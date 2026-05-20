@@ -4,9 +4,10 @@ import { db } from '@/lib/db'
 // 撤销任务完成
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     // 优先从请求头获取 userId，如果不存在则从 cookie 获取
     const userId = request.headers.get('x-user-id') || request.cookies.get('userId')?.value
 
@@ -29,7 +30,7 @@ export async function POST(
 
     // 获取任务完成记录
     const completion = await db.taskCompletion.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         task: true,
         user: true
@@ -58,7 +59,7 @@ export async function POST(
 
     // 标记任务完成为已撤销并记录时间
     await db.taskCompletion.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         revoked: true,
         revokedAt: new Date()

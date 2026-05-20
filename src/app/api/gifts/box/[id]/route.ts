@@ -5,9 +5,10 @@ import { cookies } from 'next/headers'
 // 更新礼物盒中的物品数量
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const cookiesList = await cookies()
     const userIdCookie = cookiesList.get('userId')?.value
     const userIdHeader = request.headers.get('x-user-id')
@@ -22,7 +23,7 @@ export async function PATCH(
 
     const boxItem = await db.giftBox.findFirst({
       where: {
-        id: params.id,
+        id,
         userId
       },
       include: { gift: true }
@@ -71,7 +72,7 @@ export async function PATCH(
     }
 
     const updatedBoxItem = await db.giftBox.update({
-      where: { id: params.id },
+      where: { id },
       data: { quantity }
     })
 
@@ -98,9 +99,10 @@ export async function PATCH(
 // 从礼物盒中移除物品
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params
     const cookiesList = await cookies()
     const userIdCookie = cookiesList.get('userId')?.value
     const userIdHeader = request.headers.get('x-user-id')
@@ -112,7 +114,7 @@ export async function DELETE(
 
     const boxItem = await db.giftBox.findFirst({
       where: {
-        id: params.id,
+        id,
         userId
       }
     })
@@ -122,7 +124,7 @@ export async function DELETE(
     }
 
     await db.giftBox.delete({
-      where: { id: params.id }
+      where: { id }
     })
 
     return NextResponse.json({ success: true })

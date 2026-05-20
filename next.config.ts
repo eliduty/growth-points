@@ -1,22 +1,22 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-  reactStrictMode: false,
-  images: {
-    unoptimized: true,
-  },
-  serverExternalPackages: [
-    'sharp',
-    '@libsql/client',
-    '@prisma/adapter-libsql',
-  ],
-  experimental: {
-    optimizePackageImports: ['lucide-react', 'recharts', 'framer-motion'],
-  },
+  // output: 'standalone',
+  // typescript: {
+  //   ignoreBuildErrors: true,
+  // },
+  // reactStrictMode: false,
+  // images: {
+  //   unoptimized: true,
+  // },
+  // serverExternalPackages: [
+  //   'sharp',
+  //   '@libsql/client',
+  //   '@prisma/adapter-libsql',
+  // ],
+  // experimental: {
+  //   optimizePackageImports: ['lucide-react', 'recharts', 'framer-motion'],
+  // },
 };
 
 export default nextConfig;

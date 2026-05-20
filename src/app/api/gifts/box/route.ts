@@ -3,7 +3,7 @@ import { db } from '@/lib/db'
 import { cookies } from 'next/headers'
 
 // 获取礼物盒内容
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const cookiesList = await cookies()
     const userIdCookie = cookiesList.get('userId')?.value

@@ -4,10 +4,10 @@ import { db } from '@/lib/db'
 // 删除任务
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await params
 
     // 检查任务是否存在
     const task = await db.task.findUnique({

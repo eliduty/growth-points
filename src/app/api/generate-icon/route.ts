@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     // 保存不同尺寸的图标
     const sizes = ['192x192', '512x512']
-    const results = []
+    const results: { size: string; path: string; fileSize: number }[] = []
 
     for (const s of sizes) {
       const [width, height] = s.split('x').map(Number)
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         error: '生成图标失败',
-        details: error.message
+        details: error instanceof Error ? error.message : String(error)
       },
       { status: 500 }
     )
@@ -91,8 +91,8 @@ export async function GET() {
     'favicon.ico'
   ]
 
-  const existingIcons = []
-  const missingIcons = []
+  const existingIcons: string[] = []
+  const missingIcons: string[] = []
 
   for (const icon of requiredIcons) {
     const filepath = path.join(publicDir, icon)

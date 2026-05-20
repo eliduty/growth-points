@@ -2,7 +2,7 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
@@ -27,6 +27,7 @@ model User {
 
   taskCompletions TaskCompletion[]
   giftRedemptions GiftRedemption[]
+  giftBoxes       GiftBox[]
 }
 
 model Task {
@@ -55,16 +56,18 @@ model TaskCompletion {
 }
 
 model Gift {
-  id          String            @id @default(cuid())
-  name        String
-  points      Int
-  description String?
-  image       String?
-  available   Boolean           @default(true)
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
+  id            String            @id @default(cuid())
+  name          String
+  points        Int
+  description   String?
+  image         String?
+  available     Boolean           @default(true)
+  maxRedeemable Int?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
 
   redemptions GiftRedemption[]
+  giftBoxes   GiftBox[]
 }
 
 model GiftRedemption {
@@ -76,6 +79,19 @@ model GiftRedemption {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   gift Gift @relation(fields: [giftId], references: [id], onDelete: Cascade)
+}
+
+model GiftBox {
+  id        String   @id @default(cuid())
+  userId    String
+  giftId    String
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  gift Gift @relation(fields: [giftId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, giftId])
 }
 
 model Setting {
