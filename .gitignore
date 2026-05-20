@@ -17,6 +17,7 @@ db/*.db-journal
 dev.db
 
 prisma/migrations/
+src/generated/
 
 *.tsbuildinfo
 next-env.d.ts
