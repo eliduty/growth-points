@@ -1,13 +1,17 @@
-import { defineConfig, env } from '@prisma/config'
+import { defineConfig } from '@prisma/config'
 import 'dotenv/config'
 
 type Env = {
   DATABASE_URL?: string
 }
 
+const envVars: Env = {
+  DATABASE_URL: process.env.DATABASE_URL,
+}
+
 export default defineConfig({
   schema: 'prisma/schema.prisma',
   datasource: {
-    url: env<Env>('DATABASE_URL') || 'file:./dev.db',
+    url: envVars.DATABASE_URL || 'file:./dev.db',
   },
 })
