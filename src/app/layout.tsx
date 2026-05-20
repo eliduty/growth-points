@@ -1,6 +1,18 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#faf5ff" },
+    { media: "(prefers-color-scheme: dark)", color: "#1a0a2e" },
+  ],
+};
 
 export const metadata: Metadata = {
   title: "家庭积分任务",
@@ -8,17 +20,6 @@ export const metadata: Metadata = {
   keywords: ["家庭", "积分", "任务", "孩子", "奖励", "教育"],
   authors: [{ name: "家庭积分系统" }],
   manifest: "/manifest.json",
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 1,
-    userScalable: false,
-    viewportFit: "cover",
-  },
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf5ff" },
-    { media: "(prefers-color-scheme: dark)", color: "#1a0a2e" },
-  ],
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

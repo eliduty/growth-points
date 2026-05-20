@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+.git
+.gitignore
+*.log
+.DS_Store
+Thumbs.db
+.idea
+.vscode
+*.swp
+*.swo
+coverage
+download
+pnpm-lock.yaml
+dev.log
