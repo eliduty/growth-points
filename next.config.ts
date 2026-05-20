@@ -9,16 +9,9 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  serverExternalPackages: ['sharp', '@prisma/client', 'prisma'],
+  serverExternalPackages: ['sharp', '@prisma/client', 'prisma', '@libsql/client', '@prisma/adapter-libsql'],
   experimental: {
     optimizePackageImports: ['lucide-react', 'recharts', 'framer-motion'],
-  },
-  outputFileTracingExcludes: {
-    '/api/**': [
-      'node_modules/.pnpm/@prisma+client*/**/query_engine_bg.*.wasm-base64.*',
-      'node_modules/.pnpm/@prisma+client*/**/query_compiler_bg.*.wasm-base64.*',
-      'node_modules/.pnpm/@img+sharp-libvips*/**',
-    ],
   },
 };
 
