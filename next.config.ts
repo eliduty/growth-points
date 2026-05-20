@@ -9,7 +9,14 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
-  serverExternalPackages: ['sharp', '@prisma/client', 'prisma', '@libsql/client', '@prisma/adapter-libsql'],
+  serverExternalPackages: [
+    'sharp',
+    '@prisma/client',
+    'prisma',
+    '@libsql/client',
+    '@prisma/adapter-libsql',
+    '.prisma/client',
+  ],
   experimental: {
     optimizePackageImports: ['lucide-react', 'recharts', 'framer-motion'],
   },
