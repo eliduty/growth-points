@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -211,20 +212,18 @@ const WeeklyTimetable = ({ completions, tasks, isParent, onRevoke }: WeeklyTimet
 
 // 创建一个带认证信息的 fetch 函数
 const apiFetch = (url: string, options?: RequestInit) => {
-  // 从 localStorage 获取 userId
-  const userId = typeof window !== 'undefined' ? localStorage.getItem('userId') : null
-
   return fetch(url, {
     ...options,
     headers: {
       ...options?.headers,
-      ...(userId ? { 'x-user-id': userId } : {}),
     },
   })
 }
 
 export default function Home() {
+  const router = useRouter()
   const { toast } = useToast()
+  const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('tasks')
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [allUsers, setAllUsers] = useState<User[]>([])
@@ -376,15 +375,13 @@ export default function Home() {
         setCurrentUser(userData)
         await loadData()
       } else {
-        // 未登录，加载用户列表
-        const usersRes = await apiFetch('/api/users')
-        if (usersRes.ok) {
-          setAllUsers(await usersRes.json())
-        }
-        setAuthDialogOpen(true)
+        router.push('/login')
       }
     } catch (error) {
       console.error('检查登录状态失败:', error)
+      router.push('/login')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -430,8 +427,6 @@ export default function Home() {
 
       if (res.ok) {
         const userData = await res.json()
-        // 保存 userId 到 localStorage
-        localStorage.setItem('userId', userData.id)
         setCurrentUser(userData)
         setAuthDialogOpen(false)
         setLoginPassword('')
@@ -483,6 +478,16 @@ export default function Home() {
       return
     }
 
+    const hasLetter = /[a-zA-Z]/.test(newUserPassword)
+    const hasNumber = /[0-9]/.test(newUserPassword)
+    if (!hasLetter || !hasNumber) {
+      toast({
+        title: '密码必须包含字母和数字',
+        variant: 'destructive',
+      })
+      return
+    }
+
     if (newUserPassword !== confirmPassword) {
       toast({
         title: '两次密码不一致',
@@ -504,8 +509,6 @@ export default function Home() {
 
       if (res.ok) {
         const userData = await res.json()
-        // 保存 userId 到 localStorage
-        localStorage.setItem('userId', userData.id)
         setCurrentUser(userData)
         setAuthDialogOpen(false)
         setNewUserName('')
@@ -534,8 +537,6 @@ export default function Home() {
   const handleLogout = async () => {
     try {
       await apiFetch('/api/user/logout', { method: 'POST' })
-      // 清除 localStorage 中的 userId
-      localStorage.removeItem('userId')
       setCurrentUser(null)
       setAuthDialogOpen(true)
       setAuthMode('login')
@@ -867,201 +868,21 @@ export default function Home() {
     checkLoginAndLoad()
   }, [])
 
-  // 未登录状态
-  if (!currentUser) {
+  // 加载中
+  if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 p-4">
-        <Dialog open={authDialogOpen} onOpenChange={setAuthDialogOpen}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle>
-                {authMode === 'login'
-                  ? (loginStep === 'select-user' ? '选择用户登录' : '输入密码')
-                  : '注册新用户'
-                }
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 pt-4">
-              {authMode === 'login' ? (
-                <>
-                  {allUsers.length === 0 ? (
-                    <p className="text-center text-gray-500 py-4">
-                      还没有用户，请先注册
-                    </p>
-                  ) : loginStep === 'select-user' ? (
-                    // 第一步：选择用户
-                    <>
-                      <div className="space-y-2">
-                        <Label>选择用户</Label>
-                        {allUsers.map((user) => (
-                          <Card
-                            key={user.id}
-                            className="cursor-pointer transition-colors hover:bg-gray-50"
-                            onClick={() => handleSelectUser(user.id)}
-                          >
-                            <CardContent className="p-4">
-                              <div className="flex items-center gap-3">
-                                {user.role === 'PARENT' ? (
-                                  <Crown className="w-5 h-5 text-purple-600" />
-                                ) : (
-                                  <UserPlus className="w-5 h-5 text-pink-600" />
-                                )}
-                                <div>
-                                  <p className="font-semibold">{user.name}</p>
-                                  <p className="text-sm text-gray-600">
-                                    {user.role === 'PARENT' ? '家长' : '孩子'}
-                                  </p>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ))}
-                      </div>
-                      <Button
-                        variant="ghost"
-                        onClick={() => {
-                          setAuthMode('register')
-                          setLoginStep('select-user')
-                          setSelectedUserId('')
-                          setSelectedUserInfo(null)
-                          setLoginPassword('')
-                        }}
-                        className="w-full"
-                      >
-                        还没有账号？去注册
-                      </Button>
-                    </>
-                  ) : (
-                    // 第二步：输入密码
-                    <>
-                      <div className="text-center mb-6">
-                        {selectedUserInfo?.role === 'PARENT' ? (
-                          <Crown className="w-12 h-12 text-purple-600 mx-auto mb-2" />
-                        ) : (
-                          <UserPlus className="w-12 h-12 text-pink-600 mx-auto mb-2" />
-                        )}
-                        <h3 className="text-xl font-semibold">{selectedUserInfo?.name}</h3>
-                        <p className="text-sm text-gray-600">
-                          {selectedUserInfo?.role === 'PARENT' ? '家长' : '孩子'}
-                        </p>
-                      </div>
-                      <div>
-                        <Label htmlFor="loginPassword">请输入密码</Label>
-                        <Input
-                          id="loginPassword"
-                          type="password"
-                          placeholder="输入密码"
-                          value={loginPassword}
-                          onChange={(e) => setLoginPassword(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              handleLogin()
-                            }
-                          }}
-                          className="mt-2"
-                        />
-                      </div>
-                      <Button
-                        onClick={handleLogin}
-                        className="w-full bg-purple-600 hover:bg-purple-700 mt-4"
-                      >
-                        <LogIn className="w-4 h-4 mr-2" />
-                        登录
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        onClick={handleBackToUserSelect}
-                        className="w-full"
-                      >
-                        返回选择用户
-                      </Button>
-                    </>
-                  )}
-                </>
-              ) : (
-                <>
-                  <div>
-                    <Label htmlFor="userName">用户名 *</Label>
-                    <Input
-                      id="userName"
-                      placeholder="输入用户名"
-                      value={newUserName}
-                      onChange={(e) => setNewUserName(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="newPassword">密码 *</Label>
-                    <Input
-                      id="newPassword"
-                      type="password"
-                      placeholder="输入密码（至少6位）"
-                      value={newUserPassword}
-                      onChange={(e) => setNewUserPassword(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="confirmPassword">确认密码 *</Label>
-                    <Input
-                      id="confirmPassword"
-                      type="password"
-                      placeholder="再次输入密码"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Label>身份 *</Label>
-                    <div className="flex gap-2 mt-2">
-                      <Button
-                        type="button"
-                        variant={newUserRole === 'PARENT' ? 'default' : 'outline'}
-                        onClick={() => setNewUserRole('PARENT')}
-                        className={newUserRole === 'PARENT' ? 'bg-purple-600 hover:bg-purple-700' : ''}
-                      >
-                        <Crown className="w-4 h-4 mr-2" />
-                        家长
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={newUserRole === 'CHILD' ? 'default' : 'outline'}
-                        onClick={() => setNewUserRole('CHILD')}
-                        className={newUserRole === 'CHILD' ? 'bg-pink-600 hover:bg-pink-700' : ''}
-                      >
-                        <UserPlus className="w-4 h-4 mr-2" />
-                        孩子
-                      </Button>
-                    </div>
-                  </div>
-                  <Button
-                    onClick={handleRegister}
-                    className="w-full bg-purple-600 hover:bg-purple-700"
-                  >
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    注册
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    onClick={() => {
-                      setAuthMode('login')
-                      setLoginStep('select-user')
-                      setSelectedUserId('')
-                      setSelectedUserInfo(null)
-                      setLoginPassword('')
-                      setNewUserName('')
-                      setNewUserPassword('')
-                      setConfirmPassword('')
-                    }}
-                    className="w-full"
-                  >
-                    已有账号？去登录
-                  </Button>
-                </>
-              )}
-            </div>
-          </DialogContent>
-        </Dialog>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+          <p className="text-gray-600">加载中...</p>
+        </div>
       </div>
     )
+  }
+
+  // 未登录（正在重定向）
+  if (!currentUser) {
+    return null
   }
 
   // 已登录状态

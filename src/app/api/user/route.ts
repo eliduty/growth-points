@@ -41,11 +41,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: '密码长度至少为6位' }, { status: 400 })
     }
 
+    const hasLetter = /[a-zA-Z]/.test(password)
+    const hasNumber = /[0-9]/.test(password)
+    if (!hasLetter || !hasNumber) {
+      return NextResponse.json({ error: '密码必须包含字母和数字' }, { status: 400 })
+    }
+
     if (role !== 'PARENT' && role !== 'CHILD') {
       return NextResponse.json({ error: '无效的角色' }, { status: 400 })
     }
 
-    // 加密密码
+    const existingUser = await db.user.findFirst({
+      where: { name }
+    })
+
+    if (existingUser) {
+      return NextResponse.json({ error: '用户名已存在' }, { status: 400 })
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10)
 
     const user = await db.user.create({
