@@ -11,8 +11,6 @@ const nextConfig: NextConfig = {
   },
   serverExternalPackages: [
     'sharp',
-    '@libsql/client',
-    '@prisma/adapter-libsql',
   ],
   experimental: {
     optimizePackageImports: ['lucide-react', 'recharts', 'framer-motion'],
