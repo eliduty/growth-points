@@ -1,62 +1,8 @@
-node_modules/
-.pnpm-store/
-
-.next/
-out/
-
-*.log
-npm-debug.log*
-pnpm-debug.log*
-
-.env
+node_modules
+.next
+.env.local
 .env*.local
 
-db/*.db
-db/*.db.backup
-db/*.db-journal
-dev.db
-
-prisma/migrations/
-src/generated/
-
-*.tsbuildinfo
-next-env.d.ts
-
-.DS_Store
-Thumbs.db
-
-.idea/
-.vscode/
-*.swp
-*.swo
-
-coverage/
-
-download/
-**/temp/*
-
-# Nuxt dev/build outputs
-.output
-.data
-.nuxt
-.nitro
-.cache
-dist
-
-# Node dependencies
-node_modules
-
-# Logs
-logs
-*.log
-
-# Misc
-.DS_Store
-.fleet
-.idea
-
-# Local env files
-.env
-.env.*
-!.env.example
-.edgeone/
+prisma/*.db
+prisma/*.db-journal
+src/generated/prisma
