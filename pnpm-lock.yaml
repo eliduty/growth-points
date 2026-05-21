@@ -14,9 +14,6 @@ importers:
 
   apps/nuxt-app:
     dependencies:
-      '@libsql/client':
-        specifier: ^0.17.3
-        version: 0.17.3
       '@prisma/adapter-libsql':
         specifier: ^7.8.0
         version: 7.8.0
@@ -32,9 +29,6 @@ importers:
       vue:
         specifier: ^3.5.34
         version: 3.5.34(typescript@5.9.3)
-      vue-router:
-        specifier: ^5.0.7
-        version: 5.0.7(@vue/compiler-sfc@3.5.34)(vue@3.5.34(typescript@5.9.3))
     devDependencies:
       '@unocss/nuxt':
         specifier: ^66.2.2

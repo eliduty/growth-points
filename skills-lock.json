@@ -19,6 +19,18 @@
       "skillPath": "skills/dispatching-parallel-agents/SKILL.md",
       "computedHash": "e21044ae7496fc285f1df9ff3fb518a3a20bea6f5216c1f59f4987e12c769a0a"
     },
+    "edgeone-pages-deploy": {
+      "source": "TencentEdgeOne/edgeone-pages-skills",
+      "sourceType": "github",
+      "skillPath": "skills/edgeone-pages-deploy/SKILL.md",
+      "computedHash": "22fb79bb5fa45c17a8a6b763e360d9d8ac1e102b7282002091e8ed4b2fe7114a"
+    },
+    "edgeone-pages-dev": {
+      "source": "TencentEdgeOne/edgeone-pages-skills",
+      "sourceType": "github",
+      "skillPath": "skills/edgeone-pages-dev/SKILL.md",
+      "computedHash": "f7987b7e6651e14a0e78c3e5467a52dce530539c787446c49768aee2a5200a37"
+    },
     "executing-plans": {
       "source": "obra/superpowers",
       "sourceType": "github",
