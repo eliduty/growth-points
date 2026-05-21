@@ -1,9 +1,9 @@
+/* 得意黑字体加载 */
+@import url('https://cdn.jsdelivr.net/npm/smiley-sans@1.1.1/dist/SmileySans-Oblique.min.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* 得意黑字体加载 */
-@import url('https://cdn.jsdelivr.net/npm/smiley-sans@1.1.1/dist/SmileySans-Oblique.min.css');
 
 :root {
   /* 孩子端变量 */
