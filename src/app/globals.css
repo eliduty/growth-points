@@ -2,20 +2,98 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 得意黑字体加载 */
+@import url('https://cdn.jsdelivr.net/npm/smiley-sans@1.1.1/dist/SmileySans-Oblique.min.css');
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* 孩子端变量 */
+  --child-primary: #FF6B35;
+  --child-primary-light: #FF8A50;
+  --child-secondary: #4ECDC4;
+  --child-accent: #FFD93D;
+
+  /* 家长端变量 */
+  --parent-primary: #5B7FFF;
+  --parent-primary-light: #7B9FFF;
+  --parent-secondary: #34D399;
+
+  /* 功能色 */
+  --color-success: #4ECDC4;
+  --color-warning: #FFD93D;
+  --color-error: #FF6B6B;
+  --color-info: #60A5FA;
+
+  /* 文字 */
+  --text-primary: #1F2937;
+  --text-secondary: #6B7280;
+  --text-muted: #9CA3AF;
+
+  /* 边框和背景 */
+  --border-color: #E5E7EB;
+  --bg-card: #FFFFFF;
+  --bg-page: #F9FAFB;
+
+  /* 导航高度 */
+  --nav-height: 56px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* 孩子端主题 */
+[data-role="child"] {
+  --color-primary: var(--child-primary);
+  --bg-gradient: linear-gradient(135deg, #FFF8F0 0%, #FFEDD8 50%, #FFFBE8 100%);
 }
 
+/* 家长端主题 */
+[data-role="parent"] {
+  --color-primary: var(--parent-primary);
+  --bg-gradient: linear-gradient(135deg, #F0F4FF 0%, #E8F0FE 50%, #F5F7FF 100%);
+}
+
+/* 基础样式 */
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Smiley Sans Oblique', 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text-primary);
+  background: var(--bg-page);
+  min-height: 100vh;
+}
+
+/* 积分卡片渐变背景 */
+.points-card-child {
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8A50 100%);
+}
+
+.points-card-parent {
+  background: linear-gradient(135deg, #5B7FFF 0%, #7B9FFF 100%);
+}
+
+/* 礼物颜色池 */
+.gift-color-1 { background: #FF6B35; }
+.gift-color-2 { background: #4ECDC4; }
+.gift-color-3 { background: #FFD93D; }
+.gift-color-4 { background: #60A5FA; }
+.gift-color-5 { background: #A78BFA; }
+.gift-color-6 { background: #FB923C; }
+
+/* 卡片悬停效果 */
+.card-hover {
+  transition: all 0.15s ease-out;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
+}
+
+/* 按钮点击效果 */
+.btn-press:active {
+  transform: scale(0.95);
+}
+
+/* 隐藏滚动条 */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  scrollbar-width: none;
 }
