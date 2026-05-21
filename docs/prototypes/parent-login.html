@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>家长端登录 - 家庭积分兑换系统</title>
+  <link href="https://cdn.jsdelivr.net/npm/smiley-sans@1.1.1/dist/SmileySans-Oblique.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --color-primary: #5B7FFF;
+      --color-primary-light: #7B9FFF;
+      --color-secondary: #34D399;
+      --text-primary: #1F2937;
+      --text-secondary: #6B7280;
+      --text-muted: #9CA3AF;
+      --color-error: #EF4444;
+      --radius-button: 8px;
+      --radius-input: 8px;
+    }
+
+    body {
+      font-family: 'Smiley Sans Oblique', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #F0F4FF 0%, #E8F0FE 50%, #F5F7FF 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      position: relative;
+    }
+
+    /* 背景纹理 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%235B7FFF' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 375px;
+      background: white;
+      border-radius: 20px;
+      box-shadow:
+        0 8px 32px rgba(91, 127, 255, 0.12),
+        0 4px 8px rgba(91, 127, 255, 0.08);
+      padding: 36px 28px;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+      animation: fadeInScale 0.5s ease-out;
+    }
+
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* 标题 */
+    .header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .logo-icon {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, #5B7FFF 0%, #7B9FFF 100%);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow:
+        0 8px 24px rgba(91, 127, 255, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-icon::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15) 0%, transparent 50%);
+    }
+
+    .logo-icon svg {
+      width: 36px;
+      height: 36px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* 登录表单 */
+    .login-form {
+      margin-top: 28px;
+    }
+
+    .form-group {
+      margin-bottom: 22px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 48px;
+      border: 1px solid #E5E7EB;
+      border-radius: var(--radius-input);
+      padding: 14px 18px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: all 0.15s ease-out;
+      background: #F9FAFB;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(91, 127, 255, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    /* 登录按钮 */
+    .login-btn {
+      width: 100%;
+      height: 48px;
+      background: linear-gradient(135deg, #5B7FFF 0%, #7B9FFF 100%);
+      border: none;
+      border-radius: var(--radius-button);
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s ease-out;
+      box-shadow: 0 4px 12px rgba(91, 127, 255, 0.2);
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .login-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+      transition: left 0.5s;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(91, 127, 255, 0.25);
+    }
+
+    .login-btn:hover::before {
+      left: 100%;
+    }
+
+    .login-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(91, 127, 255, 0.2);
+    }
+
+    /* 切换登录/注册 */
+    .switch-mode {
+      text-align: center;
+      margin-top: 28px;
+      padding-top: 28px;
+      border-top: 1px solid #E5E7EB;
+    }
+
+    .switch-text {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .switch-link {
+      color: var(--color-primary);
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 0.15s ease-out;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .switch-link svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--color-primary);
+      stroke-width: 2;
+      fill: none;
+      transition: stroke 0.15s;
+    }
+
+    .switch-link:hover {
+      color: var(--color-primary-light);
+    }
+
+    .switch-link:hover svg {
+      stroke: var(--color-primary-light);
+    }
+
+    /* 底部提示 */
+    .footer-tip {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .footer-tip svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--text-muted);
+      stroke-width: 2;
+      fill: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <!-- 标题 -->
+    <div class="header">
+      <div class="logo-icon">
+        <!-- Home icon -->
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      </div>
+      <h1 class="title">家庭积分兑换系统</h1>
+      <p class="subtitle">家长端管理平台</p>
+    </div>
+
+    <!-- 登录表单 -->
+    <form class="login-form">
+      <div class="form-group">
+        <label class="form-label">用户名</label>
+        <input type="text" class="form-input" placeholder="请输入用户名">
+      </div>
+      <div class="form-group">
+        <label class="form-label">密码</label>
+        <input type="password" class="form-input" placeholder="请输入密码">
+      </div>
+      <button type="button" class="login-btn" id="submitBtn">
+        <!-- LogIn icon -->
+        <svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        登录
+      </button>
+    </form>
+
+    <!-- 切换登录/注册 -->
+    <div class="switch-mode">
+      <p class="switch-text">
+        没有账号？<span class="switch-link" onclick="switchToRegister()">
+          <!-- UserPlus icon -->
+          <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+          注册
+        </span>
+      </p>
+    </div>
+
+    <!-- 底部提示 -->
+    <p class="footer-tip">
+      <!-- Info icon -->
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      注册后自动创建家庭，成为创始家长
+    </p>
+  </div>
+
+  <script>
+    let isRegisterMode = false;
+
+    function switchToRegister() {
+      isRegisterMode = true;
+      const subtitle = document.querySelector('.subtitle');
+      const submitBtn = document.getElementById('submitBtn');
+      const switchText = document.querySelector('.switch-text');
+
+      subtitle.textContent = '创建新家庭';
+      submitBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> 注册';
+      switchText.innerHTML = '已有账号？<span class="switch-link" onclick="switchToLogin()"><svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> 登录</span>';
+    }
+
+    function switchToLogin() {
+      isRegisterMode = false;
+      const subtitle = document.querySelector('.subtitle');
+      const submitBtn = document.getElementById('submitBtn');
+      const switchText = document.querySelector('.switch-text');
+
+      subtitle.textContent = '家长端管理平台';
+      submitBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> 登录';
+      switchText.innerHTML = '没有账号？<span class="switch-link" onclick="switchToRegister()"><svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> 注册</span>';
+    }
+  </script>
+</body>
+</html>

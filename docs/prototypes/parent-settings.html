@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设置页 - 家长端</title>
+  <link href="https://cdn.jsdelivr.net/npm/smiley-sans@1.1.1/dist/SmileySans-Oblique.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --color-primary: #5B7FFF;
+      --color-primary-light: #7B9FFF;
+      --color-secondary: #34D399;
+      --color-success: #34D399;
+      --color-error: #EF4444;
+      --text-primary: #1F2937;
+      --text-secondary: #6B7280;
+      --text-muted: #9CA3AF;
+      --bg-card: #FFFFFF;
+      --radius-card: 12px;
+      --radius-button: 8px;
+      --radius-input: 8px;
+      --shadow-card: 0 2px 8px rgba(91, 127, 255, 0.08), 0 1px 2px rgba(91, 127, 255, 0.04);
+      --nav-height: 56px;
+    }
+
+    body {
+      font-family: 'Smiley Sans Oblique', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #F0F4FF 0%, #E8F0FE 50%, #F5F7FF 100%);
+      padding-bottom: var(--nav-height);
+      position: relative;
+    }
+
+    /* 背景纹理 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%235B7FFF' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-content {
+      padding: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 设置区块 */
+    .settings-section {
+      background: white;
+      border-radius: var(--radius-card);
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid rgba(91, 127, 255, 0.08);
+      animation: fadeIn 0.4s ease-out backwards;
+    }
+
+    .settings-section:nth-child(1) { animation-delay: 0.1s; }
+    .settings-section:nth-child(2) { animation-delay: 0.2s; }
+    .settings-section:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-header {
+      padding: 12px 16px;
+      background: linear-gradient(135deg, #F9FAFB 0%, #F5F7FF 100%);
+      border-radius: var(--radius-card) var(--radius-card) 0 0;
+      font-size: 15px;
+      color: var(--text-primary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-header svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--color-primary);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .section-content {
+      padding: 16px;
+    }
+
+    /* 成员管理 */
+    .member-group {
+      margin-bottom: 16px;
+    }
+
+    .member-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .member-label {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .member-label svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--text-muted);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .member-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .member-item:last-child {
+      border-bottom: none;
+    }
+
+    .member-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .member-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #E8F0FE 0%, #F0F4FF 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .member-avatar svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--color-primary);
+      stroke-width: 1.5;
+      fill: none;
+    }
+
+    .member-avatar.child {
+      background: linear-gradient(135deg, #FFF0E8 0%, #FFE8DC 100%);
+    }
+
+    .member-avatar.child svg {
+      stroke: #FF6B35;
+    }
+
+    .member-name {
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    .member-tag {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-left: 4px;
+    }
+
+    .member-btn {
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 150ms ease-out;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .member-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--text-secondary);
+      stroke-width: 2;
+      fill: none;
+      transition: stroke 150ms ease-out;
+    }
+
+    .member-btn:hover {
+      border-color: var(--color-error);
+      color: var(--color-error);
+    }
+
+    .member-btn:hover svg {
+      stroke: var(--color-error);
+    }
+
+    .member-btn.hidden {
+      visibility: hidden;
+    }
+
+    .add-member-btn {
+      background: linear-gradient(135deg, #5B7FFF 0%, #7B9FFF 100%);
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 14px;
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 500;
+      margin-top: 12px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(91, 127, 255, 0.2);
+      transition: all 150ms ease-out;
+    }
+
+    .add-member-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .add-member-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(91, 127, 255, 0.25);
+    }
+
+    /* 兑换日设置 */
+    .redeem-setting {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .redeem-setting:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .redeem-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .redeem-label svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-secondary);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .redeem-value {
+      font-size: 14px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .redeem-btn {
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 14px;
+      color: var(--color-primary);
+      cursor: pointer;
+      font-family: inherit;
+      margin-top: 16px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 150ms ease-out;
+    }
+
+    .redeem-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--color-primary);
+      stroke-width: 2;
+      fill: none;
+      transition: stroke 150ms ease-out;
+    }
+
+    .redeem-btn:hover {
+      background: var(--color-primary);
+      color: white;
+      border-color: var(--color-primary);
+    }
+
+    .redeem-btn:hover svg {
+      stroke: white;
+    }
+
+    /* 个人信息 */
+    .info-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+    }
+
+    .info-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-label svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-secondary);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .info-value {
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    /* 退出登录 */
+    .logout-section {
+      margin-top: 16px;
+    }
+
+    .logout-btn {
+      width: 100%;
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 16px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 150ms ease-out;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .logout-btn svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--text-secondary);
+      stroke-width: 2;
+      fill: none;
+      transition: stroke 150ms ease-out;
+    }
+
+    .logout-btn:hover {
+      border-color: var(--color-error);
+      color: var(--color-error);
+    }
+
+    .logout-btn:hover svg {
+      stroke: var(--color-error);
+    }
+
+    /* 弹窗样式 */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(4px);
+      z-index: 99;
+      display: none;
+    }
+
+    .popup-overlay.show {
+      display: block;
+      animation: fadeInOverlay 200ms ease-out;
+    }
+
+    @keyframes fadeInOverlay {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 340px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 4px 16px rgba(91, 127, 255, 0.1);
+      z-index: 100;
+      display: none;
+    }
+
+    .popup.show {
+      display: block;
+      animation: popIn 200ms ease-out;
+    }
+
+    @keyframes popIn {
+      0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    .popup-header {
+      padding: 16px;
+      border-bottom: 1px solid #E5E7EB;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .popup-header svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--color-primary);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .popup-title {
+      font-size: 16px;
+      color: var(--text-primary);
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .popup-body {
+      padding: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      height: 44px;
+      border: 1px solid #E5E7EB;
+      border-radius: var(--radius-input);
+      padding: 12px 16px;
+      font-size: 15px;
+      font-family: inherit;
+      background: #F9FAFB;
+      transition: all 150ms ease-out;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--color-primary);
+      background: white;
+      box-shadow: 0 0 0 3px rgba(91, 127, 255, 0.1);
+    }
+
+    .popup-footer {
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+    }
+
+    .popup-btn-cancel {
+      flex: 1;
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 150ms ease-out;
+    }
+
+    .popup-btn-cancel:hover {
+      background: #F9FAFB;
+    }
+
+    .popup-btn-confirm {
+      flex: 1;
+      background: linear-gradient(135deg, #5B7FFF 0%, #7B9FFF 100%);
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 15px;
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(91, 127, 255, 0.2);
+      transition: all 150ms ease-out;
+    }
+
+    .popup-btn-confirm svg {
+      width: 16px;
+      height: 16px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .popup-btn-confirm:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(91, 127, 255, 0.25);
+    }
+
+    /* 兑换日设置弹窗 */
+    .weekday-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .weekday-item {
+      background: #F9FAFB;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 150ms ease-out;
+    }
+
+    .weekday-item.selected {
+      background: linear-gradient(135deg, #5B7FFF 0%, #7B9FFF 100%);
+      border-color: var(--color-primary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(91, 127, 255, 0.2);
+    }
+
+    .weekday-item:hover:not(.selected) {
+      border-color: var(--color-primary);
+      background: #F0F4FF;
+    }
+
+    /* 删除确认弹窗 */
+    .delete-popup {
+      padding: 24px;
+      text-align: center;
+    }
+
+    .delete-popup-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .delete-popup-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--color-error);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .delete-popup-title {
+      font-size: 16px;
+      color: var(--text-primary);
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .delete-popup-content {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .delete-popup-hint {
+      font-size: 13px;
+      color: var(--color-error);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .delete-popup-hint svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--color-error);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .delete-popup-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .delete-btn-cancel {
+      flex: 1;
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 150ms ease-out;
+    }
+
+    .delete-btn-cancel:hover {
+      background: #F9FAFB;
+    }
+
+    .delete-btn-confirm {
+      flex: 1;
+      background: var(--color-error);
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 15px;
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+      transition: all 150ms ease-out;
+    }
+
+    .delete-btn-confirm svg {
+      width: 16px;
+      height: 16px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .delete-btn-confirm:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(239, 68, 68, 0.25);
+    }
+
+    /* 底部导航 */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-height);
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -4px 16px rgba(91, 127, 255, 0.08), 0 -2px 8px rgba(91, 127, 255, 0.04);
+      border-top: 1px solid rgba(91, 127, 255, 0.08);
+      z-index: 10;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+      cursor: pointer;
+      transition: all 150ms ease-out;
+    }
+
+    .nav-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--text-muted);
+      stroke-width: 1.5;
+      fill: none;
+      transition: stroke 150ms ease-out;
+    }
+
+    .nav-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      transition: color 150ms ease-out;
+    }
+
+    .nav-item.active .nav-icon svg {
+      stroke: var(--color-primary);
+    }
+
+    .nav-item.active .nav-label {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    .nav-item:hover:not(.active) .nav-icon svg {
+      stroke: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="page-content">
+    <!-- 成员管理 -->
+    <div class="settings-section">
+      <div class="section-header">
+        <!-- Users icon -->
+        <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        成员管理
+      </div>
+      <div class="section-content">
+        <!-- 孩子 -->
+        <div class="member-group">
+          <div class="member-label">
+            <!-- Smile icon -->
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            孩子
+          </div>
+          <div class="member-item">
+            <div class="member-info">
+              <div class="member-avatar child">
+                <!-- Smile icon -->
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+              </div>
+              <div class="member-name">小明</div>
+            </div>
+            <button class="member-btn" onclick="showDeleteChildPopup()">
+              <!-- Trash2 icon -->
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+              删除
+            </button>
+          </div>
+          <div class="member-item">
+            <div class="member-info">
+              <div class="member-avatar child">
+                <!-- Smile icon -->
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+              </div>
+              <div class="member-name">小红</div>
+            </div>
+            <button class="member-btn">
+              <!-- Trash2 icon -->
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+              删除
+            </button>
+          </div>
+          <button class="add-member-btn" onclick="showAddChildPopup()">
+            <!-- UserPlus icon -->
+            <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            添加孩子
+          </button>
+        </div>
+
+        <!-- 家长 -->
+        <div class="member-group">
+          <div class="member-label">
+            <!-- UserCog icon -->
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15c1.3-1.3 1.9-3.2 1.4-5"/><circle cx="12" cy="12" r="3"/><path d="M8 6h1l4-4 4 4"/><circle cx="12" cy="12" r="3"/><path d="M16 18h-1l-4 4-4-4"/></svg>
+            家长
+          </div>
+          <div class="member-item">
+            <div class="member-info">
+              <div class="member-avatar">
+                <!-- User icon -->
+                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div class="member-name">爸爸<span class="member-tag">(你)</span></div>
+            </div>
+            <button class="member-btn hidden">
+              <!-- Trash2 icon -->
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+              删除
+            </button>
+          </div>
+          <div class="member-item">
+            <div class="member-info">
+              <div class="member-avatar">
+                <!-- User icon -->
+                <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <div class="member-name">妈妈</div>
+            </div>
+            <button class="member-btn">
+              <!-- Trash2 icon -->
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+              删除
+            </button>
+          </div>
+          <button class="add-member-btn" onclick="showAddParentPopup()">
+            <!-- UserPlus icon -->
+            <svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            添加家长
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 兑换日设置 -->
+    <div class="settings-section">
+      <div class="section-header">
+        <!-- Calendar icon -->
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        兑换日设置
+      </div>
+      <div class="section-content">
+        <div class="redeem-setting">
+          <div class="redeem-label">
+            <!-- Clock icon -->
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            当前设置
+          </div>
+          <div class="redeem-value">周三、周六</div>
+        </div>
+        <button class="redeem-btn" onclick="showRedeemPopup()">
+          <!-- Settings icon -->
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          修改设置
+        </button>
+      </div>
+    </div>
+
+    <!-- 个人信息 -->
+    <div class="settings-section">
+      <div class="section-header">
+        <!-- User icon -->
+        <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        个人信息
+      </div>
+      <div class="section-content">
+        <div class="info-item">
+          <div class="info-label">
+            <!-- User icon -->
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            用户名
+          </div>
+          <div class="info-value">爸爸</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 退出登录 -->
+    <div class="logout-section">
+      <button class="logout-btn">
+        <!-- LogOut icon -->
+        <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        退出登录
+      </button>
+    </div>
+  </div>
+
+  <!-- 遮罩层 -->
+  <div class="popup-overlay" id="overlay"></div>
+
+  <!-- 添加孩子弹窗 -->
+  <div class="popup" id="addChildPopup">
+    <div class="popup-header">
+      <!-- Smile icon -->
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      <div class="popup-title">添加孩子</div>
+    </div>
+    <div class="popup-body">
+      <div class="form-group">
+        <label class="form-label">用户名</label>
+        <input type="text" class="form-input" placeholder="请输入用户名">
+      </div>
+      <div class="form-group">
+        <label class="form-label">密码</label>
+        <input type="password" class="form-input" placeholder="请输入密码">
+      </div>
+    </div>
+    <div class="popup-footer">
+      <button class="popup-btn-cancel" onclick="hideAddChildPopup()">取消</button>
+      <button class="popup-btn-confirm" onclick="hideAddChildPopup()">
+        <!-- CheckCircle2 icon -->
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        确认添加
+      </button>
+    </div>
+  </div>
+
+  <!-- 添加家长弹窗 -->
+  <div class="popup" id="addParentPopup">
+    <div class="popup-header">
+      <!-- UserCog icon -->
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15c1.3-1.3 1.9-3.2 1.4-5"/><circle cx="12" cy="12" r="3"/><path d="M8 6h1l4-4 4 4"/><circle cx="12" cy="12" r="3"/><path d="M16 18h-1l-4 4-4-4"/></svg>
+      <div class="popup-title">添加家长</div>
+    </div>
+    <div class="popup-body">
+      <div class="form-group">
+        <label class="form-label">用户名</label>
+        <input type="text" class="form-input" placeholder="请输入用户名">
+      </div>
+      <div class="form-group">
+        <label class="form-label">密码</label>
+        <input type="password" class="form-input" placeholder="请输入密码">
+      </div>
+    </div>
+    <div class="popup-footer">
+      <button class="popup-btn-cancel" onclick="hideAddParentPopup()">取消</button>
+      <button class="popup-btn-confirm" onclick="hideAddParentPopup()">
+        <!-- CheckCircle2 icon -->
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        确认添加
+      </button>
+    </div>
+  </div>
+
+  <!-- 兑换日设置弹窗 -->
+  <div class="popup" id="redeemPopup">
+    <div class="popup-header">
+      <!-- Calendar icon -->
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <div class="popup-title">设置兑换日</div>
+    </div>
+    <div class="popup-body">
+      <div class="form-label">选择每周可兑换礼物的日期：</div>
+      <div class="weekday-grid">
+        <div class="weekday-item">周一</div>
+        <div class="weekday-item">周二</div>
+        <div class="weekday-item selected">周三</div>
+        <div class="weekday-item">周四</div>
+        <div class="weekday-item">周五</div>
+        <div class="weekday-item selected">周六</div>
+        <div class="weekday-item">周日</div>
+      </div>
+    </div>
+    <div class="popup-footer">
+      <button class="popup-btn-cancel" onclick="hideRedeemPopup()">取消</button>
+      <button class="popup-btn-confirm" onclick="hideRedeemPopup()">
+        <!-- CheckCircle2 icon -->
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        确认保存
+      </button>
+    </div>
+  </div>
+
+  <!-- 删除孩子确认弹窗 -->
+  <div class="popup" id="deleteChildPopup">
+    <div class="delete-popup">
+      <div class="delete-popup-icon">
+        <!-- AlertTriangle icon -->
+        <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </div>
+      <div class="delete-popup-title">确认删除孩子账号？</div>
+      <div class="delete-popup-content">将删除：小明的账号</div>
+      <div class="delete-popup-content">包括：所有完成记录、兑换记录</div>
+      <div class="delete-popup-hint">
+        <!-- Info icon -->
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        此操作不可恢复
+      </div>
+      <div class="delete-popup-buttons">
+        <button class="delete-btn-cancel" onclick="hideDeleteChildPopup()">取消</button>
+        <button class="delete-btn-confirm" onclick="hideDeleteChildPopup()">
+          <!-- Trash2 icon -->
+          <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          确认删除
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部导航 -->
+  <div class="bottom-nav">
+    <div class="nav-item">
+      <div class="nav-icon">
+        <!-- BarChart3 icon -->
+        <svg viewBox="0 0 24 24"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-4"/></svg>
+      </div>
+      <div class="nav-label">统计</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">
+        <!-- ListTodo icon -->
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="6" height="6" rx="1"/><line x1="13" y1="6" x2="21" y2="6"/><line x1="13" y1="10" x2="21" y2="10"/><rect x="3" y="13" width="6" height="6" rx="1"/><line x1="13" y1="14" x2="21" y2="14"/><line x1="13" y1="18" x2="21" y2="18"/></svg>
+      </div>
+      <div class="nav-label">任务</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">
+        <!-- Gift icon -->
+        <svg viewBox="0 0 24 24"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 0 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+      </div>
+      <div class="nav-label">礼物</div>
+    </div>
+    <div class="nav-item active">
+      <div class="nav-icon">
+        <!-- Settings icon -->
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <div class="nav-label">设置</div>
+    </div>
+  </div>
+
+  <script>
+    function showOverlay() {
+      document.getElementById('overlay').classList.add('show');
+    }
+
+    function hideOverlay() {
+      document.getElementById('overlay').classList.remove('show');
+    }
+
+    function showAddChildPopup() {
+      showOverlay();
+      document.getElementById('addChildPopup').classList.add('show');
+    }
+
+    function hideAddChildPopup() {
+      hideOverlay();
+      document.getElementById('addChildPopup').classList.remove('show');
+    }
+
+    function showAddParentPopup() {
+      showOverlay();
+      document.getElementById('addParentPopup').classList.add('show');
+    }
+
+    function hideAddParentPopup() {
+      hideOverlay();
+      document.getElementById('addParentPopup').classList.remove('show');
+    }
+
+    function showRedeemPopup() {
+      showOverlay();
+      document.getElementById('redeemPopup').classList.add('show');
+    }
+
+    function hideRedeemPopup() {
+      hideOverlay();
+      document.getElementById('redeemPopup').classList.remove('show');
+    }
+
+    function showDeleteChildPopup() {
+      showOverlay();
+      document.getElementById('deleteChildPopup').classList.add('show');
+    }
+
+    function hideDeleteChildPopup() {
+      hideOverlay();
+      document.getElementById('deleteChildPopup').classList.remove('show');
+    }
+
+    // 兑换日点击切换
+    document.querySelectorAll('.weekday-item').forEach(item => {
+      item.addEventListener('click', function() {
+        this.classList.toggle('selected');
+      });
+    });
+  </script>
+</body>
+</html>

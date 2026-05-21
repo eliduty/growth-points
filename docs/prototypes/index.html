@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>高保真原型索引 - 家庭积分兑换系统</title>
+  <link href="https://cdn.jsdelivr.net/npm/smiley-sans@1.1.1/dist/SmileySans-Oblique.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Smiley Sans Oblique', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: linear-gradient(135deg, #F0F4FF 0%, #E8F0FE 100%);
+      min-height: 100vh;
+      padding: 24px;
+      position: relative;
+    }
+
+    /* 背景纹理 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%235B7FFF' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+      animation: fadeInDown 0.6s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .header-title {
+      font-size: 28px;
+      color: #1F2937;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .header-subtitle {
+      font-size: 16px;
+      color: #6B7280;
+    }
+
+    .section {
+      background: white;
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 24px;
+      box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.03),
+        0 12px 24px rgba(91, 127, 255, 0.08);
+      border: 1px solid rgba(91, 127, 255, 0.1);
+      animation: fadeInUp 0.5s ease-out;
+      animation-delay: calc(var(--delay, 0) * 0.1s);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section:first-of-type { --delay: 1; }
+    .section:last-of-type { --delay: 2; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .section-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section-icon.child {
+      background: linear-gradient(135deg, #FF6B35 0%, #FF8A50 100%);
+      box-shadow: 0 4px 16px rgba(255, 107, 53, 0.25);
+    }
+
+    .section-icon.parent {
+      background: linear-gradient(135deg, #5B7FFF 0%, #7B9FFF 100%);
+      box-shadow: 0 4px 16px rgba(91, 127, 255, 0.25);
+    }
+
+    .section-icon svg {
+      width: 28px;
+      height: 28px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .section-icon::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: shimmer 3s infinite;
+    }
+
+    @keyframes shimmer {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(180deg); }
+    }
+
+    .section-title {
+      font-size: 20px;
+      color: #1F2937;
+      font-weight: 600;
+    }
+
+    .section-desc {
+      font-size: 14px;
+      color: #6B7280;
+      margin-top: 4px;
+    }
+
+    .page-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 16px;
+    }
+
+    .page-card {
+      background: #F9FAFB;
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      border: 1px solid #E5E7EB;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--accent-color, #5B7FFF), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .page-card:hover {
+      transform: translateY(-4px);
+      box-shadow:
+        0 8px 16px rgba(91, 127, 255, 0.12),
+        0 4px 8px rgba(0, 0, 0, 0.06);
+      border-color: #5B7FFF;
+    }
+
+    .page-card:hover::before {
+      opacity: 1;
+    }
+
+    .page-card.child { --accent-color: #FF6B35; }
+    .page-card.parent { --accent-color: #5B7FFF; }
+
+    .page-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #F0F4FF 0%, #E8F0FE 100%);
+      border-radius: 12px;
+      transition: all 0.3s;
+    }
+
+    .page-card:hover .page-icon {
+      background: linear-gradient(135deg, #5B7FFF 0%, #7B9FFF 100%);
+    }
+
+    .page-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: #5B7FFF;
+      stroke-width: 1.5;
+      fill: none;
+      transition: stroke 0.3s;
+    }
+
+    .page-card:hover .page-icon svg {
+      stroke: white;
+    }
+
+    .page-name {
+      font-size: 16px;
+      color: #1F2937;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .page-desc {
+      font-size: 12px;
+      color: #9CA3AF;
+    }
+
+    .page-card a {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 32px;
+      color: #9CA3AF;
+      font-size: 14px;
+      animation: fadeIn 0.6s ease-out 0.3s backwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .footer a {
+      color: #5B7FFF;
+      transition: color 0.2s;
+    }
+
+    .footer a:hover {
+      color: #FF6B35;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 页面标题 -->
+    <div class="header">
+      <h1 class="header-title">家庭积分兑换系统</h1>
+      <p class="header-subtitle">高保真 HTML 原型预览</p>
+    </div>
+
+    <!-- 孩子端 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon child">
+          <!-- Smile icon -->
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+            <line x1="9" y1="9" x2="9.01" y2="9"/>
+            <line x1="15" y1="9" x2="15.01" y2="9"/>
+          </svg>
+        </div>
+        <div>
+          <div class="section-title">孩子端</div>
+          <div class="section-desc">童趣活泼、激励感强、操作简单</div>
+        </div>
+      </div>
+      <div class="page-grid">
+        <div class="page-card child">
+          <a href="child-login.html">
+            <div class="page-icon">
+              <!-- Star icon -->
+              <svg viewBox="0 0 24 24">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </div>
+            <div class="page-name">登录页</div>
+            <div class="page-desc">星星装饰 + 激励标语</div>
+          </a>
+        </div>
+        <div class="page-card child">
+          <a href="child-tasks.html">
+            <div class="page-icon">
+              <!-- ListTodo icon -->
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="5" width="6" height="6" rx="1"/>
+                <path d="M11 4h10"/>
+                <path d="M11 8h10"/>
+                <path d="M11 12h10"/>
+                <path d="M3 16l3.5 3.5L10 14"/>
+              </svg>
+            </div>
+            <div class="page-name">任务页</div>
+            <div class="page-desc">积分概览 + 任务列表</div>
+          </a>
+        </div>
+        <div class="page-card child">
+          <a href="child-gifts.html">
+            <div class="page-icon">
+              <!-- Gift icon -->
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="8" width="18" height="4" rx="1"/>
+                <path d="M12 8v13"/>
+                <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
+                <path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/>
+              </svg>
+            </div>
+            <div class="page-name">礼物页</div>
+            <div class="page-desc">兑换日提示 + 礼物网格</div>
+          </a>
+        </div>
+        <div class="page-card child">
+          <a href="child-profile.html">
+            <div class="page-icon">
+              <!-- User icon -->
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M20 21a8 8 0 1 0-16 0"/>
+              </svg>
+            </div>
+            <div class="page-name">个人中心</div>
+            <div class="page-desc">历史记录 + 退出登录</div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 家长端 -->
+    <div class="section">
+      <div class="section-header">
+        <div class="section-icon parent">
+          <!-- UserCog icon -->
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="8" r="4"/>
+            <path d="M20 21a8 8 0 1 0-16 0"/>
+            <circle cx="18" cy="18" r="3"/>
+            <path d="M18 14v1"/>
+            <path d="M18 21v1"/>
+            <path d="M21 18h1"/>
+            <path d="M15 18h-1"/>
+            <path d="M20.2 20.2l.7.7"/>
+            <path d="M15.8 15.8l-.7-.7"/>
+            <path d="M20.2 15.8l.7-.7"/>
+            <path d="M15.8 20.2l-.7.7"/>
+          </svg>
+        </div>
+        <div>
+          <div class="section-title">家长端</div>
+          <div class="section-desc">简洁专业、清晰高效、管理便捷</div>
+        </div>
+      </div>
+      <div class="page-grid">
+        <div class="page-card parent">
+          <a href="parent-login.html">
+            <div class="page-icon">
+              <!-- Home icon -->
+              <svg viewBox="0 0 24 24">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+            </div>
+            <div class="page-name">登录/注册页</div>
+            <div class="page-desc">支持注册和登录切换</div>
+          </a>
+        </div>
+        <div class="page-card parent">
+          <a href="parent-stats.html">
+            <div class="page-icon">
+              <!-- BarChart3 icon -->
+              <svg viewBox="0 0 24 24">
+                <path d="M3 3v18h18"/>
+                <path d="M18 17V9"/>
+                <path d="M13 17V5"/>
+                <path d="M8 17v-3"/>
+              </svg>
+            </div>
+            <div class="page-name">统计页</div>
+            <div class="page-desc">孩子概览 + 撤销记录</div>
+          </a>
+        </div>
+        <div class="page-card parent">
+          <a href="parent-tasks.html">
+            <div class="page-icon">
+              <!-- ListTodo icon -->
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="5" width="6" height="6" rx="1"/>
+                <path d="M11 4h10"/>
+                <path d="M11 8h10"/>
+                <path d="M11 12h10"/>
+                <path d="M3 16l3.5 3.5L10 14"/>
+              </svg>
+            </div>
+            <div class="page-name">任务页</div>
+            <div class="page-desc">任务管理 + 类别管理</div>
+          </a>
+        </div>
+        <div class="page-card parent">
+          <a href="parent-gifts.html">
+            <div class="page-icon">
+              <!-- Gift icon -->
+              <svg viewBox="0 0 24 24">
+                <rect x="3" y="8" width="18" height="4" rx="1"/>
+                <path d="M12 8v13"/>
+                <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
+                <path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/>
+              </svg>
+            </div>
+            <div class="page-name">礼物页</div>
+            <div class="page-desc">礼物管理 + 兑换确认</div>
+          </a>
+        </div>
+        <div class="page-card parent">
+          <a href="parent-settings.html">
+            <div class="page-icon">
+              <!-- Settings icon -->
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="3"/>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+              </svg>
+            </div>
+            <div class="page-name">设置页</div>
+            <div class="page-desc">成员管理 + 兑换日设置</div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div class="footer">
+      <p>设计规范参考：<a href="../UI设计规范.md">UI设计规范.md</a></p>
+      <p style="margin-top: 8px;">原型创建日期：2026-05-21 · 使用 Lucide Icons</p>
+    </div>
+  </div>
+</body>
+</html>
