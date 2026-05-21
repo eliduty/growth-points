@@ -1,0 +1,15 @@
+# dependencies
+node_modules
+
+# next.js
+.next
+
+# env
+.env
+.env.*
+
+# misc
+*.log
+
+# prisma
+prisma/*.db
