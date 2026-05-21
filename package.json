@@ -1,0 +1,15 @@
+{
+  "name": "growth-points",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter @growth-points/nuxt-app dev",
+    "build": "pnpm --filter @growth-points/nuxt-app build",
+    "generate": "pnpm --filter @growth-points/nuxt-app generate",
+    "preview": "pnpm --filter @growth-points/nuxt-app preview"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

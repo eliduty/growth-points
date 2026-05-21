@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "@growth-points/nuxt-app",
   "type": "module",
   "private": true,
   "scripts": {
