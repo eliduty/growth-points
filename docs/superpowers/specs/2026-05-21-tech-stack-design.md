@@ -26,17 +26,17 @@
 | 撤销积分不足 | 自动关联撤销 | 撤销完成记录时积分不足，自动撤销待确认兑换记录 |
 | 任务描述显示 | 直接显示 | 孩子端任务描述直接显示在列表中 |
 
-### 1.3 待办决策
+### 1.3 已确认的 UI 相关决策（2026-05-21 补充）
 
 | 项目 | 状态 | 说明 |
 |------|------|------|
-| UI 组件方案 | ⏳ 进行中 | UI 规范设计正在进行 |
-| 组件分层架构 | ⏳ 进行中 | UI 规范设计正在进行 |
-| 核心共享组件规范 | ⏳ 进行中 | UI 规范设计正在进行 |
-| 组件交互一致性规范 | ⏳ 进行中 | UI 规范设计正在进行 |
-| 设计系统变量 | ⏳ 进行中 | UI 规范设计正在进行 |
-| 礼物颜色池 | ⏳ 进行中 | UI 规范设计正在进行 |
-| 反馈提示样式 | ⏳ 进行中 | UI 规范设计正在进行 |
+| UI 组件方案 | ✅ 已确认 | 见 UI设计规范.md |
+| 组件分层架构 | ✅ 已确认 | 见 实现前确认事项设计.md §6 |
+| 核心共享组件规范 | ✅ 已确认 | 见 实现前确认事项设计.md §6 |
+| 组件交互一致性规范 | ✅ 已确认 | 见 实现前确认事项设计.md §3 |
+| 设计系统变量 | ✅ 已确认 | 见 UI设计规范.md §14、实现前确认事项设计.md §1 |
+| 礼物颜色池 | ✅ 已确认 | 见 UI设计规范.md §15 |
+| 反馈提示样式 | ✅ 已确认 | 见 实现前确认事项设计.md §3 |
 
 ---
 
@@ -71,8 +71,8 @@ apps/nuxt-app/
 │   │   │   └── profile.vue  # 个人中心页
 │   │   ├── login.vue        # 登录页
 │   │   └── register.vue     # 注册页（家长）
-│   ├── components/          # ⏳ 待办 — 等待 UI 规范确认后细化
-│   ├── layouts/             # ⏳ 待办 — 等待 UI 规范确认后细化
+│   ├── components/          # 见实现前确认事项设计.md §6
+│   ├── layouts/             # 见实现前确认事项设计.md §6
 │   └── composables/         # 共享逻辑
 ├── server/
 │   ├── api/                 # REST API
@@ -100,21 +100,23 @@ datasource db {
 
 // 用户模型
 model User {
-  id           String   @id @default(cuid())
-  username     String   @unique
-  password     String   // bcrypt 加密存储
-  role         Role     // PARENT, CHILD
-  familyId     String
-  family       Family   @relation(fields: [familyId], references: [id])
-  timezoneOffset Int?   // 时区偏移量（如 +8 = 8, -5 = -5）
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id             String   @id @default(cuid())
+  username       String
+  password       String   // bcrypt 加密存储
+  role           Role     // PARENT, CHILD
+  familyId       String
+  family         Family   @relation(fields: [familyId], references: [id])
+  timezoneOffset Int?     // 时区偏移量（如 +8 = 8, -5 = -5）
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
   
   // 孩子特有字段
   currentPoints   Int     @default(0)
   totalPoints     Int     @default(0)
   taskCompletions TaskCompletion[]
   giftRedemptions GiftRedemption[]
+
+  @@unique([familyId, username])  // 家庭内用户名唯一
 }
 
 // 家庭模型
@@ -142,6 +144,7 @@ model Task {
   completions TaskCompletion[]
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?  // 软删除
 }
 
 // 类别模型
@@ -159,12 +162,15 @@ model Gift {
   id           String          @id @default(cuid())
   name         String
   points       Int
-  color        String          // 预设颜色池随机分配
+  description  String?         // 礼物描述（可选）
+  color        String?         // 预设颜色池随机分配（可选）
+  weeklyLimit  Int?            // 每周兑换上限，null 表示无限制
   familyId     String
   family       Family          @relation(fields: [familyId], references: [id])
   redemptions  GiftRedemption[]
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
+  deletedAt    DateTime?       // 软删除
 }
 
 // 任务完成记录
@@ -446,17 +452,17 @@ async function submit() {
 
 ---
 
-## 10. 待办事项
+## 10. UI 相关规范
 
-以下内容等待 UI 规范设计完成后确认：
+以下内容已确认完成，详见相关文档：
 
-- [ ] UI 组件方案
-- [ ] 组件分层架构
-- [ ] 核心共享组件规范（AppButton、AppModal、AppConfirm 等）
-- [ ] 组件交互一致性规范
-- [ ] 设计系统变量（颜色、字号、间距等）
-- [ ] 布局组件设计
-- [ ] 反馈组件设计（Toast、Loading 等）
+- [x] UI 组件方案 → 见 UI设计规范.md
+- [x] 组件分层架构 → 见 实现前确认事项设计.md §6
+- [x] 核心共享组件规范 → 见 实现前确认事项设计.md §6
+- [x] 组件交互一致性规范 → 见 实现前确认事项设计.md §3
+- [x] 设计系统变量 → 见 UI设计规范.md §14、实现前确认事项设计.md §1
+- [x] 礼物颜色池 → 见 UI设计规范.md §15
+- [x] 反馈提示样式 → 见 实现前确认事项设计.md §3
 
 ---
 

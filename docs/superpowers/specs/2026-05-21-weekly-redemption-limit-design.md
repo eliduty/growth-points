@@ -25,21 +25,22 @@
 
 ### 2.1 Gift 表变更
 
-新增 `weeklyLimit` 字段：
+新增 `weeklyLimit`、`description`、`color` 字段：
 
 ```prisma
 model Gift {
-  id          String    @id @default(cuid())
-  name        String
-  points      Int
-  description String?
-  color       String?
-  familyId    String
-  weeklyLimit Int?      // 每周兑换上限，null 表示无限制
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id           String    @id @default(cuid())
+  name         String
+  points       Int
+  description  String?   // 礼物描述（可选）
+  color        String?   // 预设颜色池随机分配（可选）
+  familyId     String
+  weeklyLimit  Int?      // 每周兑换上限，null 表示无限制
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime? // 软删除
 
-  family      Family    @relation(fields: [familyId], references: [id])
+  family       Family    @relation(fields: [familyId], references: [id])
   redemptions GiftRedemption[]
 }
 ```
@@ -48,6 +49,8 @@ model Gift {
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
+| description | String? | 礼物描述，可选字段 |
+| color | String? | 礼物颜色，从预设池随机分配，可选字段 |
 | weeklyLimit | Int? | 每周兑换上限，可选字段。null 表示无限制，最小值为 1（如果填写） |
 
 ### 2.2 GiftRedemption 表（无变更）

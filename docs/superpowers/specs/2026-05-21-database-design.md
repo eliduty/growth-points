@@ -106,7 +106,9 @@ model Gift {
   id           String           @id @default(cuid())
   name         String
   points       Int
-  description  String?
+  description  String?          // 礼物描述（可选）
+  color        String?          // 预设颜色池随机分配（可选）
+  weeklyLimit  Int?             // 每周兑换上限，null 表示无限制
   familyId     String
   family       Family           @relation(fields: [familyId], references: [id])
   redemptions  GiftRedemption[]

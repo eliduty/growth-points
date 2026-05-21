@@ -84,7 +84,9 @@ erDiagram
         string id PK
         string name
         int points
-        string color
+        string description "可选"
+        string color "可选"
+        int weeklyLimit "可选，null表示无限制"
         string familyId FK
     }
     
