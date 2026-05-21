@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "pnpm --filter @growth-points/nuxt-app dev",
+    "dev:next": "pnpm --filter @growth-points/next-app dev",
     "build": "pnpm --filter @growth-points/nuxt-app build",
+    "build:next": "pnpm --filter @growth-points/next-app build",
     "generate": "pnpm --filter @growth-points/nuxt-app generate",
     "preview": "pnpm --filter @growth-points/nuxt-app preview"
   },
