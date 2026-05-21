@@ -6,6 +6,9 @@
 .cache
 dist
 
+# Nuxt build artifacts
+@growth-points
+
 # Node dependencies
 node_modules
 
