@@ -31,7 +31,7 @@ model User {
   role           Role     // PARENT, CHILD
   familyId       String
   family         Family   @relation(fields: [familyId], references: [id])
-  timezoneOffset Int?     // 时区偏移量（如 +8 = 8, -5 = -5）
+  timezoneOffset Int?     // 时区偏移量（如 +8 = 8, -5 = -5），所有用户都需要
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   
@@ -252,8 +252,9 @@ enum RedemptionStatus {
 
 ---
 
-**文档版本：** v1.0
+**文档版本：** v1.1
 **创建日期：** 2026-05-21
-**更新日期：** 2026-05-21
+**更新日期：** 2026-05-22
 **讨论参与：** 用户与 Claude Code
-**关联文档：** [[2026-05-21-tech-stack-design]]、[[2026-05-21-family-mechanism-design]]
+**关联文档：** [[2026-05-21-family-mechanism-design]]
+**更新内容：** timezoneOffset 调整为所有用户都需要

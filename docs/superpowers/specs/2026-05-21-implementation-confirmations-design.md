@@ -4,36 +4,38 @@
 
 ### 1.1 实现方式
 
-采用 **UnoCSS 配置引用 CSS 变量**，运行时通过 `data-role` 属性切换主题。
+采用 **Tailwind CSS 配置引用 CSS 变量**，运行时通过 `data-role` 属性切换主题。
 
 ```typescript
-// uno.config.ts
-export default defineConfig({
+// tailwind.config.ts
+export default {
   theme: {
-    colors: {
-      primary: 'var(--color-primary)',
-      secondary: 'var(--color-secondary)',
-      accent: 'var(--color-accent)',
-      success: 'var(--color-success)',
-      warning: 'var(--color-warning)',
-      error: 'var(--color-error)',
-      info: 'var(--color-info)',
-    },
-    fontSize: {
-      xs: 'var(--font-size-xs)',
-      sm: 'var(--font-size-sm)',
-      base: 'var(--font-size-base)',
-      lg: 'var(--font-size-lg)',
-      xl: 'var(--font-size-xl)',
-      '2xl': 'var(--font-size-2xl)',
+    extend: {
+      colors: {
+        primary: 'var(--color-primary)',
+        secondary: 'var(--color-secondary)',
+        accent: 'var(--color-accent)',
+        success: 'var(--color-success)',
+        warning: 'var(--color-warning)',
+        error: 'var(--color-error)',
+        info: 'var(--color-info)',
+      },
+      fontSize: {
+        xs: 'var(--font-size-xs)',
+        sm: 'var(--font-size-sm)',
+        base: 'var(--font-size-base)',
+        lg: 'var(--font-size-lg)',
+        xl: 'var(--font-size-xl)',
+        '2xl': 'var(--font-size-2xl)',
+      },
     },
   },
-})
+}
 ```
 
 ### 1.2 CSS 变量定义位置
 
-全局 CSS 文件：`assets/css/variables.css`
+全局 CSS 文件：`app/globals.css`
 
 ```css
 /* 孩子端主题 */
@@ -58,7 +60,7 @@ export default defineConfig({
 
 ### 2.1 动画库
 
-使用 **@vueuse/motion** 处理动画。
+使用 **Framer Motion** 处理动画。
 
 ### 2.2 页面切换动画
 
@@ -81,12 +83,14 @@ export default defineConfig({
 采用 **简单放大弹回** 效果：
 
 ```typescript
-// 使用 @vueuse/motion
-useMotion(target, {
-  initial: { scale: 1 },
-  enter: { scale: 1.2 },
-  leave: { scale: 1 },
-})
+// 使用 Framer Motion
+<motion.div
+  initial={{ scale: 1 }}
+  animate={{ scale: 1.2 }}
+  transition={{ duration: 0.2, repeat: 1, repeatType: 'reverse' }}
+>
+  {points}
+</motion.div>
 ```
 
 ---
@@ -114,7 +118,7 @@ useMotion(target, {
 | 配置项 | 值 |
 |--------|-----|
 | 实现方式 | 自定义组件，完全按 UI 设计规范实现 |
-| 调用方式 | Composable 函数调用 |
+| 调用方式 | React Hook 调用 |
 
 API 设计：
 
@@ -178,49 +182,49 @@ if (confirmed) {
 
 ### 6.1 组件命名
 
-采用 **PascalCase**，如 `TaskCard.vue`。
+采用 **PascalCase**，如 `TaskCard.tsx`。
 
 ### 6.2 组件目录组织
 
-以组件为单位文件夹，`index.vue` 对外暴露，内部子组件不暴露：
+以组件为单位文件夹，`index.tsx` 对外暴露，内部子组件不暴露：
 
 ```
 components/
 ├── TaskCard/
-│   ├── index.vue           # 对外暴露的主组件
-│   ├── TaskButton.vue      # 内部子组件，不暴露
-│   └── TaskDescription.vue # 内部子组件，不暴露
+│   ├── index.tsx           # 对外暴露的主组件
+│   ├── TaskButton.tsx      # 内部子组件，不暴露
+│   └── TaskDescription.tsx # 内部子组件，不暴露
 ├── GiftCard/
-│   ├── index.vue
-│   └── GiftInfo.vue        # 内部子组件
+│   ├── index.tsx
+│   └── GiftInfo.tsx        # 内部子组件
 ├── PointsCard/
-│   ├── index.vue
-│   ├── PointsNumber.vue    # 积分数字展示（内部）
-│   └── PointsStats.vue     # 累计/本周统计（内部）
+│   ├── index.tsx
+│   ├── PointsNumber.tsx    # 积分数字展示（内部）
+│   └── PointsStats.tsx     # 累计/本周统计（内部）
 ├── Toast/
-│   ├── index.vue           # 对外暴露
-│   └── ToastItem.vue       # 单条 Toast（内部）
+│   ├── index.tsx           # 对外暴露
+│   └── ToastItem.tsx       # 单条 Toast（内部）
 ├── Confirm/
-│   ├── index.vue           # 对外暴露
-│   └── ConfirmDialog.vue   # 弹窗本体（内部）
+│   ├── index.tsx           # 对外暴露
+│   └── ConfirmDialog.tsx   # 弹窗本体（内部）
 ├── Loading/
-│   ├── index.vue           # 全局 loading（对外）
-│   ├── Spinner.vue         # spinner 图标（内部）
-│   ├── ButtonSpinner.vue   # 按钮 spinner（内部）
-│   ├── Skeleton.vue        # 骨架屏（内部）
+│   ├── index.tsx           # 全局 loading（对外）
+│   ├── Spinner.tsx         # spinner 图标（内部）
+│   ├── ButtonSpinner.tsx   # 按钮 spinner（内部）
+│   ├── Skeleton.tsx        # 骨架屏（内部）
 ├── ...
 ```
 
 使用方式：
-- Nuxt 自动导入 `<TaskCard />` 或 `import TaskCard from '@/components/TaskCard'`
-- 内部子组件不被自动导入，只在主组件内部引用
+- 直接导入 `import TaskCard from '@/components/TaskCard'`
+- 内部子组件只在主组件内部引用
 
-### 6.3 Composables 组织
+### 6.3 Hooks 组织
 
 采用 **扁平结构**：
 
 ```
-composables/
+hooks/
 ├── useConfirm.ts      # 确认弹窗
 ├── useToast.ts        # Toast 提示
 ├── useLoading.ts      # Loading 控制
@@ -230,7 +234,7 @@ composables/
 └── ...
 ```
 
-Nuxt 自动导入，使用时直接调用 `useXxx()`。
+使用时直接调用 `useXxx()`。
 
 ### 6.4 类型定义
 
@@ -240,14 +244,14 @@ Nuxt 自动导入，使用时直接调用 `useXxx()`。
 
 ## 7. 状态管理
 
-遵守 Nuxt/Vue 最佳实践：
+遵守 React/Next.js 最佳实践：
 
 | 场景 | 做法 |
 |------|------|
-| 页面数据获取 | `useFetch('/api/xxx')`，自动处理 loading/error |
-| 操作后刷新 | 调用 `refresh()` 刷新数据 |
-| 跨组件共享状态 | `useState('key', initialValue)` |
-| 临时表单状态 | `reactive({...})` 组件内部管理 |
+| 页面数据获取 | Server Components 直接查询，或 Client Components 使用 `useSWR` / `useQuery` |
+| 操作后刷新 | 调用 `mutate()` 或重新获取数据 |
+| 跨组件共享状态 | React Context 或 Zustand |
+| 临时表单状态 | `useState` / `useReducer` 组件内部管理 |
 
 ---
 
@@ -308,8 +312,9 @@ UI 设计规范定义了积分里程碑（100、500、1000）的庆祝动画（�
 
 ---
 
-**文档版本：** v1.1
+**文档版本：** v2.0
 **创建日期：** 2026-05-21
-**更新日期：** 2026-05-21
+**更新日期：** 2026-05-22
 **讨论参与：** 用户与 Claude Code
-**关联文档：** [[UI设计规范]]、[[2026-05-21-tech-stack-design]]
+**关联文档：** [[UI设计规范]]、[[2026-05-21-family-mechanism-design]]
+**更新内容：** 技术栈调整为 Next.js/React

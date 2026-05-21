@@ -184,7 +184,7 @@
 
 | 方案特点 | 说明 |
 |---------|------|
-| 单一项目 | 一个 Nuxt 应用，共享后端和数据层 |
+| 单一项目 | 一个 Next.js 应用，共享后端和数据层 |
 | 双入口路由 | `/parent/*` 和 `/child/*` 两套独立页面路由 |
 | 共享数据模型 | Prisma schema 共用，无需同步多项目 |
 | 登录跳转 | 登录后根据用户角色自动跳转到对应入口 |
@@ -193,21 +193,32 @@
 **目录结构：**
 
 ```
-apps/nuxt-app/
+apps/next-app/
 ├── app/
-│   ├── pages/
-│   │   ├── parent/           # 家长端页面
-│   │   ├── child/            # 孩子端页面
-│   │   └── login.vue         # 登录页
-│   ├── components/
-│   │   ├── parent/           # 家长端组件
-│   │   ├── child/            # 孩子端组件
-│   │   └── shared/           # 共享组件
-│   └── layouts/
-│   │   ├── parent.vue        # 家长端布局
-│   │   └── child.vue         # 孩子端布局
-├── server/api/               # 共享 API
-├── prisma/schema.prisma      # 共享数据模型
+│   ├── (parent)/            # 家长端路由组
+│   │   ├── layout.tsx       # 家长端布局
+│   │   ├── page.tsx         # 家长端首页
+│   │   ├── tasks/
+│   │   ├── gifts/
+│   │   └── settings/
+│   ├── (child)/             # 孩子端路由组
+│   │   ├── layout.tsx       # 孩子端布局
+│   │   ├── page.tsx         # 孩子端首页
+│   │   ├── tasks/
+│   │   ├── gifts/
+│   │   └── history/
+│   ├── login/
+│   │   └── page.tsx         # 登录页
+│   ├── layout.tsx           # 根布局
+│   └── globals.css          # 全局样式
+├── components/
+│   ├── parent/              # 家长端组件
+│   ├── child/               # 孩子端组件
+│   └── shared/              # 共享组件
+├── lib/                     # 共享工具函数
+├── api/                     # API 路由（Route Handlers）
+├── prisma/schema.prisma     # 共享数据模型
+└── middleware.ts            # 认证中间件
 ```
 
 ---
@@ -278,7 +289,8 @@ apps/nuxt-app/
 
 ---
 
-**文档版本：** v1.3
+**文档版本：** v1.4
 **创建日期：** 2026-05-21
-**更新日期：** 2026-05-21
+**更新日期：** 2026-05-22
 **讨论参与：** 用户与 Claude Code
+**更新内容：** 技术栈调整为 Next.js
