@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { QueryProvider } from "@/providers/query-provider";
+import { UserProvider } from "@/providers/user-provider";
+import { Toaster } from "@/components/ui/toast";
 
 export const metadata: Metadata = {
-  title: "Todo List - 待办事项管理",
-  description: "一个简单的待办事项管理应用",
+  title: "家庭积分兑换系统",
+  description: "通过积分机制激励孩子完成日常任务",
 };
 
 export default function RootLayout({
@@ -13,7 +16,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <QueryProvider>
+          <UserProvider>
+            {children}
+            <Toaster />
+          </UserProvider>
+        </QueryProvider>
+      </body>
     </html>
   );
 }
