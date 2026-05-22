@@ -1,4 +1,4 @@
-/**
+﻿/**
  * API 响应类型
  */
 export interface ApiResponse<T> {
@@ -53,6 +53,11 @@ export interface ExchangeDayInfo {
  * 孩子端礼物页响应类型
  */
 export interface ChildGiftsResponse {
+  pointsOverview: {
+    current: number;
+    total: number;
+    weekly: number;
+  };
   exchangeDaysInfo: ExchangeDayInfo;
   gifts: ChildGift[];
   pendingRedemptions: {
