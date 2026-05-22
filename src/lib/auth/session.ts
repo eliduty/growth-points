@@ -1,4 +1,4 @@
-import { getIronSession, SessionOptions } from "iron-session";
+import { getIronSession, SessionOptions, IronSession } from "iron-session";
 import { cookies } from "next/headers";
 import { SessionData, Role } from "@/types";
 import { SESSION_CONFIG } from "@/lib/constants";
@@ -17,7 +17,7 @@ export const sessionOptions: SessionOptions = {
 /**
  * 获取 Session
  */
-export async function getSession(): Promise<SessionData> {
+export async function getSession(): Promise<IronSession<SessionData>> {
   const cookieStore = await cookies();
   const session = await getIronSession<SessionData>(cookieStore, sessionOptions);
   return session;

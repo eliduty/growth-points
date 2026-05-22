@@ -44,20 +44,22 @@ export function isExchangeDayNow(exchangeDays: number[]): boolean {
 }
 
 /**
- * 获取本周起始时间（周一 00:00:00，北京时间）
+ * 获取指定日期所在周的起始时间（周一 00:00:00，北京时间）
+ * @param date 可选，默认为当前时间
  */
-export function getWeekStart(): Date {
-  const now = getBeijingNow();
-  const dayOfWeek = now.day();
+export function getWeekStart(date?: Date): Date {
+  const base = date ? dayjs(date).tz(BEIJING_TZ) : getBeijingNow();
+  const dayOfWeek = base.day();
   const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-  return now.subtract(daysToMonday, "day").startOf("day").toDate();
+  return base.subtract(daysToMonday, "day").startOf("day").toDate();
 }
 
 /**
- * 获取本周结束时间（周日 23:59:59，北京时间）
+ * 获取指定日期所在周的结束时间（周日 23:59:59，北京时间）
+ * @param date 可选，默认为当前时间
  */
-export function getWeekEnd(): Date {
-  const weekStart = getWeekStart();
+export function getWeekEnd(date?: Date): Date {
+  const weekStart = getWeekStart(date);
   return dayjs(weekStart).add(6, "day").endOf("day").toDate();
 }
 
@@ -106,4 +108,27 @@ export function getSecondsUntilNextExchange(exchangeDays: number[]): number {
   const now = getBeijingNow();
   const nextExchangeDay = now.add(nextInfo.daysUntil, "day").startOf("day");
   return nextExchangeDay.diff(now, "second");
+}
+
+/**
+ * 格式化相对时间（如 "3分钟前"、"2小时前"）
+ */
+export function formatRelativeTime(date: Date | string): string {
+  const now = getBeijingNow();
+  const target = dayjs(date).tz(BEIJING_TZ);
+  const diffMinutes = now.diff(target, "minute");
+  const diffHours = now.diff(target, "hour");
+  const diffDays = now.diff(target, "day");
+
+  if (diffMinutes < 1) {
+    return "刚刚";
+  } else if (diffMinutes < 60) {
+    return `${diffMinutes}分钟前`;
+  } else if (diffHours < 24) {
+    return `${diffHours}小时前`;
+  } else if (diffDays < 7) {
+    return `${diffDays}天前`;
+  } else {
+    return target.format("YYYY-MM-DD HH:mm");
+  }
 }
