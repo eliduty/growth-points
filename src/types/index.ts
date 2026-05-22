@@ -170,7 +170,7 @@ export interface ParentRedemption {
   username: string;
   redeemedAt: string;
   confirmedAt?: string | null;
-  status: "PENDING" | "CONFIRMED" | "CANCELLED";
+  status: RedemptionStatus;
 }
 
 /**

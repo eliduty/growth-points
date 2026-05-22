@@ -1,4 +1,11 @@
-import { ApiResponse } from "@/types";
+import {
+  ApiResponse,
+  WeeklyStats,
+  CategoryWithTasks,
+  ParentTask,
+  ParentRedemption,
+  Member,
+} from "@/types";
 
 const API_BASE = "/api/parent";
 
@@ -6,7 +13,7 @@ const API_BASE = "/api/parent";
  * 统计相关 API
  */
 export const statsApi = {
-  getWeekly: async (weekStart?: string): Promise<ApiResponse<import("@/types").WeeklyStats>> => {
+  getWeekly: async (weekStart?: string): Promise<ApiResponse<WeeklyStats>> => {
     const url = weekStart ? `${API_BASE}/stats?weekStart=${weekStart}` : `${API_BASE}/stats`;
     const res = await fetch(url);
     return res.json();
@@ -27,11 +34,11 @@ export const completionsApi = {
  * 任务相关 API
  */
 export const tasksApi = {
-  list: async (): Promise<ApiResponse<{ categories: import("@/types").CategoryWithTasks[] }>> => {
+  list: async (): Promise<ApiResponse<{ categories: CategoryWithTasks[] }>> => {
     const res = await fetch(`${API_BASE}/tasks`);
     return res.json();
   },
-  create: async (data: { name: string; points: number; categoryId: string; description?: string }): Promise<ApiResponse<import("@/types").ParentTask>> => {
+  create: async (data: { name: string; points: number; categoryId: string; description?: string }): Promise<ApiResponse<ParentTask>> => {
     const res = await fetch(`${API_BASE}/tasks`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -39,7 +46,7 @@ export const tasksApi = {
     });
     return res.json();
   },
-  update: async (id: string, data: Partial<{ name: string; points: number; categoryId: string; description: string }>): Promise<ApiResponse<import("@/types").ParentTask>> => {
+  update: async (id: string, data: Partial<{ name: string; points: number; categoryId: string; description: string }>): Promise<ApiResponse<ParentTask>> => {
     const res = await fetch(`${API_BASE}/tasks/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -117,7 +124,7 @@ export const giftsApi = {
  * 兑换记录相关 API
  */
 export const redemptionsApi = {
-  list: async (): Promise<ApiResponse<{ pending: import("@/types").ParentRedemption[]; confirmed: import("@/types").ParentRedemption[] }>> => {
+  list: async (): Promise<ApiResponse<{ pending: ParentRedemption[]; confirmed: ParentRedemption[] }>> => {
     const res = await fetch(`${API_BASE}/gifts/redemptions`);
     return res.json();
   },
@@ -135,7 +142,7 @@ export const redemptionsApi = {
  * 成员相关 API
  */
 export const membersApi = {
-  list: async (): Promise<ApiResponse<{ children: import("@/types").Member[]; parents: import("@/types").Member[] }>> => {
+  list: async (): Promise<ApiResponse<{ children: Member[]; parents: Member[] }>> => {
     const res = await fetch(`${API_BASE}/members`);
     return res.json();
   },
