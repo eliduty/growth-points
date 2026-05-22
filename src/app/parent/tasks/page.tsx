@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, RefreshCw, AlertCircle } from "lucide-react";
+import { Plus, Settings, RefreshCw, AlertCircle } from "lucide-react";
 import { useTasks } from "@/hooks/use-tasks";
 import { CategorySection } from "@/components/parent/CategorySection";
 import { AddTaskDialog } from "@/components/parent/AddTaskDialog";
 import { EditTaskDialog } from "@/components/parent/EditTaskDialog";
 import { CategoryManageDialog } from "@/components/parent/CategoryManageDialog";
-import { BottomMenu, MenuItem } from "@/components/parent/BottomMenu";
 import { DeleteConfirmDialog } from "@/components/parent/DeleteConfirmDialog";
 import { Button } from "@/components/ui/button";
 import type { CategoryWithTasks, ParentTask } from "@/types";
@@ -25,9 +24,7 @@ export default function ParentTasksPage() {
     createTask,
     isCreatingTask,
     updateTask,
-    isUpdatingTask,
     deleteTask,
-    isDeletingTask,
     createCategory,
     deleteCategory,
     updateCategoryOrder,
@@ -39,52 +36,20 @@ export default function ParentTasksPage() {
   const [categoryManageDialogOpen, setCategoryManageDialogOpen] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
-  // 选中的任务和类别
+  // 选中的任务
   const [selectedTask, setSelectedTask] = useState<ParentTask | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<CategoryWithTasks | null>(null);
 
-  // 底部菜单状态
-  const [taskMenuOpen, setTaskMenuOpen] = useState(false);
-  const [categoryMenuOpen, setCategoryMenuOpen] = useState(false);
-
-  // 任务长按处理
-  const handleTaskLongPress = (task: ParentTask) => {
+  // 处理编辑任务
+  const handleEditTask = (task: ParentTask) => {
     setSelectedTask(task);
-    setTaskMenuOpen(true);
+    setEditTaskDialogOpen(true);
   };
 
-  // 类别长按处理
-  const handleCategoryLongPress = (category: CategoryWithTasks) => {
-    setSelectedCategory(category);
-    setCategoryMenuOpen(true);
+  // 处理删除任务
+  const handleDeleteTask = (task: ParentTask) => {
+    setSelectedTask(task);
+    setDeleteConfirmOpen(true);
   };
-
-  // 任务菜单项
-  const taskMenuItems: MenuItem[] = [
-    {
-      label: "编辑任务",
-      onClick: () => {
-        setEditTaskDialogOpen(true);
-      },
-    },
-    {
-      label: "删除任务",
-      destructive: true,
-      onClick: () => {
-        setDeleteConfirmOpen(true);
-      },
-    },
-  ];
-
-  // 类别菜单项
-  const categoryMenuItems: MenuItem[] = [
-    {
-      label: "管理类别",
-      onClick: () => {
-        setCategoryManageDialogOpen(true);
-      },
-    },
-  ];
 
   // 确认删除任务
   const handleConfirmDelete = async () => {
@@ -125,28 +90,33 @@ export default function ParentTasksPage() {
 
   return (
     <div className="p-4">
-      {/* 头部 */}
+      {/* 顶部操作栏 */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between mb-6"
+        className="flex items-center justify-between mb-4"
       >
-        <h1 className="text-xl font-bold text-text">任务管理</h1>
-        <div className="flex items-center gap-2">
-          {isFetching && (
-            <div className="flex items-center gap-1 text-xs text-text-secondary">
-              <RefreshCw className="w-3 h-3 animate-spin" />
-              <span>刷新中...</span>
-            </div>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setCategoryManageDialogOpen(true)}
-          >
-            管理类别
-          </Button>
-        </div>
+        <Button
+          variant="outline"
+          onClick={() => setCategoryManageDialogOpen(true)}
+          className="flex items-center gap-2"
+        >
+          <Settings className="w-4 h-4" />
+          管理类别
+        </Button>
+
+        <Button
+          onClick={() => setAddTaskDialogOpen(true)}
+          disabled={categories.length === 0 || isCreatingTask}
+          className="flex items-center gap-2"
+        >
+          <Plus className="w-4 h-4" />
+          添加任务
+        </Button>
+
+        {isFetching && (
+          <RefreshCw className="w-4 h-4 animate-spin text-text-muted absolute right-4" />
+        )}
       </motion.div>
 
       {/* 任务列表 */}
@@ -163,62 +133,21 @@ export default function ParentTasksPage() {
           </Button>
         </motion.div>
       ) : (
-        <>
-          {categories.map((category, index) => (
-            <motion.div
-              key={category.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <CategorySection
-                category={category}
-                onTaskLongPress={handleTaskLongPress}
-                onCategoryLongPress={handleCategoryLongPress}
-              />
-            </motion.div>
-          ))}
-
-          {/* 添加任务按钮 */}
+        categories.map((category, index) => (
           <motion.div
+            key={category.id}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex justify-center pt-4"
+            transition={{ delay: index * 0.1 }}
           >
-            <Button
-              onClick={() => setAddTaskDialogOpen(true)}
-              disabled={categories.length === 0 || isCreatingTask}
-            >
-              <Plus className="w-5 h-5 mr-2" />
-              添加任务
-            </Button>
+            <CategorySection
+              category={category}
+              onEditTask={handleEditTask}
+              onDeleteTask={handleDeleteTask}
+            />
           </motion.div>
-        </>
+        ))
       )}
-
-      {/* 底部菜单 - 任务 */}
-      <BottomMenu
-        open={taskMenuOpen}
-        onClose={() => {
-          setTaskMenuOpen(false);
-          setSelectedTask(null);
-        }}
-        title={selectedTask?.name || ""}
-        subtitle={selectedTask ? `${selectedTask.points} 积分` : ""}
-        items={taskMenuItems}
-      />
-
-      {/* 底部菜单 - 类别 */}
-      <BottomMenu
-        open={categoryMenuOpen}
-        onClose={() => {
-          setCategoryMenuOpen(false);
-          setSelectedCategory(null);
-        }}
-        title={selectedCategory?.name || ""}
-        subtitle={selectedCategory ? `${selectedCategory.tasks.length} 个任务` : ""}
-        items={categoryMenuItems}
-      />
 
       {/* 添加任务弹窗 */}
       <AddTaskDialog
