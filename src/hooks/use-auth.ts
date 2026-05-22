@@ -122,7 +122,12 @@ export function useAuth() {
       if (result.code === 0) {
         setUser(null);
         toast.success("已退出登录");
-        router.push("/login");
+        // 根据角色跳转到对应登录页
+        if (user?.role === "PARENT") {
+          router.push("/parent/login");
+        } else {
+          router.push("/child/login");
+        }
 
         return { success: true };
       } else {
