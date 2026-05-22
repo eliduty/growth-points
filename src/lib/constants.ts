@@ -47,3 +47,12 @@ export const DAY_OF_WEEK_MAP: Record<number, string> = {
   5: "周五",
   6: "周六",
 };
+
+/**
+ * Session 配置常量
+ */
+export const SESSION_CONFIG = {
+  cookieName: "family_points_session",
+  ttl: 7 * 24 * 60 * 60, // 7 天
+  password: process.env.SESSION_PASSWORD || "complex_password_at_least_32_characters_long_for_security",
+} as const;

@@ -94,3 +94,19 @@ export interface ExchangeDaysInfo {
     daysUntil: number;
   } | null;
 }
+
+/**
+ * Session 数据类型
+ */
+export interface SessionData {
+  userId: string;
+  role: Role;
+  familyId: string;
+}
+
+/**
+ * Iron-session 配置类型
+ */
+export interface IronSession {
+  session: SessionData;
+}
