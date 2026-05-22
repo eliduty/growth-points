@@ -7,6 +7,8 @@ interface DeleteConfirmDialogProps {
   isOpen: boolean;
   title: string;
   content?: string;
+  subContent?: string;
+  warningText?: string;
   confirmText?: string;
   cancelText?: string;
   destructive?: boolean;
@@ -18,6 +20,8 @@ export function DeleteConfirmDialog({
   isOpen,
   title,
   content,
+  subContent,
+  warningText,
   confirmText = "确认删除",
   cancelText = "取消",
   destructive = false,
@@ -53,8 +57,22 @@ export function DeleteConfirmDialog({
 
             {/* 内容 */}
             {content && (
-              <div className="text-sm text-text-secondary text-center mb-5 whitespace-pre-line">
+              <div className="text-sm text-text-secondary text-center mb-2 whitespace-pre-line">
                 {content}
+              </div>
+            )}
+
+            {/* 次级内容 */}
+            {subContent && (
+              <div className="text-sm text-text-secondary text-center mb-2 whitespace-pre-line">
+                {subContent}
+              </div>
+            )}
+
+            {/* 警告文本 */}
+            {warningText && (
+              <div className="text-sm text-error text-center mb-5 whitespace-pre-line">
+                {warningText}
               </div>
             )}
 

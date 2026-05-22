@@ -2,11 +2,11 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { RefreshCw, AlertCircle, Plus, Settings, User, Star, LogOut } from "lucide-react";
+import { RefreshCw, AlertCircle, Users, Clock, User, LogOut } from "lucide-react";
 import { useMembers, useExchangeDays } from "@/hooks/use-members";
 import { useUser } from "@/hooks/use-user";
 import { useAuth } from "@/hooks/use-auth";
-import { MemberCard } from "@/components/parent/MemberCard";
+import { MemberGroup } from "@/components/parent/MemberGroup";
 import { AddMemberDialog } from "@/components/parent/AddMemberDialog";
 import { ExchangeDaysDialog } from "@/components/parent/ExchangeDaysDialog";
 import { SettingsCard } from "@/components/parent/SettingsCard";
@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 const WEEKDAY_NAMES = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
 
 export default function ParentSettingsPage() {
-  const { children, parents, isLoading, isError, error, refetch, isFetching, addMember, isAddingMember, deleteMember, isDeletingMember } = useMembers();
+  const { children, parents, isLoading, isError, error, refetch, isFetching, addMember, isAddingMember, deleteMember } = useMembers();
   const { exchangeDays, updateExchangeDays, isUpdating } = useExchangeDays();
   const { user } = useUser();
   const { logout } = useAuth();
@@ -126,100 +126,71 @@ export default function ParentSettingsPage() {
         </div>
       </motion.div>
 
-      {/* 孩子列表 */}
-      <SettingsCard title="孩子成员" className="mb-4">
-        <div className="grid grid-cols-2 gap-3 mb-3">
-          {children.map((child) => (
-            <MemberCard
-              key={child.id}
-              member={child}
-              onDelete={handleDeleteMember}
-              showPoints
-            />
-          ))}
-        </div>
+      {/* 成员管理 */}
+      <SettingsCard title="成员管理" icon={Users} delay={0.1} className="mb-4">
+        <MemberGroup
+          title="孩子成员"
+          members={children}
+          onDelete={handleDeleteMember}
+          onAdd={() => setAddChildDialogOpen(true)}
+          isAdding={isAddingMember}
+          showPoints
+        />
 
-        {/* 添加孩子按钮 */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setAddChildDialogOpen(true)}
-          disabled={isAddingMember}
-          className="w-full"
-        >
-          <Plus className="w-4 h-4" />
-          添加孩子
-        </Button>
-      </SettingsCard>
+        {/* 分割线 */}
+        <div className="my-4 border-t border-border" />
 
-      {/* 家长列表 */}
-      <SettingsCard title="家长成员" className="mb-4">
-        <div className="grid grid-cols-2 gap-3 mb-3">
-          {parents.map((parent) => (
-            <MemberCard
-              key={parent.id}
-              member={parent}
-              onDelete={handleDeleteMember}
-            />
-          ))}
-        </div>
-
-        {/* 添加家长按钮 */}
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setAddParentDialogOpen(true)}
-          disabled={isAddingMember}
-          className="w-full"
-        >
-          <Plus className="w-4 h-4" />
-          添加家长
-        </Button>
+        <MemberGroup
+          title="家长成员"
+          members={parents}
+          onDelete={handleDeleteMember}
+          onAdd={() => setAddParentDialogOpen(true)}
+          isAdding={isAddingMember}
+        />
       </SettingsCard>
 
       {/* 兑换日设置 */}
-      <SettingsCard title="兑换日设置" className="mb-4">
-        <div className="flex items-center justify-between">
+      <SettingsCard title="兑换日设置" icon={Clock} delay={0.2} className="mb-4">
+        <div className="flex items-center justify-between py-2">
           <div className="flex items-center gap-2">
-            <Star className="w-4 h-4 text-primary" />
-            <span className="text-text-secondary">{exchangeDaysText}</span>
+            <span className="text-sm text-text-secondary">当前设置</span>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setExchangeDaysDialogOpen(true)}
-            disabled={isUpdating}
-          >
-            <Settings className="w-4 h-4" />
-            设置
-          </Button>
+          <span className="text-base font-medium text-text">{exchangeDaysText}</span>
         </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setExchangeDaysDialogOpen(true)}
+          disabled={isUpdating}
+          className="w-full bg-white hover:bg-primary hover:text-white transition-colors"
+        >
+          修改设置
+        </Button>
       </SettingsCard>
 
       {/* 个人信息 */}
-      <SettingsCard title="个人信息" className="mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-secondary-light/20 to-secondary/10 flex items-center justify-center">
-            <User className="w-5 h-5 text-secondary" />
-          </div>
-          <div>
-            <div className="text-base font-semibold text-text">{user?.username}</div>
-            <div className="text-sm text-text-secondary">
-              {user?.role === "PARENT" ? "家长" : "孩子"}
-            </div>
-          </div>
+      <SettingsCard title="个人信息" icon={User} delay={0.3} className="mb-4">
+        <div className="flex items-center justify-between py-2">
+          <span className="text-sm text-text-secondary">用户名</span>
+          <span className="text-base font-medium text-text">{user?.username}</span>
         </div>
       </SettingsCard>
 
       {/* 退出登录 */}
-      <Button
-        variant="destructive"
-        onClick={handleLogout}
-        className="w-full"
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.4 }}
       >
-        <LogOut className="w-4 h-4" />
-        退出登录
-      </Button>
+        <Button
+          variant="outline"
+          onClick={handleLogout}
+          className="w-full bg-white border-border hover:bg-error hover:text-white hover:border-error transition-colors"
+        >
+          <LogOut className="w-4 h-4 mr-2" />
+          退出登录
+        </Button>
+      </motion.div>
 
       {/* 添加孩子弹窗 */}
       <AddMemberDialog
@@ -252,7 +223,9 @@ export default function ParentSettingsPage() {
       <DeleteConfirmDialog
         isOpen={deleteConfirmOpen}
         title="删除成员"
-        content={deleteTarget ? `确定要删除成员 "${deleteTarget.username}" 吗？删除后该成员的所有数据将被清除。` : ""}
+        content={deleteTarget ? `确定要删除成员 "${deleteTarget.username}" 吗？` : ""}
+        subContent="删除后该成员的所有数据将被清除。"
+        warningText="此操作不可恢复，请谨慎操作。"
         destructive
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
