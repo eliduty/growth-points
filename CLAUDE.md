@@ -7,6 +7,7 @@
 - 没读过的代码不要去猜。
 - 只做我要求的任务，不做其他任何事情。
 - 执行任务临时生成的文件，任务结束后需要清理。
+- 使用Superpowers时，优先使用 subagent-driven-development而不是executing-plans。
 
 ## 禁止事项
 
