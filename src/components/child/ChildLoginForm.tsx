@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { useUser } from "@/hooks/use-user";
 
 const loginSchema = z.object({
   username: z.string().min(1, "请输入用户名"),
@@ -20,6 +21,7 @@ type LoginFormData = z.infer<typeof loginSchema>;
 export default function ChildLoginForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const { setUser } = useUser();
 
   const {
     register,
@@ -55,6 +57,8 @@ export default function ChildLoginForm() {
 
       if (result.code === 0) {
         toast.success("登录成功");
+        // 更新用户状态，确保 layout 能正确识别已登录
+        setUser(result.data);
         // 孩子端登录成功后跳转到孩子端主页
         router.push("/child");
       } else {
