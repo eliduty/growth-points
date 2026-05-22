@@ -6,3 +6,10 @@ node_modules
 prisma/*.db
 prisma/*.db-journal
 src/generated/prisma
+
+# Local database at root
+dev.db
+dev.db-journal
+
+# TypeScript build cache
+*.tsbuildinfo
