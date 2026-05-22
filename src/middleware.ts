@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getIronSession } from "iron-session";
-import { SessionData, Role } from "@/types";
+import { SessionData } from "@/types";
 import { sessionOptions } from "@/lib/auth/session";
 
 // 需要认证的路由
@@ -23,7 +23,7 @@ export async function middleware(request: NextRequest) {
 
   // 获取 Session
   const response = NextResponse.next();
-  const session = await getIronSession<SessionData>(request.cookies, response.cookies, sessionOptions);
+  const session = await getIronSession<SessionData>(request, response, sessionOptions);
 
   // 未登录，跳转到登录页
   if (!session.userId) {
