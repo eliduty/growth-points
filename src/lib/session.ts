@@ -24,3 +24,11 @@ export async function getSession() {
   const cookieStore = cookies();
   return getIronSession<SessionData>(cookieStore, sessionOptions);
 }
+
+/**
+ * 销毁当前会话（登出）
+ */
+export async function clearSession() {
+  const session = await getSession();
+  session.destroy();
+}
