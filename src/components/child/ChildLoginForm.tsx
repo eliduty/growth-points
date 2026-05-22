@@ -73,7 +73,7 @@ export default function ChildLoginForm() {
       <div className="text-center mb-7">
         <div className="flex justify-center gap-10 mb-5">
           {/* 礼物图标 */}
-          <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-[#FF6B35] to-[#FF8A50] shadow-[0_4px_12px_rgba(255,107,53,0.3)] animate-bounce">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-primary to-primaryLight shadow-[0_4px_12px_rgba(255,107,53,0.3)] animate-bounce">
             <svg
               className="w-8 h-8 text-white"
               viewBox="0 0 24 24"
@@ -89,7 +89,7 @@ export default function ChildLoginForm() {
           </div>
           {/* 奖杯图标 */}
           <div
-            className="w-16 h-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-[#FFD93D] to-[#FFE066] shadow-[0_4px_12px_rgba(255,217,61,0.3)] animate-bounce"
+            className="w-16 h-16 rounded-2xl flex items-center justify-center bg-gradient-to-br from-amber-400 to-amber-300 shadow-[0_4px_12px_rgba(255,217,61,0.3)] animate-bounce"
             style={{ animationDelay: "1s" }}
           >
             <svg
@@ -108,10 +108,10 @@ export default function ChildLoginForm() {
             </svg>
           </div>
         </div>
-        <h1 className="text-2xl font-bold text-[#FF6B35] mb-2">
+        <h1 className="text-2xl font-bold text-primary mb-2">
           家庭积分兑换系统
         </h1>
-        <p className="text-sm text-[#6B7280]">孩子端登录</p>
+        <p className="text-sm text-text-secondary">孩子端登录</p>
       </div>
 
       {/* 登录表单 */}
@@ -123,10 +123,10 @@ export default function ChildLoginForm() {
             {...register("username")}
             placeholder="请输入用户名"
             disabled={isLoading}
-            className="h-[50px] rounded-xl border-2 border-[#E5E7EB] bg-[#F9FAFB] focus:border-[#FF6B35] focus:bg-white focus:shadow-[0_0_0_4px_rgba(255,107,53,0.1)]"
+            className="h-[50px] rounded-xl border-2 border-border bg-background focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(255,107,53,0.1)]"
           />
           {errors.username && (
-            <p className="text-sm text-[#FF6B6B]">{errors.username.message}</p>
+            <p className="text-sm text-error">{errors.username.message}</p>
           )}
         </div>
 
@@ -138,16 +138,16 @@ export default function ChildLoginForm() {
             {...register("password")}
             placeholder="请输入密码"
             disabled={isLoading}
-            className="h-[50px] rounded-xl border-2 border-[#E5E7EB] bg-[#F9FAFB] focus:border-[#FF6B35] focus:bg-white focus:shadow-[0_0_0_4px_rgba(255,107,53,0.1)]"
+            className="h-[50px] rounded-xl border-2 border-border bg-background focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(255,107,53,0.1)]"
           />
           {errors.password && (
-            <p className="text-sm text-[#FF6B6B]">{errors.password.message}</p>
+            <p className="text-sm text-error">{errors.password.message}</p>
           )}
         </div>
 
         <Button
           type="submit"
-          className="w-full h-[50px] rounded-xl bg-gradient-to-r from-[#FF6B35] to-[#FF8A50] text-white font-semibold text-lg shadow-[0_4px_16px_rgba(255,107,53,0.25)] hover:shadow-[0_6px_20px_rgba(255,107,53,0.35)] hover:translate-y-[-2px] active:translate-y-0 active:scale-[0.98] active:shadow-[0_2px_8px_rgba(255,107,53,0.2)]"
+          className="w-full h-[50px] rounded-xl bg-gradient-to-r from-primary to-primaryLight text-white font-semibold text-lg shadow-[0_4px_16px_rgba(255,107,53,0.25)] hover:shadow-[0_6px_20px_rgba(255,107,53,0.35)] hover:translate-y-[-2px] active:translate-y-0 active:scale-[0.98] active:shadow-[0_2px_8px_rgba(255,107,53,0.2)]"
           size="lg"
           disabled={isLoading}
         >
@@ -156,8 +156,8 @@ export default function ChildLoginForm() {
       </form>
 
       {/* 激励标语 */}
-      <div className="mt-7 text-center p-5 bg-gradient-to-br from-[#FFF8F0] to-[#FFEDD8] rounded-2xl border border-[rgba(255,107,53,0.1)]">
-        <p className="text-sm text-[#FF6B35] leading-relaxed">
+      <div className="mt-7 text-center p-5 bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl border border-orange-200">
+        <p className="text-sm text-primary leading-relaxed">
           完成任务，赚取积分，兑换心仪礼物！
           <br />
           加油，小小努力家！
