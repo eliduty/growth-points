@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireChild, handleAuthError } from "@/lib/auth/guard";
-import { getWeekStart, getWeekEnd, formatBeijingTime, getBeijingNow } from "@/lib/date";
+import { getWeekStart, getWeekEnd, formatBeijingDate, formatBeijingTime, getBeijingNow } from "@/lib/date";
 
 export async function GET(request: NextRequest) {
   try {
@@ -58,8 +58,8 @@ export async function GET(request: NextRequest) {
 
       weeksData.push({
         weekRange: {
-          start: formatBeijingTime(weekStart, "yyyy-MM-dd"),
-          end: formatBeijingTime(weekEnd, "yyyy-MM-dd"),
+          start: formatBeijingDate(weekStart),
+          end: formatBeijingDate(weekEnd),
         },
         completions: completionsData,
         summary: {

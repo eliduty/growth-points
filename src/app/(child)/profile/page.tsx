@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { LogOut, User, ChevronLeft } from "lucide-react";
 import { useChildHistory } from "@/hooks/use-child-history";
+import { useUser } from "@/hooks/use-user";
 import HistoryTab from "@/components/child/HistoryTab";
 import WeekHistory from "@/components/child/WeekHistory";
 
 export default function ProfilePage() {
   const router = useRouter();
+  const { user } = useUser();
   const [activeTab, setActiveTab] = useState<"completions" | "redemptions">("completions");
   const [expandedWeeks, setExpandedWeeks] = useState<Set<number>>(new Set([0])); // 默认展开本周
   const { completions, redemptions, isLoading, error } = useChildHistory(4);
@@ -122,7 +124,7 @@ export default function ProfilePage() {
               <div className="w-16 h-16 bg-gradient-to-br from-[#FF6B35] to-[#FF8A50] rounded-full flex items-center justify-center mb-3 shadow-lg">
                 <User className="w-8 h-8 text-white" />
               </div>
-              <h2 className="text-xl font-bold text-gray-900">小朋友</h2>
+              <h2 className="text-xl font-bold text-gray-900">{user?.username || "小朋友"}</h2>
               <p className="text-sm text-gray-500 mt-1">继续保持哦！</p>
             </div>
           </div>

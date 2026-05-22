@@ -20,6 +20,16 @@ export function UserProvider({ children }: { children: ReactNode }) {
     fetchCurrentUser();
   }, []);
 
+  // 根据用户角色设置 html 的 data-role 属性
+  useEffect(() => {
+    if (user?.role) {
+      const role = user.role === "CHILD" ? "child" : "parent";
+      document.documentElement.setAttribute("data-role", role);
+    } else {
+      document.documentElement.removeAttribute("data-role");
+    }
+  }, [user?.role]);
+
   const fetchCurrentUser = async () => {
     try {
       const res = await fetch("/api/auth/me");

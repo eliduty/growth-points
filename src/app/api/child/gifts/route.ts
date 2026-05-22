@@ -1,28 +1,7 @@
 ﻿import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireChild, handleAuthError } from "@/lib/auth/guard";
-import { getWeekStart, getWeekEnd, formatBeijingTime, getBeijingNow } from "@/lib/date";
-
-// 判断是否为兑换日（周六为兑换日）
-function isExchangeDayNow(): boolean {
-  const now = getBeijingNow();
-  return now.getDay() === 6; // 6 = 周六
-}
-
-// 获取下一个兑换日信息
-function getNextExchangeDayInfo(): { dayOfWeek: number; daysUntil: number } | null {
-  const now = getBeijingNow();
-  const currentDay = now.getDay();
-  
-  // 如果今天是周六，下一个兑换日也是下周六
-  if (currentDay === 6) {
-    return { dayOfWeek: 6, daysUntil: 7 };
-  }
-  
-  // 计算距离周六的天数
-  const daysUntil = 6 - currentDay;
-  return { dayOfWeek: 6, daysUntil };
-}
+import { getWeekStart, getWeekEnd, formatBeijingTime, getBeijingNow, isExchangeDayNow, getNextExchangeDayInfo } from "@/lib/date";
 
 export async function GET() {
   try {
@@ -31,6 +10,13 @@ export async function GET() {
     // 计算本周时间范围
     const weekStart = getWeekStart();
     const weekEnd = getWeekEnd();
+
+    // 查询兑换日设置
+    const exchangeDaysRecords = await prisma.exchangeDay.findMany({
+      where: { familyId },
+      select: { dayOfWeek: true },
+    });
+    const exchangeDays = exchangeDaysRecords.map((d) => d.dayOfWeek);
 
     // 查询用户信息和家庭设置
     const user = await prisma.user.findUnique({
@@ -48,8 +34,8 @@ export async function GET() {
       );
     }
 
-    const isExchangeDay = isExchangeDayNow();
-    const nextExchangeDay = getNextExchangeDayInfo();
+    const isExchangeDay = isExchangeDayNow(exchangeDays);
+    const nextExchangeDay = getNextExchangeDayInfo(exchangeDays);
 
     // 查询家庭所有礼物
     const gifts = await prisma.gift.findMany({
@@ -137,7 +123,7 @@ export async function GET() {
           weekly: 0,
         },
         exchangeDaysInfo: {
-          days: [6],
+          days: exchangeDays,
           isExchangeDay,
           nextExchangeDay,
         },

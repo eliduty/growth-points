@@ -31,10 +31,8 @@ export async function POST(
 
     // 查询今天是否已完成该任务
     const now = getBeijingNow();
-    const todayStart = new Date(now);
-    todayStart.setHours(0, 0, 0, 0);
-    const todayEnd = new Date(now);
-    todayEnd.setHours(23, 59, 59, 999);
+    const todayStart = now.startOf("day").toDate();
+    const todayEnd = now.endOf("day").toDate();
 
     const existingCompletion = await prisma.taskCompletion.findFirst({
       where: {

@@ -6,7 +6,7 @@ import { getWeekStart, getWeekEnd, getBeijingNow } from "@/lib/date";
 // 判断是否为兑换日（周六为兑换日）
 function isExchangeDayNow(): boolean {
   const now = getBeijingNow();
-  return now.getDay() === 6; // 6 = 周六
+  return now.day() === 6; // 6 = 周六
 }
 
 export async function POST(request: NextRequest) {

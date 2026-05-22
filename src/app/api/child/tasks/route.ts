@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { requireChild } from "@/lib/auth/guard";
 import { handleAuthError } from "@/lib/auth/guard";
 import { getWeekStart, getWeekEnd, formatBeijingTime, getBeijingNow } from "@/lib/date";
+import dayjs from "dayjs";
 
 export async function GET(request: NextRequest) {
   try {
@@ -10,7 +11,7 @@ export async function GET(request: NextRequest) {
 
     // 获取日期参数（可选）
     const dateParam = request.nextUrl.searchParams.get("date");
-    const targetDate = dateParam ? new Date(dateParam) : getBeijingNow();
+    const targetDate = dateParam ? dayjs(dateParam) : getBeijingNow();
 
     // 计算本周时间范围
     const weekStart = getWeekStart();
@@ -63,10 +64,8 @@ export async function GET(request: NextRequest) {
     });
 
     // 查询用户当天完成的任务
-    const todayStart = new Date(targetDate);
-    todayStart.setHours(0, 0, 0, 0);
-    const todayEnd = new Date(targetDate);
-    todayEnd.setHours(23, 59, 59, 999);
+    const todayStart = targetDate.startOf("day").toDate();
+    const todayEnd = targetDate.endOf("day").toDate();
 
     const todayCompletions = await prisma.taskCompletion.findMany({
       where: {

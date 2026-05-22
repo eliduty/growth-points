@@ -14,7 +14,7 @@ export default function PointsOverview({ current, total, weekly }: PointsOvervie
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       className="relative overflow-hidden rounded-[24px] px-7 py-8 mb-5 text-center text-white
-        bg-gradient-to-br from-[#FF6B35] to-[#FF8A50]
+        bg-gradient-to-br from-primary to-primaryLight
         shadow-[0_8px_24px_rgba(255,107,53,0.25),0_4px_8px_rgba(255,107,53,0.15),inset_0_1px_0_rgba(255,255,255,0.2)]"
     >
       {/* 旋转动画背景 */}

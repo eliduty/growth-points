@@ -47,8 +47,8 @@ export function isExchangeDayNow(exchangeDays: number[]): boolean {
  * 获取指定日期所在周的起始时间（周一 00:00:00，北京时间）
  * @param date 可选，默认为当前时间
  */
-export function getWeekStart(date?: Date): Date {
-  const base = date ? dayjs(date).tz(BEIJING_TZ) : getBeijingNow();
+export function getWeekStart(date?: Date | dayjs.Dayjs): Date {
+  const base = date ? dayjs(date instanceof Date ? date : date.toDate()).tz(BEIJING_TZ) : getBeijingNow();
   const dayOfWeek = base.day();
   const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
   return base.subtract(daysToMonday, "day").startOf("day").toDate();
@@ -58,7 +58,7 @@ export function getWeekStart(date?: Date): Date {
  * 获取指定日期所在周的结束时间（周日 23:59:59，北京时间）
  * @param date 可选，默认为当前时间
  */
-export function getWeekEnd(date?: Date): Date {
+export function getWeekEnd(date?: Date | dayjs.Dayjs): Date {
   const weekStart = getWeekStart(date);
   return dayjs(weekStart).add(6, "day").endOf("day").toDate();
 }
