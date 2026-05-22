@@ -1,4 +1,5 @@
 import { Role, RedemptionStatus } from "@/generated/prisma";
+export { Role, RedemptionStatus };
 
 /**
  * 用户信息类型（前端使用）

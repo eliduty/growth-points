@@ -17,8 +17,8 @@ export async function POST(request: NextRequest) {
     // 验证输入
     const parsed = registerSchema.safeParse(body);
     if (!parsed.success) {
-      const errorMessage = parsed.error.errors[0]?.message || "输入格式错误";
-      const errorCode = parsed.error.errors[0]?.path[0] === "username" ? 1002 : 1003;
+      const errorMessage = parsed.error.issues[0]?.message || "输入格式错误";
+      const errorCode = parsed.error.issues[0]?.path[0] === "username" ? 1002 : 1003;
       return NextResponse.json(
         { code: errorCode, data: null, message: errorMessage },
         { status: 400 }
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await hashPassword(password);
 
     // 创建新家庭和用户
-    const family = await prisma.family.create({});
+    const family = await prisma.family.create({ data: {} });
 
     const user = await prisma.user.create({
       data: {
