@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { LogIn, UserPlus, Home, Info } from "lucide-react";
+import { LogIn, UserPlus } from "lucide-react";
 
 // 登录表单验证
 const loginSchema = z.object({
@@ -36,16 +36,10 @@ const registerSchema = z
 type LoginFormData = z.infer<typeof loginSchema>;
 type RegisterFormData = z.infer<typeof registerSchema>;
 
-type Mode = "login" | "register";
-
-interface ParentLoginFormProps {
-  onSuccess?: () => void;
-}
-
-export default function ParentLoginForm({ onSuccess }: ParentLoginFormProps) {
+export default function ParentLoginForm() {
   const router = useRouter();
-  const [mode, setMode] = useState<Mode>("login");
   const [isLoading, setIsLoading] = useState(false);
+  const [currentMode, setCurrentMode] = useState<"login" | "register">("login");
 
   // 登录表单
   const loginForm = useForm<LoginFormData>({
@@ -66,9 +60,9 @@ export default function ParentLoginForm({ onSuccess }: ParentLoginFormProps) {
     },
   });
 
-  // 切换模式时重置表单
-  const switchMode = (newMode: Mode) => {
-    setMode(newMode);
+  // 切换模式
+  const switchMode = (newMode: "login" | "register") => {
+    setCurrentMode(newMode);
     loginForm.reset();
     registerForm.reset();
   };
@@ -95,12 +89,7 @@ export default function ParentLoginForm({ onSuccess }: ParentLoginFormProps) {
 
       if (result.code === 0) {
         toast.success("登录成功");
-
-        if (onSuccess) {
-          onSuccess();
-        } else {
-          router.push("/parent");
-        }
+        router.push("/parent");
       } else {
         toast.error(result.message || "登录失败");
       }
@@ -130,13 +119,8 @@ export default function ParentLoginForm({ onSuccess }: ParentLoginFormProps) {
       const result = await response.json();
 
       if (result.code === 0) {
-        toast.success("注册成功，已自动创建家庭");
-
-        if (onSuccess) {
-          onSuccess();
-        } else {
-          router.push("/parent");
-        }
+        toast.success("注册成功");
+        router.push("/parent");
       } else {
         toast.error(result.message || "注册失败");
       }
@@ -147,57 +131,57 @@ export default function ParentLoginForm({ onSuccess }: ParentLoginFormProps) {
     }
   };
 
-  const {
-    register: loginRegister,
-    handleSubmit: handleLoginSubmit,
-    formState: { errors: loginErrors },
-  } = loginForm;
-
-  const {
-    register: registerRegister,
-    handleSubmit: handleRegisterSubmit,
-    formState: { errors: registerErrors },
-  } = registerForm;
-
   return (
-    <div className="w-full max-w-[375px] mx-auto bg-white rounded-2xl shadow-lg p-9 py-9 px-7">
-      {/* Header */}
-      <div className="text-center mb-9">
-        {/* Logo Icon */}
-        <div
-          className="w-[72px] h-[72px] rounded-[18px] flex items-center justify-center mx-auto mb-5"
-          style={{
-            background: "linear-gradient(135deg, #5B7FFF 0%, #7B9FFF 100%)",
-            boxShadow: "0 8px 24px rgba(91, 127, 255, 0.25)",
-          }}
+    <div className="space-y-6">
+      {/* 模式切换按钮 */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => switchMode("login")}
+          className={`flex-1 py-2.5 text-center font-medium rounded-lg transition-all ${
+            currentMode === "login"
+              ? "bg-[var(--color-primary)] text-white shadow-sm"
+              : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-page)]"
+          }`}
         >
-          <Home className="w-9 h-9 text-white" strokeWidth={2} />
-        </div>
-
-        <h1 className="text-xl font-semibold text-text-primary mb-2">
-          家庭积分兑换系统
-        </h1>
-        <p className="text-sm text-text-muted">
-          {mode === "login" ? "家长端管理平台" : "创建新家庭"}
-        </p>
+          <span className="inline-flex items-center gap-2">
+            <LogIn className="w-4 h-4" />
+            登录
+          </span>
+        </button>
+        <button
+          onClick={() => switchMode("register")}
+          className={`flex-1 py-2.5 text-center font-medium rounded-lg transition-all ${
+            currentMode === "register"
+              ? "bg-[var(--color-primary)] text-white shadow-sm"
+              : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-page)]"
+          }`}
+        >
+          <span className="inline-flex items-center gap-2">
+            <UserPlus className="w-4 h-4" />
+            注册
+          </span>
+        </button>
       </div>
 
-      {/* Form */}
-      {mode === "login" ? (
+      {/* 登录表单 */}
+      {currentMode === "login" && (
         <form
-          onSubmit={handleLoginSubmit(onLoginSubmit)}
-          className="space-y-6"
+          onSubmit={loginForm.handleSubmit(onLoginSubmit)}
+          className="space-y-5"
         >
           <div className="space-y-2">
             <Label htmlFor="login-username">用户名</Label>
             <Input
               id="login-username"
-              {...loginRegister("username")}
+              {...loginForm.register("username")}
               placeholder="请输入用户名"
               disabled={isLoading}
+              className="h-12 rounded-lg border-[var(--border-color)] bg-[var(--bg-page)] focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]/10"
             />
-            {loginErrors.username && (
-              <p className="text-sm text-error">{loginErrors.username.message}</p>
+            {loginForm.formState.errors.username && (
+              <p className="text-sm text-error">
+                {loginForm.formState.errors.username.message}
+              </p>
             )}
           </div>
 
@@ -206,42 +190,50 @@ export default function ParentLoginForm({ onSuccess }: ParentLoginFormProps) {
             <Input
               id="login-password"
               type="password"
-              {...loginRegister("password")}
+              {...loginForm.register("password")}
               placeholder="请输入密码"
               disabled={isLoading}
+              className="h-12 rounded-lg border-[var(--border-color)] bg-[var(--bg-page)] focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]/10"
             />
-            {loginErrors.password && (
-              <p className="text-sm text-error">{loginErrors.password.message}</p>
+            {loginForm.formState.errors.password && (
+              <p className="text-sm text-error">
+                {loginForm.formState.errors.password.message}
+              </p>
             )}
           </div>
 
           <Button
             type="submit"
-            className="w-full h-12"
-            variant="default"
+            className="w-full h-12 bg-gradient-to-r from-primary to-primaryLight hover:opacity-90 rounded-lg shadow-sm"
             size="lg"
             disabled={isLoading}
           >
-            <LogIn className="w-5 h-5" />
-            {isLoading ? "登录中..." : "登录"}
+            <span className="inline-flex items-center gap-2">
+              <LogIn className="w-5 h-5" />
+              {isLoading ? "登录中..." : "登录"}
+            </span>
           </Button>
         </form>
-      ) : (
+      )}
+
+      {/* 注册表单 */}
+      {currentMode === "register" && (
         <form
-          onSubmit={handleRegisterSubmit(onRegisterSubmit)}
-          className="space-y-6"
+          onSubmit={registerForm.handleSubmit(onRegisterSubmit)}
+          className="space-y-5"
         >
           <div className="space-y-2">
             <Label htmlFor="register-username">用户名</Label>
             <Input
               id="register-username"
-              {...registerRegister("username")}
+              {...registerForm.register("username")}
               placeholder="请输入用户名"
               disabled={isLoading}
+              className="h-12 rounded-lg border-[var(--border-color)] bg-[var(--bg-page)] focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]/10"
             />
-            {registerErrors.username && (
+            {registerForm.formState.errors.username && (
               <p className="text-sm text-error">
-                {registerErrors.username.message}
+                {registerForm.formState.errors.username.message}
               </p>
             )}
           </div>
@@ -251,13 +243,14 @@ export default function ParentLoginForm({ onSuccess }: ParentLoginFormProps) {
             <Input
               id="register-password"
               type="password"
-              {...registerRegister("password")}
-              placeholder="请输入密码"
+              {...registerForm.register("password")}
+              placeholder="请输入密码（至少6位）"
               disabled={isLoading}
+              className="h-12 rounded-lg border-[var(--border-color)] bg-[var(--bg-page)] focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]/10"
             />
-            {registerErrors.password && (
+            {registerForm.formState.errors.password && (
               <p className="text-sm text-error">
-                {registerErrors.password.message}
+                {registerForm.formState.errors.password.message}
               </p>
             )}
           </div>
@@ -267,66 +260,31 @@ export default function ParentLoginForm({ onSuccess }: ParentLoginFormProps) {
             <Input
               id="register-confirmPassword"
               type="password"
-              {...registerRegister("confirmPassword")}
+              {...registerForm.register("confirmPassword")}
               placeholder="请再次输入密码"
               disabled={isLoading}
+              className="h-12 rounded-lg border-[var(--border-color)] bg-[var(--bg-page)] focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]/10"
             />
-            {registerErrors.confirmPassword && (
+            {registerForm.formState.errors.confirmPassword && (
               <p className="text-sm text-error">
-                {registerErrors.confirmPassword.message}
+                {registerForm.formState.errors.confirmPassword.message}
               </p>
             )}
           </div>
 
           <Button
             type="submit"
-            className="w-full h-12"
-            variant="default"
+            className="w-full h-12 bg-gradient-to-r from-primary to-primaryLight hover:opacity-90 rounded-lg shadow-sm"
             size="lg"
             disabled={isLoading}
           >
-            <UserPlus className="w-5 h-5" />
-            {isLoading ? "注册中..." : "注册"}
+            <span className="inline-flex items-center gap-2">
+              <UserPlus className="w-5 h-5" />
+              {isLoading ? "注册中..." : "注册"}
+            </span>
           </Button>
         </form>
       )}
-
-      {/* Switch Mode */}
-      <div className="text-center mt-7 pt-7 border-t border-[#E5E7EB]">
-        <p className="text-sm text-[#9CA3AF]">
-          {mode === "login" ? (
-            <>
-              没有账号？
-              <button
-                type="button"
-                onClick={() => switchMode("register")}
-                className="text-primary font-medium ml-1 inline-flex items-center gap-1 hover:text-primaryLight transition-colors"
-              >
-                <UserPlus className="w-3.5 h-3.5" />
-                注册
-              </button>
-            </>
-          ) : (
-            <>
-              已有账号？
-              <button
-                type="button"
-                onClick={() => switchMode("login")}
-                className="text-primary font-medium ml-1 inline-flex items-center gap-1 hover:text-primaryLight transition-colors"
-              >
-                <LogIn className="w-3.5 h-3.5" />
-                登录
-              </button>
-            </>
-          )}
-        </p>
-      </div>
-
-      {/* Footer Tip */}
-      <p className="text-xs text-[#9CA3AF] text-center mt-5 flex items-center justify-center gap-1.5">
-        <Info className="w-3.5 h-3.5" />
-        注册后自动创建家庭，成为创始家长
-      </p>
     </div>
   );
 }
