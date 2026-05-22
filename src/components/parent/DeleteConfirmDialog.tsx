@@ -48,7 +48,7 @@ export function DeleteConfirmDialog({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-[280px] bg-card rounded-card p-5 shadow-lg border border-border"
+            className="fixed left-1/2 top-[50%] z-50 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-[320px] max-h-[85vh] overflow-y-auto bg-card rounded-card p-5 shadow-lg border border-border"
           >
             {/* 标题 */}
             <div className="text-lg font-semibold text-text text-center mb-3">

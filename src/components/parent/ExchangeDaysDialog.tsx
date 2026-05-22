@@ -53,7 +53,7 @@ export function ExchangeDaysDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[400px]">
+      <DialogContent className="sm:max-w-[400px] max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>兑换日设置</DialogTitle>
         </DialogHeader>
