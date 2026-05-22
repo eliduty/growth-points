@@ -31,7 +31,7 @@ export default function ProfilePage() {
   const handleLogout = async () => {
     // 清除会话并跳转到登录页
     await fetch("/api/logout", { method: "POST" });
-    router.push("/login");
+    router.push("/child/login");
   };
 
   if (isLoading) {
