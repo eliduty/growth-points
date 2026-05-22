@@ -5,47 +5,52 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 字号变量 */
 :root {
-  /* 孩子端变量 */
-  --child-primary: #FF6B35;
-  --child-primary-light: #FF8A50;
-  --child-secondary: #4ECDC4;
-  --child-accent: #FFD93D;
+  --font-size-xs: 12px;
+  --font-size-sm: 14px;
+  --font-size-base: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 24px;
+  --font-size-2xl: 32px;
 
-  /* 家长端变量 */
-  --parent-primary: #5B7FFF;
-  --parent-primary-light: #7B9FFF;
-  --parent-secondary: #34D399;
+  /* 导航高度 */
+  --nav-height: 56px;
 
-  /* 功能色 */
+  /* 功能色（固定） */
   --color-success: #4ECDC4;
   --color-warning: #FFD93D;
   --color-error: #FF6B6B;
   --color-info: #60A5FA;
 
-  /* 文字 */
+  /* 文字色（固定） */
   --text-primary: #1F2937;
   --text-secondary: #6B7280;
   --text-muted: #9CA3AF;
 
-  /* 边框和背景 */
+  /* 边框和背景（固定） */
   --border-color: #E5E7EB;
   --bg-card: #FFFFFF;
   --bg-page: #F9FAFB;
-
-  /* 导航高度 */
-  --nav-height: 56px;
 }
 
 /* 孩子端主题 */
-[data-role="child"] {
-  --color-primary: var(--child-primary);
+:root[data-role='child'] {
+  --color-primary: #FF6B35;
+  --color-primary-light: #FF8A50;
+  --color-secondary: #4ECDC4;
+  --color-accent: #FFD93D;
+  --shadow-card: 0 4px 12px rgba(255, 107, 53, 0.15);
   --bg-gradient: linear-gradient(135deg, #FFF8F0 0%, #FFEDD8 50%, #FFFBE8 100%);
 }
 
 /* 家长端主题 */
-[data-role="parent"] {
-  --color-primary: var(--parent-primary);
+:root[data-role='parent'] {
+  --color-primary: #5B7FFF;
+  --color-primary-light: #7B9FFF;
+  --color-secondary: #34D399;
+  --color-accent: #FFE66D;
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
   --bg-gradient: linear-gradient(135deg, #F0F4FF 0%, #E8F0FE 50%, #F5F7FF 100%);
 }
 
@@ -58,12 +63,8 @@ body {
 }
 
 /* 积分卡片渐变背景 */
-.points-card-child {
-  background: linear-gradient(135deg, #FF6B35 0%, #FF8A50 100%);
-}
-
-.points-card-parent {
-  background: linear-gradient(135deg, #5B7FFF 0%, #7B9FFF 100%);
+.points-card {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
 }
 
 /* 礼物颜色池 */
@@ -81,7 +82,7 @@ body {
 
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
+  box-shadow: var(--shadow-card);
 }
 
 /* 按钮点击效果 */

@@ -9,32 +9,25 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        //孩子端主色
-        child: {
-          primary: "#FF6B35",
-          primaryLight: "#FF8A50",
-          secondary: "#4ECDC4",
-          accent: "#FFD93D",
-        },
-        // 家长端主色
-        parent: {
-          primary: "#5B7FFF",
-          primaryLight: "#7B9FFF",
-          secondary: "#34D399",
-        },
+        // 语义化颜色（通过 CSS 变量动态切换）
+        primary: "var(--color-primary)",
+        primaryLight: "var(--color-primary-light)",
+        secondary: "var(--color-secondary)",
+        accent: "var(--color-accent)",
         // 功能色
-        success: "#4ECDC4",
-        warning: "#FFD93D",
-        error: "#FF6B6B",
-        info: "#60A5FA",
+        success: "var(--color-success)",
+        warning: "var(--color-warning)",
+        error: "var(--color-error)",
+        info: "var(--color-info)",
         // 中性色
         text: {
-          primary: "#1F2937",
-          secondary: "#6B7280",
-          muted: "#9CA3AF",
+          primary: "var(--text-primary)",
+          secondary: "var(--text-secondary)",
+          muted: "var(--text-muted)",
         },
-        border: "#E5E7EB",
-        background: "#F9FAFB",
+        border: "var(--border-color)",
+        background: "var(--bg-page)",
+        card: "var(--bg-card)",
       },
       fontFamily: {
         sans: [
@@ -47,16 +40,15 @@ const config: Config = {
         ],
       },
       fontSize: {
-        xs: ["12px", { lineHeight: "1.4" }],
-        sm: ["14px", { lineHeight: "1.4" }],
-        base: ["16px", { lineHeight: "1.5" }],
-        lg: ["18px", { lineHeight: "1.5" }],
-        xl: ["24px", { lineHeight: "1.3" }],
-        "2xl": ["32px", { lineHeight: "1.2" }],
-        "5xl": ["56px", { lineHeight: "1.1" }],
+        xs: "var(--font-size-xs)",
+        sm: "var(--font-size-sm)",
+        base: "var(--font-size-base)",
+        lg: "var(--font-size-lg)",
+        xl: "var(--font-size-xl)",
+        "2xl": "var(--font-size-2xl)",
       },
       spacing: {
-        "nav": "56px",
+        "nav": "var(--nav-height)",
       },
       borderRadius: {
         card: "16px",
@@ -64,8 +56,7 @@ const config: Config = {
         input: "12px",
       },
       boxShadow: {
-        card: "0 4px 12px rgba(255, 107, 53, 0.15)",
-        "card-parent": "0 2px 8px rgba(0, 0, 0, 0.08)",
+        card: "var(--shadow-card)",
         nav: "0 -4px 16px rgba(0, 0, 0, 0.08)",
       },
       animation: {

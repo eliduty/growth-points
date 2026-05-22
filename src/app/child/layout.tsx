@@ -8,7 +8,7 @@ export default function ChildLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-yellow-50 to-yellow-50 pb-[56px]" data-role="child">
+    <div className="min-h-screen pb-nav" data-role="child" style={{ background: "var(--bg-gradient)" }}>
       {children}
       <BottomNav role="child" />
     </div>

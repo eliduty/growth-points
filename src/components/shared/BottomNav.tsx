@@ -31,10 +31,9 @@ const parentNavItems = [
 export default function BottomNav({ role }: BottomNavProps) {
   const pathname = usePathname();
   const navItems = role === "child" ? childNavItems : parentNavItems;
-  const primaryColor = role === "child" ? "text-child-primary" : "text-parent-primary";
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 h-[56px] bg-white border-t border-border shadow-nav z-50">
+    <nav className="fixed bottom-0 left-0 right-0 h-nav bg-card border-t border-border shadow-nav z-50">
       <div className="flex justify-around items-center h-full">
         {navItems.map((item) => {
           const isActive = pathname === item.href;
@@ -44,7 +43,7 @@ export default function BottomNav({ role }: BottomNavProps) {
               href={item.href}
               className={cn(
                 "flex flex-col items-center justify-center gap-1 px-4 py-2 transition-colors",
-                isActive ? primaryColor : "text-text-muted"
+                isActive ? "text-primary" : "text-text-muted"
               )}
             >
               <item.icon className="w-6 h-6" />

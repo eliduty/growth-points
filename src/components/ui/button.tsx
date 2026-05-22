@@ -8,13 +8,18 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-child-primary text-white shadow-md hover:bg-child-primaryLight",
-        parent: "bg-parent-primary text-white shadow-md hover:bg-parent-primaryLight",
+        // 默认/主要按钮 - 使用语义化颜色，根据 data-role 自动切换
+        default: "bg-primary text-white shadow-md hover:bg-primaryLight",
+        // 次要按钮
+        secondary: "bg-secondary text-white shadow-sm hover:bg-secondary/80",
+        // 破坏性操作
         destructive: "bg-error text-white shadow-sm hover:bg-error/90",
-        outline: "border border-border bg-background hover:bg-background/80",
-        secondary: "bg-child-secondary text-white shadow-sm hover:bg-child-secondary/80",
-        ghost: "hover:bg-background/80",
-        link: "text-child-primary underline-offset-4 hover:underline",
+        // 轮廓按钮
+        outline: "border border-border bg-card hover:bg-card/80",
+        // 幽灵按钮
+        ghost: "hover:bg-card/80",
+        // 链接按钮
+        link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
         default: "h-11 px-6 py-2",
