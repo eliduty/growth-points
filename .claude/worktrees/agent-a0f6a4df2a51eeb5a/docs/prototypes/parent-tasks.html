@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>任务页 - 家长端</title>
+  <link href="https://cdn.jsdelivr.net/npm/smiley-sans@1.1.1/dist/SmileySans-Oblique.min.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --color-primary: #5B7FFF;
+      --color-primary-light: #7B9FFF;
+      --color-secondary: #34D399;
+      --color-success: #34D399;
+      --color-error: #EF4444;
+      --text-primary: #1F2937;
+      --text-secondary: #6B7280;
+      --text-muted: #9CA3AF;
+      --bg-card: #FFFFFF;
+      --radius-card: 12px;
+      --radius-button: 8px;
+      --radius-input: 8px;
+      --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
+      --nav-height: 56px;
+    }
+
+    body {
+      font-family: 'Smiley Sans Oblique', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #F0F4FF 0%, #E8F0FE 50%, #F5F7FF 100%);
+      padding-bottom: var(--nav-height);
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%235B7FFF' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    .page-content { padding: 16px; position: relative; z-index: 1; }
+
+    /* 顶部操作栏 */
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+
+    .btn-secondary {
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: var(--radius-button);
+      padding: 12px 18px;
+      font-size: 14px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-secondary svg { width: 18px; height: 18px; stroke: var(--text-secondary); stroke-width: 2; fill: none; }
+    .btn-secondary:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .btn-secondary:hover svg { stroke: var(--color-primary); }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #5B7FFF 0%, #7B9FFF 100%);
+      border: none;
+      border-radius: var(--radius-button);
+      padding: 12px 18px;
+      font-size: 14px;
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 500;
+      transition: all 0.15s;
+      box-shadow: 0 2px 8px rgba(91, 127, 255, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary svg { width: 18px; height: 18px; stroke: white; stroke-width: 2; fill: none; }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(91, 127, 255, 0.25); }
+
+    /* 任务类别分组 */
+    .category-group {
+      background: white;
+      border-radius: var(--radius-card);
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid #E5E7EB;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: #F9FAFB;
+      border-radius: var(--radius-card) var(--radius-card) 0 0;
+      cursor: pointer;
+    }
+
+    .category-header.expanded { background: linear-gradient(135deg, #F0F4FF 0%, #E8F0FE 100%); }
+
+    .category-title {
+      font-size: 15px;
+      color: var(--text-primary);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .category-title svg { width: 18px; height: 18px; stroke: var(--color-primary); stroke-width: 2; fill: none; }
+
+    .category-icon svg { width: 14px; height: 14px; stroke: var(--text-muted); stroke-width: 2; fill: none; transition: transform 0.15s; }
+    .category-header.expanded .category-icon svg { transform: rotate(180deg); }
+
+    .task-list { padding: 18px; }
+
+    .task-item {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .task-item:last-child { border-bottom: none; }
+
+    .task-info { flex: 1; }
+
+    .task-name {
+      font-size: 15px;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .task-name svg { width: 16px; height: 16px; stroke: var(--color-primary); stroke-width: 2; fill: none; }
+
+    .task-desc { font-size: 13px; color: var(--text-muted); }
+
+    .task-meta { display: flex; align-items: center; gap: 10px; }
+
+    .task-points {
+      font-size: 14px;
+      color: var(--color-primary);
+      font-weight: 600;
+      margin-right: 14px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .task-points svg { width: 14px; height: 14px; stroke: var(--color-primary); stroke-width: 2; fill: none; }
+
+    .task-btn {
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .task-btn svg { width: 14px; height: 14px; stroke: var(--text-secondary); stroke-width: 2; fill: none; }
+    .task-btn.edit:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    .task-btn.edit:hover svg { stroke: var(--color-primary); }
+    .task-btn.delete:hover { border-color: var(--color-error); color: var(--color-error); }
+    .task-btn.delete:hover svg { stroke: var(--color-error); }
+
+    /* 弹窗样式 */
+    .popup-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 200;
+      display: none;
+      backdrop-filter: blur(2px);
+    }
+
+    .popup-overlay.show { display: block; }
+
+    .popup {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 340px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+      z-index: 201;
+      display: none;
+    }
+
+    .popup.show { display: block; animation: popIn 0.2s ease-out; }
+
+    @keyframes popIn {
+      0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    .popup-header { padding: 18px; border-bottom: 1px solid #E5E7EB; display: flex; align-items: center; gap: 10px; }
+
+    .popup-header svg { width: 20px; height: 20px; stroke: var(--color-primary); stroke-width: 2; fill: none; }
+
+    .popup-title { font-size: 16px; color: var(--text-primary); font-weight: 600; }
+
+    .popup-body { padding: 18px; }
+
+    .form-group { margin-bottom: 18px; }
+
+    .form-label { display: block; font-size: 14px; color: var(--text-primary); margin-bottom: 10px; font-weight: 500; }
+
+    .form-input {
+      width: 100%;
+      height: 44px;
+      border: 1px solid #E5E7EB;
+      border-radius: var(--radius-input);
+      padding: 12px 16px;
+      font-size: 15px;
+      font-family: inherit;
+      background: #F9FAFB;
+      transition: all 0.15s;
+    }
+
+    .form-input:focus { outline: none; border-color: var(--color-primary); background: white; }
+
+    .form-select {
+      width: 100%;
+      height: 44px;
+      border: 1px solid #E5E7EB;
+      border-radius: var(--radius-input);
+      padding: 12px 16px;
+      font-size: 15px;
+      font-family: inherit;
+      background: #F9FAFB;
+      cursor: pointer;
+    }
+
+    .form-textarea {
+      width: 100%;
+      height: 80px;
+      border: 1px solid #E5E7EB;
+      border-radius: var(--radius-input);
+      padding: 12px 16px;
+      font-size: 15px;
+      font-family: inherit;
+      background: #F9FAFB;
+      resize: none;
+    }
+
+    .form-textarea:focus { outline: none; border-color: var(--color-primary); background: white; }
+
+    .optional-label { font-size: 12px; color: var(--text-muted); }
+
+    .popup-footer { padding: 18px; display: flex; gap: 12px; }
+
+    .popup-btn-cancel {
+      flex: 1;
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .popup-btn-confirm {
+      flex: 1;
+      background: linear-gradient(135deg, #5B7FFF 0%, #7B9FFF 100%);
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 15px;
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(91, 127, 255, 0.2);
+      transition: all 0.15s;
+    }
+
+    .popup-btn-confirm:hover { box-shadow: 0 4px 12px rgba(91, 127, 255, 0.25); }
+
+    /* 删除确认弹窗 */
+    .delete-popup { padding: 28px; text-align: center; }
+
+    .delete-popup-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .delete-popup-icon svg { width: 24px; height: 24px; stroke: var(--color-error); stroke-width: 2; fill: none; }
+
+    .delete-popup-title { font-size: 16px; color: var(--text-primary); font-weight: 600; margin-bottom: 20px; }
+
+    .delete-popup-content { font-size: 14px; color: var(--text-secondary); margin-bottom: 6px; }
+
+    .delete-popup-hint { font-size: 13px; color: var(--text-muted); margin-bottom: 24px; }
+
+    .delete-popup-buttons { display: flex; gap: 12px; }
+
+    .delete-btn-cancel { flex: 1; background: white; border: 1px solid #E5E7EB; border-radius: 8px; padding: 12px; font-size: 15px; color: var(--text-secondary); cursor: pointer; font-family: inherit; }
+    .delete-btn-confirm { flex: 1; background: var(--color-error); border: none; border-radius: 8px; padding: 12px; font-size: 15px; color: white; cursor: pointer; font-family: inherit; font-weight: 500; }
+
+    /* 底部导航 */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: var(--nav-height);
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+      border-top: 1px solid #E5E7EB;
+      z-index: 100;
+    }
+
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 12px; cursor: pointer; position: relative; }
+
+    .nav-item::before {
+      content: '';
+      position: absolute;
+      top: -4px; left: 50%;
+      transform: translateX(-50%);
+      width: 20px; height: 3px;
+      background: var(--color-primary);
+      border-radius: 3px;
+      opacity: 0;
+    }
+
+    .nav-item.active::before { opacity: 1; }
+
+    .nav-icon svg { width: 24px; height: 24px; stroke: var(--text-muted); stroke-width: 1.5; fill: none; }
+    .nav-item.active .nav-icon svg { stroke: var(--color-primary); }
+    .nav-label { font-size: 12px; color: var(--text-muted); }
+    .nav-item.active .nav-label { color: var(--color-primary); font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="page-content">
+    <!-- 顶部操作栏 -->
+    <div class="top-bar">
+      <button class="btn-secondary" onclick="showCategoryPopup()">
+        <!-- Settings icon -->
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        管理类别
+      </button>
+      <button class="btn-primary" onclick="showAddPopup()">
+        <!-- Plus icon -->
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        添加任务
+      </button>
+    </div>
+
+    <!-- 学习类（展开） -->
+    <div class="category-group">
+      <div class="category-header expanded">
+        <div class="category-title">
+          <!-- BookOpen icon -->
+          <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3 3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3 3h7z"/></svg>
+          学习类
+        </div>
+        <div class="category-icon">
+          <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+      </div>
+      <div class="task-list">
+        <div class="task-item">
+          <div class="task-info">
+            <div class="task-name">
+              <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3 3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3 3h7z"/></svg>
+              阅读书籍
+            </div>
+            <div class="task-desc">每天阅读30分钟</div>
+          </div>
+          <div class="task-meta">
+            <div class="task-points">
+              <!-- Star icon -->
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              +10积分
+            </div>
+            <button class="task-btn edit" onclick="showEditPopup()">
+              <!-- Pencil icon -->
+              <svg viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+              编辑
+            </button>
+            <button class="task-btn delete" onclick="showDeletePopup()">
+              <!-- Trash2 icon -->
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              删除
+            </button>
+          </div>
+        </div>
+        <div class="task-item">
+          <div class="task-info">
+            <div class="task-name">
+              <!-- PenTool icon -->
+              <svg viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L11 18l5-5z"/><circle cx="11" cy="11" r="2"/></svg>
+              练习写字
+            </div>
+          </div>
+          <div class="task-meta">
+            <div class="task-points">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              +5积分
+            </div>
+            <button class="task-btn edit">
+              <svg viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+              编辑
+            </button>
+            <button class="task-btn delete">
+              <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              删除
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 家务类（折叠） -->
+    <div class="category-group">
+      <div class="category-header">
+        <div class="category-title">
+          <!-- Sparkles icon -->
+          <svg viewBox="0 0 24 24"><path d="M12 3l1.912 5.813 6.088-1.913-3.5 3.5 3.5 3.5-6.088-1.913L12 21l-1.912-5.813L4 17l3.5-3.5L4 10l6.088 1.913L12 3z"/></svg>
+          家务类
+        </div>
+        <div class="category-icon">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- 运动类（折叠） -->
+    <div class="category-group">
+      <div class="category-header">
+        <div class="category-title">
+          <!-- Activity icon -->
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          运动类
+        </div>
+        <div class="category-icon">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 遮罩层 -->
+  <div class="popup-overlay" id="overlay"></div>
+
+  <!-- 添加任务弹窗 -->
+  <div class="popup" id="addPopup">
+    <div class="popup-header">
+      <!-- Plus icon -->
+      <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <div class="popup-title">添加任务</div>
+    </div>
+    <div class="popup-body">
+      <div class="form-group">
+        <label class="form-label">任务名称</label>
+        <input type="text" class="form-input" placeholder="请输入任务名称">
+      </div>
+      <div class="form-group">
+        <label class="form-label">积分值</label>
+        <input type="number" class="form-input" placeholder="请输入积分值">
+      </div>
+      <div class="form-group">
+        <label class="form-label">所属类别</label>
+        <select class="form-select">
+          <option>学习类</option>
+          <option>家务类</option>
+          <option>运动类</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">任务描述 <span class="optional-label">(可选)</span></label>
+        <textarea class="form-textarea" placeholder="请输入任务描述"></textarea>
+      </div>
+    </div>
+    <div class="popup-footer">
+      <button class="popup-btn-cancel" onclick="hideAddPopup()">取消</button>
+      <button class="popup-btn-confirm" onclick="hideAddPopup()">确认添加</button>
+    </div>
+  </div>
+
+  <!-- 编辑任务弹窗 -->
+  <div class="popup" id="editPopup">
+    <div class="popup-header">
+      <!-- Pencil icon -->
+      <svg viewBox="0 0 24 24"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg>
+      <div class="popup-title">编辑任务</div>
+    </div>
+    <div class="popup-body">
+      <div class="form-group">
+        <label class="form-label">任务名称</label>
+        <input type="text" class="form-input" value="阅读书籍">
+      </div>
+      <div class="form-group">
+        <label class="form-label">积分值</label>
+        <input type="number" class="form-input" value="10">
+      </div>
+      <div class="form-group">
+        <label class="form-label">所属类别</label>
+        <select class="form-select">
+          <option selected>学习类</option>
+          <option>家务类</option>
+          <option>运动类</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">任务描述 <span class="optional-label">(可选)</span></label>
+        <textarea class="form-textarea">每天阅读30分钟</textarea>
+      </div>
+    </div>
+    <div class="popup-footer">
+      <button class="popup-btn-cancel" onclick="hideEditPopup()">取消</button>
+      <button class="popup-btn-confirm" onclick="hideEditPopup()">确认保存</button>
+    </div>
+  </div>
+
+  <!-- 删除确认弹窗 -->
+  <div class="popup" id="deletePopup">
+    <div class="delete-popup">
+      <div class="delete-popup-icon">
+        <!-- Trash2 icon -->
+        <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      </div>
+      <div class="delete-popup-title">确认删除这个任务？</div>
+      <div class="delete-popup-content">任务：阅读书籍</div>
+      <div class="delete-popup-content">积分：10</div>
+      <div class="delete-popup-hint">删除后孩子端不再显示<br>已完成记录保留</div>
+      <div class="delete-popup-buttons">
+        <button class="delete-btn-cancel" onclick="hideDeletePopup()">取消</button>
+        <button class="delete-btn-confirm" onclick="hideDeletePopup()">确认删除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 类别管理弹窗 -->
+  <div class="popup" id="categoryPopup">
+    <div class="popup-header">
+      <!-- Folder icon -->
+      <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+      <div class="popup-title">管理类别</div>
+    </div>
+    <div class="popup-body">
+      <div class="form-group">
+        <label class="form-label">已有类别</label>
+        <div style="padding: 10px 0;">
+          <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #E5E7EB;">
+            <span style="font-size: 14px; color: var(--text-primary); display: flex; align-items: center; gap: 6px;"><svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='var(--color-primary)' stroke-width='2'><path d='M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3 3H2z'/><path d='M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3 3h7z'/></svg>学习类</span>
+            <span style="font-size: 12px; color: var(--text-muted);">3 个任务</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #E5E7EB;">
+            <span style="font-size: 14px; color: var(--text-primary); display: flex; align-items: center; gap: 6px;"><svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='var(--color-primary)' stroke-width='2'><path d='M12 3l1.912 5.813 6.088-1.913-3.5 3.5 3.5 3.5-6.088-1.913L12 21l-1.912-5.813L4 17l3.5-3.5L4 10l6.088 1.913L12 3z'/></svg>家务类</span>
+            <span style="font-size: 12px; color: var(--text-muted);">2 个任务</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+            <span style="font-size: 14px; color: var(--text-primary); display: flex; align-items: center; gap: 6px;"><svg width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='var(--color-primary)' stroke-width='2'><polyline points='22 12 18 12 15 21 9 3 6 12 2 12'/></svg>运动类</span>
+            <span style="font-size: 12px; color: var(--text-muted);">1 个任务</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">添加新类别</label>
+        <input type="text" class="form-input" placeholder="请输入类别名称">
+      </div>
+    </div>
+    <div class="popup-footer">
+      <button class="popup-btn-cancel" onclick="hideCategoryPopup()">关闭</button>
+      <button class="popup-btn-confirm" onclick="hideCategoryPopup()">添加类别</button>
+    </div>
+  </div>
+
+  <!-- 底部导航 -->
+  <div class="bottom-nav">
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+      </div>
+      <div class="nav-label">统计</div>
+    </div>
+    <div class="nav-item active">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="6" height="6" rx="1"/><path d="M11 4h10"/><path d="M11 8h10"/><path d="M11 12h10"/><path d="M3 16l3.5 3.5L10 14"/></svg>
+      </div>
+      <div class="nav-label">任务</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>
+      </div>
+      <div class="nav-label">礼物</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </div>
+      <div class="nav-label">设置</div>
+    </div>
+  </div>
+
+  <script>
+    function showOverlay() { document.getElementById('overlay').classList.add('show'); }
+    function hideOverlay() { document.getElementById('overlay').classList.remove('show'); }
+    function showAddPopup() { showOverlay(); document.getElementById('addPopup').classList.add('show'); }
+    function hideAddPopup() { hideOverlay(); document.getElementById('addPopup').classList.remove('show'); }
+    function showEditPopup() { showOverlay(); document.getElementById('editPopup').classList.add('show'); }
+    function hideEditPopup() { hideOverlay(); document.getElementById('editPopup').classList.remove('show'); }
+    function showDeletePopup() { showOverlay(); document.getElementById('deletePopup').classList.add('show'); }
+    function hideDeletePopup() { hideOverlay(); document.getElementById('deletePopup').classList.remove('show'); }
+    function showCategoryPopup() { showOverlay(); document.getElementById('categoryPopup').classList.add('show'); }
+    function hideCategoryPopup() { hideOverlay(); document.getElementById('categoryPopup').classList.remove('show'); }
+  </script>
+</body>
+</html>

@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>任务页 - 孩子端</title>
+  <link href="https://cdn.jsdelivr.net/npm/smiley-sans@1.1.1/dist/SmileySans-Oblique.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --color-primary: #FF6B35;
+      --color-primary-light: #FF8A50;
+      --color-secondary: #4ECDC4;
+      --color-accent: #FFD93D;
+      --color-success: #4ECDC4;
+      --color-error: #FF6B6B;
+      --text-primary: #1F2937;
+      --text-secondary: #6B7280;
+      --text-muted: #9CA3AF;
+      --bg-card: #FFFFFF;
+      --bg-card-success: #E8F8F5;
+      --radius-card: 16px;
+      --radius-button: 12px;
+      --shadow-card: 0 4px 12px rgba(255, 107, 53, 0.15);
+      --nav-height: 56px;
+    }
+
+    body {
+      font-family: 'Smiley Sans Oblique', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #FFF8F0 0%, #FFEDD8 50%, #FFFBE8 100%);
+      padding-bottom: var(--nav-height);
+      position: relative;
+    }
+
+    /* 背景纹理 */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FFD93D' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* 页面内容区 */
+    .page-content {
+      padding: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 积分卡片 */
+    .points-card {
+      background: linear-gradient(135deg, #FF6B35 0%, #FF8A50 100%);
+      border-radius: 24px;
+      padding: 32px 28px;
+      text-align: center;
+      color: white;
+      margin-bottom: 20px;
+      box-shadow:
+        0 8px 24px rgba(255, 107, 53, 0.25),
+        0 4px 8px rgba(255, 107, 53, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .points-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.1) 0%, transparent 50%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .points-decoration {
+      position: absolute;
+      color: rgba(255, 255, 255, 0.15);
+    }
+
+    .points-decoration svg {
+      width: 24px;
+      height: 24px;
+      stroke: rgba(255, 255, 255, 0.15);
+      stroke-width: 2;
+      fill: rgba(255, 255, 255, 0.1);
+    }
+
+    .star-1 { top: 12px; left: 16px; }
+    .star-2 { bottom: 12px; right: 16px; }
+
+    .points-label {
+      font-size: 14px;
+      opacity: 0.9;
+      margin-bottom: 8px;
+    }
+
+    .points-value {
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+
+    .points-stats {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      font-size: 14px;
+    }
+
+    .points-stat {
+      opacity: 0.85;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .points-stat svg {
+      width: 16px;
+      height: 16px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+      opacity: 0.8;
+    }
+
+    .points-stat span {
+      font-weight: 600;
+    }
+
+    /* 任务区域 */
+    .task-section {
+      margin-bottom: 20px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-left: 4px;
+    }
+
+    .section-header svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--color-primary);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .section-title {
+      font-size: 18px;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .section-count {
+      font-size: 14px;
+      color: var(--text-secondary);
+      background: rgba(255, 107, 53, 0.1);
+      padding: 4px 12px;
+      border-radius: 12px;
+    }
+
+    /* 类别分组 */
+    .category-group {
+      background: var(--bg-card);
+      border-radius: var(--radius-card);
+      padding: 18px;
+      margin-bottom: 14px;
+      box-shadow:
+        var(--shadow-card),
+        0 1px 2px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 107, 53, 0.08);
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+
+    .category-title {
+      font-size: 16px;
+      color: var(--text-primary);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .category-title svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--color-primary);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .category-icon {
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: transform 0.15s ease-out;
+    }
+
+    .category-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-muted);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .category-header.expanded .category-icon {
+      transform: rotate(180deg);
+    }
+
+    /* 任务卡片 */
+    .task-list {
+      margin-top: 14px;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .task-item:last-child {
+      border-bottom: none;
+    }
+
+    .task-info {
+      flex: 1;
+    }
+
+    .task-name {
+      font-size: 16px;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .task-name svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--color-primary);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .task-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .task-points {
+      font-size: 14px;
+      color: var(--color-primary);
+      font-weight: 600;
+      margin-right: 14px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .task-points svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--color-primary);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .task-btn {
+      background: linear-gradient(135deg, #FF6B35 0%, #FF8A50 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s ease-out;
+      box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .task-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .task-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    }
+
+    .task-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* 已完成任务 */
+    .task-item.completed {
+      background: var(--bg-card-success);
+      border-radius: 14px;
+      margin: 10px 0;
+      padding: 14px;
+    }
+
+    .task-item.completed .task-btn {
+      background: var(--color-success);
+      box-shadow: none;
+    }
+
+    .task-item.completed .task-name svg {
+      stroke: var(--color-success);
+    }
+
+    .task-item.completed .task-points {
+      color: var(--color-success);
+    }
+
+    .task-item.completed .task-points svg {
+      stroke: var(--color-success);
+    }
+
+    .completed-mark {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 28px 16px;
+      color: var(--text-muted);
+    }
+
+    .empty-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px;
+      opacity: 0.6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .empty-icon svg {
+      width: 48px;
+      height: 48px;
+      stroke: var(--text-muted);
+      stroke-width: 1.5;
+      fill: none;
+    }
+
+    .empty-text {
+      font-size: 14px;
+    }
+
+    /* 底部导航 */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-height);
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow:
+        0 -4px 16px rgba(0, 0, 0, 0.08),
+        0 -1px 2px rgba(0, 0, 0, 0.04);
+      border-top: 1px solid #E5E7EB;
+      z-index: 100;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 20px;
+      cursor: pointer;
+      transition: all 0.15s ease-out;
+      position: relative;
+    }
+
+    .nav-item::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 3px;
+      background: var(--color-primary);
+      border-radius: 3px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .nav-item.active::before {
+      opacity: 1;
+    }
+
+    .nav-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s;
+    }
+
+    .nav-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--text-muted);
+      stroke-width: 1.5;
+      fill: none;
+      transition: stroke 0.15s ease-out;
+    }
+
+    .nav-item.active .nav-icon svg {
+      stroke: var(--color-primary);
+    }
+
+    .nav-item:hover .nav-icon {
+      transform: translateY(-2px);
+    }
+
+    .nav-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      transition: color 0.15s ease-out;
+    }
+
+    .nav-item.active .nav-label {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    /* 确认弹窗模拟 */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: 200;
+      display: none;
+      backdrop-filter: blur(2px);
+    }
+
+    .overlay.show {
+      display: block;
+    }
+
+    .confirm-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 24px;
+      padding: 28px;
+      width: 90%;
+      max-width: 320px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+      z-index: 201;
+      display: none;
+    }
+
+    .confirm-popup.show {
+      display: block;
+      animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    .confirm-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, #FFF8F0 0%, #FFEDD8 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .confirm-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--color-primary);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .confirm-title {
+      font-size: 18px;
+      color: var(--text-primary);
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .confirm-content {
+      text-align: center;
+      margin-bottom: 24px;
+      background: #F9FAFB;
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .confirm-task {
+      font-size: 16px;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .confirm-task svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--color-primary);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .confirm-points {
+      font-size: 14px;
+      color: var(--color-primary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .confirm-points svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--color-primary);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .confirm-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .confirm-btn-cancel {
+      flex: 1;
+      background: white;
+      border: 2px solid #E5E7EB;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 16px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .confirm-btn-cancel:hover {
+      border-color: var(--text-muted);
+      color: var(--text-primary);
+    }
+
+    .confirm-btn-ok {
+      flex: 1;
+      background: linear-gradient(135deg, #FF6B35 0%, #FF8A50 100%);
+      border: none;
+      border-radius: 14px;
+      padding: 14px;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
+      transition: all 0.15s;
+    }
+
+    .confirm-btn-ok:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(255, 107, 53, 0.3);
+    }
+
+    /* 成功提示 */
+    .success-toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: linear-gradient(135deg, #FF6B35 0%, #FF8A50 100%);
+      color: white;
+      padding: 24px 48px;
+      border-radius: 20px;
+      font-size: 18px;
+      font-weight: 600;
+      box-shadow: 0 12px 32px rgba(255, 107, 53, 0.35);
+      z-index: 202;
+      display: none;
+    }
+
+    .success-toast.show {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: toastPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), toastFade 0.5s ease-out 1s forwards;
+    }
+
+    .success-toast svg {
+      width: 28px;
+      height: 28px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    @keyframes toastPop {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+      60% { transform: translate(-50%, -50%) scale(1.1); }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+
+    @keyframes toastFade {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-content">
+    <!-- 积分卡片 -->
+    <div class="points-card">
+      <div class="points-decoration star-1">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <div class="points-decoration star-2">
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <div class="points-label">当前积分</div>
+      <div class="points-value">120</div>
+      <div class="points-stats">
+        <div class="points-stat">
+          <!-- TrendingUp icon -->
+          <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          累计 <span>350</span>
+        </div>
+        <div class="points-stat">
+          <!-- Calendar icon -->
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          本周 <span>45</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 待完成任务 -->
+    <div class="task-section">
+      <div class="section-header">
+        <!-- Clock icon -->
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div class="section-title">待完成</div>
+        <div class="section-count">5 个</div>
+      </div>
+
+      <!-- 学习类 -->
+      <div class="category-group">
+        <div class="category-header expanded">
+          <div class="category-title">
+            <!-- BookOpen icon -->
+            <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3 3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3 3h7z"/></svg>
+            <span>学习类</span>
+          </div>
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+        <div class="task-list">
+          <div class="task-item">
+            <div class="task-info">
+              <div class="task-name">
+                <!-- BookOpen icon -->
+                <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3 3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3 3h7z"/></svg>
+                阅读书籍
+              </div>
+              <div class="task-desc">每天阅读30分钟</div>
+            </div>
+            <div class="task-points">
+              <!-- Star icon -->
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              +10 积分
+            </div>
+            <button class="task-btn" onclick="showConfirm()">
+              <!-- CheckCircle icon -->
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+              完成
+            </button>
+          </div>
+          <div class="task-item">
+            <div class="task-info">
+              <div class="task-name">
+                <!-- PenTool icon -->
+                <svg viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L11 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+                练习写字
+              </div>
+            </div>
+            <div class="task-points">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              +5 积分
+            </div>
+            <button class="task-btn">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+              完成
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 家务类（折叠状态） -->
+      <div class="category-group">
+        <div class="category-header">
+          <div class="category-title">
+            <!-- Sparkles icon -->
+            <svg viewBox="0 0 24 24"><path d="M12 3l1.912 5.813 6.088-1.913-3.5 3.5 3.5 3.5-6.088-1.913L12 21l-1.912-5.813L4 17l3.5-3.5L4 10l6.088 1.913L12 3z"/><path d="M5 3l1 3-3-1"/><path d="M19 3l-1 3 3-1"/><path d="M5 21l1-3-3 1"/><path d="M19 21l-1-3 3 1"/></svg>
+            <span>家务类</span>
+          </div>
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- 运动类（折叠状态） -->
+      <div class="category-group">
+        <div class="category-header">
+          <div class="category-title">
+            <!-- Activity icon -->
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span>运动类</span>
+          </div>
+          <div class="category-icon">
+            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 已完成任务 -->
+    <div class="task-section">
+      <div class="section-header">
+        <!-- CheckCircle2 icon -->
+        <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div class="section-title">已完成</div>
+        <div class="section-count">2 个</div>
+      </div>
+      <div class="category-group">
+        <div class="task-list">
+          <div class="task-item completed">
+            <div class="task-info">
+              <div class="task-name">
+                <!-- Sparkles icon -->
+                <svg viewBox="0 0 24 24"><path d="M12 3l1.912 5.813 6.088-1.913-3.5 3.5 3.5 3.5-6.088-1.913L12 21l-1.912-5.813L4 17l3.5-3.5L4 10l6.088 1.913L12 3z"/><path d="M5 3l1 3-3-1"/><path d="M19 3l-1 3 3-1"/><path d="M5 21l1-3-3 1"/><path d="M19 21l-1-3 3 1"/></svg>
+                整理房间
+              </div>
+            </div>
+            <div class="task-points">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              +5 积分
+            </div>
+            <div class="completed-mark">
+              <button class="task-btn">
+                <!-- Check icon -->
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                已完成
+              </button>
+            </div>
+          </div>
+          <div class="task-item completed">
+            <div class="task-info">
+              <div class="task-name">
+                <!-- PenTool icon -->
+                <svg viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L11 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+                做作业
+              </div>
+            </div>
+            <div class="task-points">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              +15 积分
+            </div>
+            <div class="completed-mark">
+              <button class="task-btn">
+                <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+                已完成
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部导航 -->
+  <div class="bottom-nav">
+    <div class="nav-item active">
+      <div class="nav-icon">
+        <!-- ListTodo icon -->
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="5" width="6" height="6" rx="1"/>
+          <path d="M11 4h10"/>
+          <path d="M11 8h10"/>
+          <path d="M11 12h10"/>
+          <path d="M3 16l3.5 3.5L10 14"/>
+        </svg>
+      </div>
+      <div class="nav-label">任务</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">
+        <!-- Gift icon -->
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="8" width="18" height="4" rx="1"/>
+          <path d="M12 8v13"/>
+          <path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/>
+          <path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/>
+        </svg>
+      </div>
+      <div class="nav-label">礼物</div>
+    </div>
+    <div class="nav-item">
+      <div class="nav-icon">
+        <!-- User icon -->
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M20 21a8 8 0 1 0-16 0"/>
+        </svg>
+      </div>
+      <div class="nav-label">我的</div>
+    </div>
+  </div>
+
+  <!-- 遮罩层 -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- 确认弹窗 -->
+  <div class="confirm-popup" id="confirmPopup">
+    <div class="confirm-icon">
+      <!-- CheckCircle icon -->
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+    </div>
+    <div class="confirm-title">确认完成这个任务？</div>
+    <div class="confirm-content">
+      <div class="confirm-task">
+        <!-- BookOpen icon -->
+        <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3 3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3 3h7z"/></svg>
+        阅读书籍
+      </div>
+      <div class="confirm-points">
+        <!-- Star icon -->
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        获得 10 积分
+      </div>
+    </div>
+    <div class="confirm-buttons">
+      <button class="confirm-btn-cancel" onclick="hideConfirm()">取消</button>
+      <button class="confirm-btn-ok" onclick="completeTask()">确认完成</button>
+    </div>
+  </div>
+
+  <!-- 成功提示 -->
+  <div class="success-toast" id="successToast">
+    <!-- Trophy icon -->
+    <svg viewBox="0 0 24 24">
+      <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+      <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+      <path d="M4 22h16"/>
+      <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+      <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+      <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+    </svg>
+    太棒了！获得 10 积分！
+  </div>
+
+  <script>
+    function showConfirm() {
+      document.getElementById('overlay').classList.add('show');
+      document.getElementById('confirmPopup').classList.add('show');
+    }
+
+    function hideConfirm() {
+      document.getElementById('overlay').classList.remove('show');
+      document.getElementById('confirmPopup').classList.remove('show');
+    }
+
+    function completeTask() {
+      hideConfirm();
+      const toast = document.getElementById('successToast');
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 1500);
+    }
+  </script>
+</body>
+</html>

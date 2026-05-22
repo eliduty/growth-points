@@ -1,17 +1,11 @@
 ﻿import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireChild, handleAuthError } from "@/lib/auth/guard";
-import { getWeekStart, getWeekEnd, getBeijingNow } from "@/lib/date";
-
-// 判断是否为兑换日（周六为兑换日）
-function isExchangeDayNow(): boolean {
-  const now = getBeijingNow();
-  return now.day() === 6; // 6 = 周六
-}
+import { getWeekStart, getWeekEnd, getBeijingNow, isExchangeDayNow } from "@/lib/date";
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await requireChild();
+    const { userId, familyId } = await requireChild();
 
     const body = await request.json();
     const { giftId } = body;
@@ -35,8 +29,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 查询家庭兑换日设置
+    const exchangeDaysRecords = await prisma.exchangeDay.findMany({
+      where: { familyId },
+      select: { dayOfWeek: true },
+    });
+    const exchangeDays = exchangeDaysRecords.map((d) => d.dayOfWeek);
+
     // 检查是否是兑换日
-    if (!isExchangeDayNow()) {
+    if (!isExchangeDayNow(exchangeDays)) {
       return NextResponse.json(
         { code: 3001, data: null, message: "今日不是兑换日" },
         { status: 400 }
