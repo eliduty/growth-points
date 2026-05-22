@@ -76,18 +76,39 @@ export interface ApiResponse<T> {
 }
 
 /**
- * 积分概览类型
+ * 孩子端任务类型
  */
-export interface PointsOverview {
-  current: number;
-  total: number;
-  weekly: number;
+export interface ChildTask {
+  id: string;
+  name: string;
+  points: number;
+  description: string | null;
+  categoryId: string;
+  categoryName: string;
+  categoryOrder: number;
+  completed: boolean;
+  completedAt: string | null;
+}
+
+/**
+ * 孩子端礼物类型
+ */
+export interface ChildGift {
+  id: string;
+  name: string;
+  points: number;
+  description: string | null;
+  color: string | null;
+  weeklyLimit: number | null;
+  weeklyRedeemed: number;
+  limitStatus: "unlimited" | "available" | "exhausted";
+  canRedeem: boolean;
 }
 
 /**
  * 兑换日信息类型
  */
-export interface ExchangeDaysInfo {
+export interface ExchangeDayInfo {
   days: number[];
   isExchangeDay: boolean;
   nextExchangeDay?: {
@@ -97,19 +118,22 @@ export interface ExchangeDaysInfo {
 }
 
 /**
- * Session 数据类型
+ * 孩子端礼物页响应类型
  */
-export interface SessionData {
-  userId: string;
-  role: Role;
-  familyId: string;
-}
-
-/**
- * Iron-session 配置类型
- */
-export interface IronSession {
-  session: SessionData;
+export interface ChildGiftsResponse {
+  pointsOverview: {
+    current: number;
+    total: number;
+    weekly: number;
+  };
+  exchangeDaysInfo: ExchangeDayInfo;
+  gifts: ChildGift[];
+  pendingRedemptions: {
+    id: string;
+    giftName: string;
+    points: number;
+    redeemedAt: string;
+  }[];
 }
 
 /**
@@ -183,4 +207,20 @@ export interface Member {
   isMe: boolean;
   currentPoints?: number;
   totalPoints?: number;
+}
+
+/**
+ * Session 数据类型
+ */
+export interface SessionData {
+  userId: string;
+  role: Role;
+  familyId: string;
+}
+
+/**
+ * Iron-session 配置类型
+ */
+export interface IronSession {
+  session: SessionData;
 }
