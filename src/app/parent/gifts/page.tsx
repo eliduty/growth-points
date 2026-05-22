@@ -227,6 +227,16 @@ export default function ParentGiftsPage() {
                   添加礼物
                 </Button>
               </motion.div>
+
+              {/* 操作提示 */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="text-center text-sm text-text-muted mt-6"
+              >
+                长按礼物卡片可编辑或删除
+              </motion.div>
             </>
           )}
         </>

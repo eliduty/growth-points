@@ -11,7 +11,7 @@ import WeekHistory from "@/components/child/WeekHistory";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   const [activeTab, setActiveTab] = useState<"completions" | "redemptions">("completions");
   const [expandedWeeks, setExpandedWeeks] = useState<Set<number>>(new Set([0])); // 默认展开本周
   const { completions, redemptions, isLoading, error } = useChildHistory(4);
@@ -31,6 +31,7 @@ export default function ProfilePage() {
   const handleLogout = async () => {
     // 清除会话并跳转到登录页
     await fetch("/api/logout", { method: "POST" });
+    setUser(null);
     router.push("/child/login");
   };
 

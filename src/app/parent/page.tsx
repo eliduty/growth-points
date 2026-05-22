@@ -76,37 +76,32 @@ export default function ParentStatsPage() {
         )}
       </motion.div>
 
-      {/* 孩子概览卡片（横向滑动） */}
-      <div className="mb-6">
-        <div className="overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
-          <div className="flex gap-4">
-            {children.map((child, index) => (
-              <motion.div
-                key={child.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <ChildOverviewCard
-                  child={child}
-                  weekRange={weekRange!}
-                />
-              </motion.div>
-            ))}
-          </div>
-        </div>
+      {/* 孩子概览卡片（垂直列表） */}
+      <div className="space-y-6">
+        {children.map((child, index) => (
+          <motion.div
+            key={child.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <ChildOverviewCard
+              child={child}
+              weekRange={weekRange!}
+            />
+          </motion.div>
+        ))}
       </div>
 
-      {/* 滚动隐藏样式 */}
-      <style jsx global>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
+      {/* 操作提示 */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3 }}
+        className="text-center text-sm text-text-muted mt-8"
+      >
+        点击「查看详情」可查看孩子的完成记录
+      </motion.div>
     </div>
   );
 }

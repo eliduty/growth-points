@@ -165,22 +165,36 @@ export default function ChildStatsDetailPage() {
           <p className="text-text-secondary">本周暂无完成记录</p>
         </motion.div>
       ) : (
-        <div className="space-y-3">
-          {sortedCompletions.map((record, index) => (
-            <motion.div
-              key={record.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-            >
-              <CompletionRecordCard
-                record={record}
-                onRevoke={handleRevoke}
-                disabled={isRevoking}
-              />
-            </motion.div>
-          ))}
-        </div>
+        <>
+          <div className="space-y-3">
+            {sortedCompletions.map((record, index) => (
+              <motion.div
+                key={record.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <CompletionRecordCard
+                  record={record}
+                  onRevoke={handleRevoke}
+                  disabled={isRevoking}
+                />
+              </motion.div>
+            ))}
+          </div>
+
+          {/* 底部统计 */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="mt-8 pt-4 border-t border-border text-center"
+          >
+            <p className="text-base text-text-secondary">
+              本周共完成 <span className="font-bold text-primary">{sortedCompletions.length}</span> 个任务
+            </p>
+          </motion.div>
+        </>
       )}
 
       {/* 确认弹窗 */}
