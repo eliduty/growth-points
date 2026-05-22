@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Providers } from "@/providers";
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Todo List - 待办事项管理",
@@ -13,7 +15,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body className="antialiased">{children}</body>
+      <body className="antialiased">
+        <Providers>
+          {children}
+          <Toaster position="top-center" richColors />
+        </Providers>
+      </body>
     </html>
   );
 }
