@@ -29,7 +29,7 @@ export default function ParentLoginPage() {
 
       {/* 登录容器 */}
       <div
-        className="w-full max-w-[375px] bg-white rounded-[20px] p-9 relative z-10 animate-[fadeInScale_0.5s_ease-out]"
+        className="w-full max-w-[375px] bg-white rounded-[20px] p-9 relative z-10 animate-fade-up"
         style={{
           boxShadow:
             "0 8px 32px rgba(91, 127, 255, 0.12), 0 4px 8px rgba(91, 127, 255, 0.08)",
@@ -74,20 +74,6 @@ export default function ParentLoginPage() {
           <span>注册后自动创建家庭，成为创始家长</span>
         </div>
       </div>
-
-      {/* 动画样式 */}
-      <style jsx global>{`
-        @keyframes fadeInScale {
-          from {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          to {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-      `}</style>
     </div>
   );
 }
