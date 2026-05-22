@@ -3,13 +3,16 @@ node_modules
 .env.local
 .env*.local
 
-prisma/*.db
-prisma/*.db-journal
+# Prisma generated client
 src/generated/prisma
 
-# Local database at root
+# Local database files (any location)
 dev.db
 dev.db-journal
+db/*.db
+db/*.db-journal
+prisma/*.db
+prisma/*.db-journal
 
 # TypeScript build cache
 *.tsbuildinfo
