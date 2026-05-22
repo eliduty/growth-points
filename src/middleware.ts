@@ -56,11 +56,12 @@ export const config = {
   matcher: [
     /*
      * 匹配所有路径，除了：
+     * - api (API 路由)
      * - _next/static (静态文件)
      * - _next/image (图片优化)
      * - favicon.ico (浏览器图标)
      * - public folder
      */
-    "/((?!_next/static|_next/image|favicon.ico|public/).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|public/).*)",
   ],
 };
