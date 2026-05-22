@@ -109,3 +109,26 @@ export function getSecondsUntilNextExchange(exchangeDays: number[]): number {
   const nextExchangeDay = now.add(nextInfo.daysUntil, "day").startOf("day");
   return nextExchangeDay.diff(now, "second");
 }
+
+/**
+ * 格式化相对时间（如 "3分钟前"、"2小时前"）
+ */
+export function formatRelativeTime(date: Date | string): string {
+  const now = getBeijingNow();
+  const target = dayjs(date).tz(BEIJING_TZ);
+  const diffMinutes = now.diff(target, "minute");
+  const diffHours = now.diff(target, "hour");
+  const diffDays = now.diff(target, "day");
+
+  if (diffMinutes < 1) {
+    return "刚刚";
+  } else if (diffMinutes < 60) {
+    return `${diffMinutes}分钟前`;
+  } else if (diffHours < 24) {
+    return `${diffHours}小时前`;
+  } else if (diffDays < 7) {
+    return `${diffDays}天前`;
+  } else {
+    return target.format("YYYY-MM-DD HH:mm");
+  }
+}

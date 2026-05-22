@@ -98,7 +98,7 @@ export const giftsApi = {
     const res = await fetch(`${API_BASE}/gifts`);
     return res.json();
   },
-  create: async (data: { name: string; points: number; description?: string; weeklyLimit?: number }): Promise<ApiResponse<{ id: string; name: string; points: number; description: string | null; color: string; weeklyLimit: number | null }>> => {
+  create: async (data: { name: string; points: number; description?: string; weeklyLimit?: number | null }): Promise<ApiResponse<{ id: string; name: string; points: number; description: string | null; color: string; weeklyLimit: number | null }>> => {
     const res = await fetch(`${API_BASE}/gifts`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -106,7 +106,7 @@ export const giftsApi = {
     });
     return res.json();
   },
-  update: async (id: string, data: Partial<{ name: string; points: number; description: string; weeklyLimit: number }>): Promise<ApiResponse<{ id: string; name: string; points: number; description: string | null; color: string | null; weeklyLimit: number | null }>> => {
+  update: async (id: string, data: Partial<{ name: string; points: number; description: string; weeklyLimit: number | null }>): Promise<ApiResponse<{ id: string; name: string; points: number; description: string | null; color: string | null; weeklyLimit: number | null }>> => {
     const res = await fetch(`${API_BASE}/gifts/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
