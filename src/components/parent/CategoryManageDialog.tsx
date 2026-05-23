@@ -55,7 +55,7 @@ export function CategoryManageDialog({
 
   const handleAddCategory = async () => {
     if (!newCategoryName.trim()) {
-      toast.error("请输入类别名称");
+      toast.warning("请输入类别名称");
       return;
     }
 
@@ -74,7 +74,7 @@ export function CategoryManageDialog({
 
   const handleDeleteCategory = async (id: string, taskCount: number) => {
     if (taskCount > 0) {
-      toast.error("该类别下还有任务，无法删除");
+      toast.warning("该类别下还有任务，无法删除");
       return;
     }
 
