@@ -8,6 +8,14 @@ import { useChildHistory } from "@/hooks/use-child-history";
 import { useUser } from "@/hooks/use-user";
 import HistoryTab from "@/components/child/HistoryTab";
 import WeekHistory from "@/components/child/WeekHistory";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -15,6 +23,7 @@ export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<"completions" | "redemptions">("completions");
   const [expandedWeeks, setExpandedWeeks] = useState<Set<number>>(new Set([0])); // 默认展开本周
   const { completions, redemptions, isLoading, error } = useChildHistory(4);
+  const [showLogoutDialog, setShowLogoutDialog] = useState(false);
 
   const toggleWeek = (index: number) => {
     setExpandedWeeks((prev) => {
@@ -28,8 +37,12 @@ export default function ProfilePage() {
     });
   };
 
-  const handleLogout = async () => {
-    // 清除会话并跳转到登录页
+  const handleLogout = () => {
+    setShowLogoutDialog(true);
+  };
+
+  const confirmLogout = async () => {
+    setShowLogoutDialog(false);
     await fetch("/api/logout", { method: "POST" });
     setUser(null);
     router.push("/child/login");
@@ -132,6 +145,30 @@ export default function ProfilePage() {
           退出登录
         </button>
       </motion.div>
+
+      {/* 退出确认对话框 */}
+      <Dialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>确认退出</DialogTitle>
+            <DialogDescription>退出后需要重新登录才能继续使用，确定要退出吗？</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <button
+              onClick={() => setShowLogoutDialog(false)}
+              className="px-4 py-2 rounded-xl text-gray-600 font-medium hover:bg-gray-100 transition-colors"
+            >
+              取消
+            </button>
+            <button
+              onClick={confirmLogout}
+              className="px-4 py-2 bg-[#FF6B35] text-white rounded-xl font-medium hover:bg-[#FF5722] transition-colors"
+            >
+              确认退出
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
