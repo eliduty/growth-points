@@ -82,9 +82,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       code: 0,
       data: {
-        weekStart: formatBeijingTime(weekStart),
-        weekEnd: formatBeijingTime(weekEnd),
-        stats,
+        weekRange: {
+          start: formatBeijingTime(weekStart),
+          end: formatBeijingTime(weekEnd),
+        },
+        children: stats,
       },
       message: "获取成功",
     });
