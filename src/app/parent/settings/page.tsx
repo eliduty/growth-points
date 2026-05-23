@@ -112,19 +112,15 @@ export default function ParentSettingsPage() {
       {/* 成员管理 */}
       <SettingsCard title="成员管理" icon={Users} delay={0.1} className="mb-4">
         <MemberGroup
-          title="孩子成员"
+          title="孩子"
           members={children}
           onDelete={handleDeleteMember}
           onAdd={() => setAddChildDialogOpen(true)}
           isAdding={isAddingMember}
-          showPoints
         />
 
-        {/* 分割线 */}
-        <div className="my-4 border-t border-border" />
-
         <MemberGroup
-          title="家长成员"
+          title="家长"
           members={parents}
           onDelete={handleDeleteMember}
           onAdd={() => setAddParentDialogOpen(true)}
