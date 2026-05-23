@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import ParentLoginForm from "@/components/parent/ParentLoginForm";
 import { Home, Info } from "lucide-react";
 
 export default function ParentLoginPage() {
+  const [mode, setMode] = useState<"login" | "register">("login");
+
   // 设置 data-role='parent' 以应用蓝色主题
   useEffect(() => {
     document.documentElement.setAttribute("data-role", "parent");
@@ -12,6 +14,9 @@ export default function ParentLoginPage() {
       document.documentElement.removeAttribute("data-role");
     };
   }, []);
+
+  // 副标题根据模式动态变化
+  const subtitle = mode === "login" ? "家长端管理平台" : "创建新家庭";
 
   return (
     <div
@@ -62,14 +67,15 @@ export default function ParentLoginPage() {
           <h1 className="text-[22px] font-semibold text-[var(--text-primary)] mb-2 tracking-wide">
             家庭积分兑换系统
           </h1>
-          <p className="text-sm text-[var(--text-muted)]">家长端管理平台</p>
+          {/* 副标题 - 动态变化 */}
+          <p className="text-sm text-[var(--text-muted)] transition-all">{subtitle}</p>
         </div>
 
         {/* 登录表单 */}
-        <ParentLoginForm />
+        <ParentLoginForm onModeChange={setMode} />
 
         {/* 底部提示 */}
-        <div className="mt-7 text-center flex items-center justify-center gap-2 text-xs text-[var(--text-muted)]">
+        <div className="mt-5 text-center flex items-center justify-center gap-2 text-xs text-[var(--text-muted)]">
           <Info className="w-3.5 h-3.5" />
           <span>注册后自动创建家庭，成为创始家长</span>
         </div>

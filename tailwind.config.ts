@@ -49,6 +49,7 @@ const config: Config = {
       },
       spacing: {
         "nav": "var(--nav-height)",
+        "topnav": "56px",
       },
       borderRadius: {
         card: "16px",
@@ -58,6 +59,7 @@ const config: Config = {
       boxShadow: {
         card: "var(--shadow-card)",
         nav: "0 -4px 16px rgba(0, 0, 0, 0.08)",
+        topnav: "0 2px 8px rgba(91, 127, 255, 0.04)",
       },
       animation: {
         "pop-in": "popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)",

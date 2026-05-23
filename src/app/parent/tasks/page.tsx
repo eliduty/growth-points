@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Plus, Settings, RefreshCw, AlertCircle } from "lucide-react";
 import { useTasks } from "@/hooks/use-tasks";
+import { useTopNavbar } from "@/providers/topnavbar-provider";
 import { CategorySection } from "@/components/parent/CategorySection";
 import { AddTaskDialog } from "@/components/parent/AddTaskDialog";
 import { EditTaskDialog } from "@/components/parent/EditTaskDialog";
@@ -30,6 +31,8 @@ export default function ParentTasksPage() {
     updateCategoryOrder,
   } = useTasks();
 
+  const { setConfig } = useTopNavbar();
+
   // 弹窗状态
   const [addTaskDialogOpen, setAddTaskDialogOpen] = useState(false);
   const [editTaskDialogOpen, setEditTaskDialogOpen] = useState(false);
@@ -38,6 +41,24 @@ export default function ParentTasksPage() {
 
   // 选中的任务
   const [selectedTask, setSelectedTask] = useState<ParentTask | null>(null);
+
+  // 设置 TopNavbar 操作按钮
+  useEffect(() => {
+    setConfig({
+      action: (
+        <div className="flex items-center gap-1">
+          {isFetching && <RefreshCw className="w-3 h-3 animate-spin text-text-muted" />}
+          <button
+            onClick={() => setAddTaskDialogOpen(true)}
+            disabled={categories.length === 0 || isCreatingTask}
+            className="flex items-center justify-center"
+          >
+            <Plus className="w-5 h-5 stroke-primary stroke-width-2" />
+          </button>
+        </div>
+      ),
+    });
+  }, [setConfig, categories.length, isCreatingTask, isFetching]);
 
   // 处理编辑任务
   const handleEditTask = (task: ParentTask) => {
@@ -90,35 +111,6 @@ export default function ParentTasksPage() {
 
   return (
     <div className="p-4">
-      {/* 顶部操作栏 */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between mb-4"
-      >
-        <Button
-          variant="outline"
-          onClick={() => setCategoryManageDialogOpen(true)}
-          className="flex items-center gap-2"
-        >
-          <Settings className="w-4 h-4" />
-          管理类别
-        </Button>
-
-        <Button
-          onClick={() => setAddTaskDialogOpen(true)}
-          disabled={categories.length === 0 || isCreatingTask}
-          className="flex items-center gap-2"
-        >
-          <Plus className="w-4 h-4" />
-          添加任务
-        </Button>
-
-        {isFetching && (
-          <RefreshCw className="w-4 h-4 animate-spin text-text-muted absolute right-4" />
-        )}
-      </motion.div>
-
       {/* 任务列表 */}
       {categories.length === 0 ? (
         <motion.div

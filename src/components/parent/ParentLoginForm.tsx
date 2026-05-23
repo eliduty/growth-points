@@ -5,9 +5,6 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { LogIn, UserPlus } from "lucide-react";
 
@@ -36,7 +33,12 @@ const registerSchema = z
 type LoginFormData = z.infer<typeof loginSchema>;
 type RegisterFormData = z.infer<typeof registerSchema>;
 
-export default function ParentLoginForm() {
+// 供父组件使用的回调类型
+interface ParentLoginFormProps {
+  onModeChange?: (mode: "login" | "register") => void;
+}
+
+export default function ParentLoginForm({ onModeChange }: ParentLoginFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [currentMode, setCurrentMode] = useState<"login" | "register">("login");
@@ -65,6 +67,7 @@ export default function ParentLoginForm() {
     setCurrentMode(newMode);
     loginForm.reset();
     registerForm.reset();
+    onModeChange?.(newMode);
   };
 
   // 登录提交
@@ -132,51 +135,22 @@ export default function ParentLoginForm() {
   };
 
   return (
-    <div className="space-y-6">
-      {/* 模式切换按钮 */}
-      <div className="flex gap-2">
-        <button
-          onClick={() => switchMode("login")}
-          className={`flex-1 py-2.5 text-center font-medium rounded-lg transition-all ${
-            currentMode === "login"
-              ? "bg-[var(--color-primary)] text-white shadow-sm"
-              : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-page)]"
-          }`}
-        >
-          <span className="inline-flex items-center gap-2">
-            <LogIn className="w-4 h-4" />
-            登录
-          </span>
-        </button>
-        <button
-          onClick={() => switchMode("register")}
-          className={`flex-1 py-2.5 text-center font-medium rounded-lg transition-all ${
-            currentMode === "register"
-              ? "bg-[var(--color-primary)] text-white shadow-sm"
-              : "text-[var(--text-secondary)] hover:text-[var(--text-primary)] bg-[var(--bg-page)]"
-          }`}
-        >
-          <span className="inline-flex items-center gap-2">
-            <UserPlus className="w-4 h-4" />
-            注册
-          </span>
-        </button>
-      </div>
-
+    <div className="mt-7">
       {/* 登录表单 */}
       {currentMode === "login" && (
         <form
           onSubmit={loginForm.handleSubmit(onLoginSubmit)}
-          className="space-y-5"
+          className="space-y-[22px]"
         >
-          <div className="space-y-2">
-            <Label htmlFor="login-username">用户名</Label>
-            <Input
-              id="login-username"
+          <div className="space-y-[10px]">
+            <label className="block text-sm text-[var(--text-primary)] font-medium">
+              用户名
+            </label>
+            <input
               {...loginForm.register("username")}
               placeholder="请输入用户名"
               disabled={isLoading}
-              className="h-12 rounded-lg border-[var(--border-color)] bg-[var(--bg-page)] focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]/10"
+              className="w-full h-12 border border-[var(--border-color)] rounded-[8px] px-[18px] py-[14px] text-base font-[inherit] transition-all bg-[var(--bg-page)] focus:outline-none focus:border-[var(--color-primary)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(91,127,255,0.1)] placeholder:text-[var(--text-muted)]"
             />
             {loginForm.formState.errors.username && (
               <p className="text-sm text-error">
@@ -185,15 +159,16 @@ export default function ParentLoginForm() {
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="login-password">密码</Label>
-            <Input
-              id="login-password"
+          <div className="space-y-[10px]">
+            <label className="block text-sm text-[var(--text-primary)] font-medium">
+              密码
+            </label>
+            <input
               type="password"
               {...loginForm.register("password")}
               placeholder="请输入密码"
               disabled={isLoading}
-              className="h-12 rounded-lg border-[var(--border-color)] bg-[var(--bg-page)] focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]/10"
+              className="w-full h-12 border border-[var(--border-color)] rounded-[8px] px-[18px] py-[14px] text-base font-[inherit] transition-all bg-[var(--bg-page)] focus:outline-none focus:border-[var(--color-primary)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(91,127,255,0.1)] placeholder:text-[var(--text-muted)]"
             />
             {loginForm.formState.errors.password && (
               <p className="text-sm text-error">
@@ -202,17 +177,16 @@ export default function ParentLoginForm() {
             )}
           </div>
 
-          <Button
+          <button
             type="submit"
-            className="w-full h-12 bg-gradient-to-r from-primary to-primaryLight hover:opacity-90 rounded-lg shadow-sm"
-            size="lg"
             disabled={isLoading}
+            className="w-full h-12 bg-[linear-gradient(135deg,var(--color-primary)_0%,var(--color-primary-light)_100%)] border-none rounded-[8px] text-white text-base font-medium font-[inherit] cursor-pointer transition-all shadow-[0_4px_12px_rgba(91,127,255,0.2)] mt-2 flex items-center justify-center gap-[10px] relative overflow-hidden hover:translate-y-[-2px] hover:shadow-[0_6px_16px_rgba(91,127,255,0.25)] active:translate-y-0 active:shadow-[0_2px_8px_rgba(91,127,255,0.2)] disabled:opacity-50 disabled:cursor-not-allowed group"
           >
-            <span className="inline-flex items-center gap-2">
-              <LogIn className="w-5 h-5" />
-              {isLoading ? "登录中..." : "登录"}
-            </span>
-          </Button>
+            {/* 光泽效果 */}
+            <span className="absolute top-0 left-[-100%] w-full h-full bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent)] group-hover:left-[100%] transition-[left_0.5s]" />
+            <LogIn className="w-5 h-5" />
+            {isLoading ? "登录中..." : "登录"}
+          </button>
         </form>
       )}
 
@@ -220,16 +194,17 @@ export default function ParentLoginForm() {
       {currentMode === "register" && (
         <form
           onSubmit={registerForm.handleSubmit(onRegisterSubmit)}
-          className="space-y-5"
+          className="space-y-[22px]"
         >
-          <div className="space-y-2">
-            <Label htmlFor="register-username">用户名</Label>
-            <Input
-              id="register-username"
+          <div className="space-y-[10px]">
+            <label className="block text-sm text-[var(--text-primary)] font-medium">
+              用户名
+            </label>
+            <input
               {...registerForm.register("username")}
               placeholder="请输入用户名"
               disabled={isLoading}
-              className="h-12 rounded-lg border-[var(--border-color)] bg-[var(--bg-page)] focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]/10"
+              className="w-full h-12 border border-[var(--border-color)] rounded-[8px] px-[18px] py-[14px] text-base font-[inherit] transition-all bg-[var(--bg-page)] focus:outline-none focus:border-[var(--color-primary)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(91,127,255,0.1)] placeholder:text-[var(--text-muted)]"
             />
             {registerForm.formState.errors.username && (
               <p className="text-sm text-error">
@@ -238,15 +213,16 @@ export default function ParentLoginForm() {
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="register-password">密码</Label>
-            <Input
-              id="register-password"
+          <div className="space-y-[10px]">
+            <label className="block text-sm text-[var(--text-primary)] font-medium">
+              密码
+            </label>
+            <input
               type="password"
               {...registerForm.register("password")}
               placeholder="请输入密码（至少6位）"
               disabled={isLoading}
-              className="h-12 rounded-lg border-[var(--border-color)] bg-[var(--bg-page)] focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]/10"
+              className="w-full h-12 border border-[var(--border-color)] rounded-[8px] px-[18px] py-[14px] text-base font-[inherit] transition-all bg-[var(--bg-page)] focus:outline-none focus:border-[var(--color-primary)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(91,127,255,0.1)] placeholder:text-[var(--text-muted)]"
             />
             {registerForm.formState.errors.password && (
               <p className="text-sm text-error">
@@ -255,15 +231,16 @@ export default function ParentLoginForm() {
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="register-confirmPassword">确认密码</Label>
-            <Input
-              id="register-confirmPassword"
+          <div className="space-y-[10px]">
+            <label className="block text-sm text-[var(--text-primary)] font-medium">
+              确认密码
+            </label>
+            <input
               type="password"
               {...registerForm.register("confirmPassword")}
               placeholder="请再次输入密码"
               disabled={isLoading}
-              className="h-12 rounded-lg border-[var(--border-color)] bg-[var(--bg-page)] focus:border-[var(--color-primary)] focus:ring-[var(--color-primary)]/10"
+              className="w-full h-12 border border-[var(--border-color)] rounded-[8px] px-[18px] py-[14px] text-base font-[inherit] transition-all bg-[var(--bg-page)] focus:outline-none focus:border-[var(--color-primary)] focus:bg-white focus:shadow-[0_0_0_3px_rgba(91,127,255,0.1)] placeholder:text-[var(--text-muted)]"
             />
             {registerForm.formState.errors.confirmPassword && (
               <p className="text-sm text-error">
@@ -272,19 +249,47 @@ export default function ParentLoginForm() {
             )}
           </div>
 
-          <Button
+          <button
             type="submit"
-            className="w-full h-12 bg-gradient-to-r from-primary to-primaryLight hover:opacity-90 rounded-lg shadow-sm"
-            size="lg"
             disabled={isLoading}
+            className="w-full h-12 bg-[linear-gradient(135deg,var(--color-primary)_0%,var(--color-primary-light)_100%)] border-none rounded-[8px] text-white text-base font-medium font-[inherit] cursor-pointer transition-all shadow-[0_4px_12px_rgba(91,127,255,0.2)] mt-2 flex items-center justify-center gap-[10px] relative overflow-hidden hover:translate-y-[-2px] hover:shadow-[0_6px_16px_rgba(91,127,255,0.25)] active:translate-y-0 active:shadow-[0_2px_8px_rgba(91,127,255,0.2)] disabled:opacity-50 disabled:cursor-not-allowed group"
           >
-            <span className="inline-flex items-center gap-2">
-              <UserPlus className="w-5 h-5" />
-              {isLoading ? "注册中..." : "注册"}
-            </span>
-          </Button>
+            {/* 光泽效果 */}
+            <span className="absolute top-0 left-[-100%] w-full h-full bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.15),transparent)] group-hover:left-[100%] transition-[left_0.5s]" />
+            <UserPlus className="w-5 h-5" />
+            {isLoading ? "注册中..." : "注册"}
+          </button>
         </form>
       )}
+
+      {/* 切换登录/注册 - 底部链接方式 */}
+      <div className="text-center mt-7 pt-7 border-t border-[var(--border-color)]">
+        <p className="text-sm text-[var(--text-muted)]">
+          {currentMode === "login" ? (
+            <>
+              没有账号？
+              <span
+                onClick={() => switchMode("register")}
+                className="text-[var(--color-primary)] font-medium cursor-pointer transition-color inline-flex items-center gap-1 hover:text-[var(--color-primary-light)]"
+              >
+                <UserPlus className="w-3.5 h-3.5" />
+                注册
+              </span>
+            </>
+          ) : (
+            <>
+              已有账号？
+              <span
+                onClick={() => switchMode("login")}
+                className="text-[var(--color-primary)] font-medium cursor-pointer transition-color inline-flex items-center gap-1 hover:text-[var(--color-primary-light)]"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                登录
+              </span>
+            </>
+          )}
+        </p>
+      </div>
     </div>
   );
 }

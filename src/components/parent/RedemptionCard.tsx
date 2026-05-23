@@ -1,9 +1,9 @@
 "use client";
 
+import { Clock, CheckCircle, Gift, User, Star } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { formatRelativeTime } from "@/lib/date";
 import { RedemptionStatus } from "@/generated/prisma";
-import { Button } from "@/components/ui/button";
 
 interface Redemption {
   id: string;
@@ -36,71 +36,94 @@ export function RedemptionCard({
   const isConfirmed = redemption.status === RedemptionStatus.CONFIRMED;
 
   return (
-    <div
-      className={cn(
-        "bg-card rounded-card p-4 border border-border shadow-sm",
-        isPending && "border-primary/50"
-      )}
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex-1 min-w-0">
-          {/* 顶部颜色条 */}
-          <div
-            className="h-1 rounded-full mb-2 w-12"
-            style={{ backgroundColor: redemption.giftColor || "#4ECDC4" }}
-          />
-
-          <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-base font-medium text-text truncate">
-              {redemption.giftName}
-            </h3>
-            <span
-              className={cn(
-                "px-2 py-0.5 rounded-full text-xs font-medium shrink-0",
-                isPending && "bg-primary/20 text-primary",
-                isConfirmed && "bg-green-100 text-green-700"
-              )}
-            >
-              {isPending ? "待确认" : "已确认"}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 text-sm text-text-secondary">
-            <span>{redemption.username}</span>
-            <span className="text-xs">兑换</span>
-            <span className="text-primary font-medium">
-              {redemption.points} 积分
-            </span>
-          </div>
-
-          <p className="text-xs text-text-secondary mt-1">
-            {isConfirmed && redemption.confirmedAt
-              ? `确认于 ${formatRelativeTime(redemption.confirmedAt)}`
-              : `申请于 ${formatRelativeTime(redemption.redeemedAt)}`}
-          </p>
+    <div className="flex items-start justify-between py-[14px] border-b border-[#E5E7EB] last:border-b-0">
+      {/* 左侧信息 */}
+      <div className="flex-1">
+        {/* 兑换名称 */}
+        <div className="text-sm text-[var(--text-primary)] mb-1 flex items-center gap-2">
+          <Gift className="w-4 h-4 stroke-[var(--color-primary)]" />
+          {redemption.username}兑换了「{redemption.giftName}」
         </div>
 
-        {/* 待确认时显示操作按钮 */}
-        {isPending && onConfirm && onCancel && (
-          <div className="flex items-center gap-2 shrink-0">
-            <Button
-              size="sm"
-              onClick={() => onConfirm(redemption.id)}
-              disabled={isConfirming || isCancelling}
-            >
-              {isConfirming ? "确认中..." : "确认"}
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => onCancel(redemption.id)}
-              disabled={isConfirming || isCancelling}
-            >
-              {isCancelling ? "撤销中..." : "撤销"}
-            </Button>
-          </div>
-        )}
+        {/* 时间 */}
+        <div className="text-xs text-[var(--text-muted)] flex items-center gap-1">
+          <Clock className="w-3 h-3" />
+          {isConfirmed && redemption.confirmedAt
+            ? formatRelativeTime(redemption.confirmedAt)
+            : formatRelativeTime(redemption.redeemedAt)}
+        </div>
       </div>
+
+      {/* 积分 */}
+      <div className="text-sm text-[var(--color-error)] font-semibold mr-[14px] flex items-center gap-1">
+        <Star className="w-3.5 h-3.5 stroke-[var(--color-error)]" />
+        -{redemption.points}积分
+      </div>
+
+      {/* 操作按钮 - 仅待确认时显示 */}
+      {isPending && onConfirm && onCancel && (
+        <div className="flex gap-2">
+          <button
+            onClick={() => onConfirm(redemption.id)}
+            disabled={isConfirming || isCancelling}
+            className="bg-white border border-[#E5E7EB] rounded-[6px] px-[14px] py-2 text-sm cursor-pointer transition-all flex items-center gap-1 text-[var(--color-success)] hover:bg-[var(--color-success)] hover:text-white hover:border-[var(--color-success)] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <CheckCircle className="w-3.5 h-3.5" />
+            {isConfirming ? "确认中..." : "确认"}
+          </button>
+          <button
+            onClick={() => onCancel(redemption.id)}
+            disabled={isConfirming || isCancelling}
+            className="bg-white border border-[#E5E7EB] rounded-[6px] px-[14px] py-2 text-sm cursor-pointer transition-all flex items-center gap-1 hover:border-[var(--color-error)] hover:text-[var(--color-error)] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <User className="w-3.5 h-3.5 stroke-[var(--text-secondary)]" />
+            {isCancelling ? "撤销中..." : "撤销"}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// 兑换区域 Section Header 组件
+interface RedemptionSectionProps {
+  title: string;
+  count: number;
+  type: "pending" | "confirmed";
+  children: React.ReactNode;
+}
+
+export function RedemptionSection({
+  title,
+  count,
+  type,
+  children,
+}: RedemptionSectionProps) {
+  return (
+    <div
+      className="bg-white rounded-[12px] shadow-[0_2px_8px_rgba(0,0,0,0.08)] border border-[#E5E7EB] mb-3"
+    >
+      {/* Header - 渐变背景 */}
+      <div
+        className={cn(
+          "px-[18px] py-[14px] rounded-t-[12px] text-sm text-[var(--text-primary)] font-medium flex items-center gap-[10px]",
+          type === "pending" &&
+            "bg-[linear-gradient(135deg,#FEF3C7_0%,#FDE68A_100%)]",
+          type === "confirmed" &&
+            "bg-[linear-gradient(135deg,#D1FAE5_0%,#A7F3D0_100%)]"
+        )}
+      >
+        {type === "pending" && (
+          <Clock className="w-[18px] h-[18px] stroke-[var(--color-warning)]" />
+        )}
+        {type === "confirmed" && (
+          <CheckCircle className="w-[18px] h-[18px] stroke-[var(--color-success)]" />
+        )}
+        {title}（{count} 条）
+      </div>
+
+      {/* 内容列表 */}
+      <div className="px-[18px]">{children}</div>
     </div>
   );
 }

@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import BottomNav from "@/components/shared/BottomNav";
+import TopNavbar from "@/components/shared/TopNavbar";
+import { TopNavbarProvider } from "@/providers/topnavbar-provider";
 import { useUser } from "@/hooks/use-user";
 
 export default function ChildLayout({
@@ -48,9 +50,12 @@ export default function ChildLayout({
   }
 
   return (
-    <div className="min-h-screen pb-nav" style={{ background: "var(--bg-gradient)" }}>
-      {children}
-      {!isLoginPage && <BottomNav role="child" />}
-    </div>
+    <TopNavbarProvider>
+      <div className="min-h-screen pb-nav pt-topnav" style={{ background: "var(--bg-gradient)" }}>
+        {!isLoginPage && <TopNavbar />}
+        {children}
+        {!isLoginPage && <BottomNav role="child" />}
+      </div>
+    </TopNavbarProvider>
   );
 }

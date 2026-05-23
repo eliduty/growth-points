@@ -33,8 +33,62 @@
       font-family: 'Smiley Sans Oblique', 'PingFang SC', 'Microsoft YaHei', sans-serif;
       min-height: 100vh;
       background: linear-gradient(135deg, #FFF8F0 0%, #FFEDD8 50%, #FFFBE8 100%);
+      padding-top: 56px;
       padding-bottom: var(--nav-height);
       position: relative;
+    }
+
+    /* 顶部导航栏 */
+    .top-nav {
+      height: 56px;
+      background: linear-gradient(135deg, #FF6B35 0%, #FF8A50 100%);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      box-shadow: 0 2px 8px rgba(255, 107, 53, 0.15);
+    }
+
+    .nav-back {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 150ms ease-out;
+      border-radius: 8px;
+    }
+
+    .nav-back:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-back svg {
+      width: 24px;
+      height: 24px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .nav-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .nav-action {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     body::before {
@@ -471,6 +525,15 @@
   </style>
 </head>
 <body>
+  <!-- 顶部导航栏 -->
+  <div class="top-nav">
+    <div class="nav-back">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </div>
+    <div class="nav-title">个人中心</div>
+    <div class="nav-action"></div>
+  </div>
+
   <div class="page-content">
     <!-- 用户信息区 -->
     <div class="user-info">

@@ -29,7 +29,62 @@
       font-family: 'Smiley Sans Oblique', 'PingFang SC', 'Microsoft YaHei', sans-serif;
       min-height: 100vh;
       background: linear-gradient(135deg, #F0F4FF 0%, #E8F0FE 50%, #F5F7FF 100%);
+      padding-top: 56px;
       padding-bottom: var(--nav-height);
+    }
+
+    /* 顶部导航栏 */
+    .top-nav {
+      height: 56px;
+      background: white;
+      border-bottom: 1px solid #E5E7EB;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      box-shadow: 0 2px 8px rgba(91, 127, 255, 0.04);
+    }
+
+    .nav-back {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 150ms ease-out;
+      border-radius: 8px;
+    }
+
+    .nav-back:hover {
+      background: #F5F7FF;
+    }
+
+    .nav-back svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--text-primary);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .nav-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .nav-action {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     body::before {
@@ -360,20 +415,21 @@
   </style>
 </head>
 <body>
-  <div class="page-content">
-    <!-- 顶部操作栏 -->
-    <div class="top-bar">
-      <button class="btn-secondary" onclick="showCategoryPopup()">
-        <!-- Settings icon -->
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        管理类别
-      </button>
-      <button class="btn-primary" onclick="showAddPopup()">
-        <!-- Plus icon -->
-        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        添加任务
-      </button>
+  <!-- 顶部导航栏 -->
+  <div class="top-nav">
+    <div class="nav-back">
+      <!-- ChevronLeft icon -->
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
+    <div class="nav-title">任务管理</div>
+    <div class="nav-action">
+      <!-- Plus icon - 添加任务 -->
+      <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--color-primary)" stroke-width="2" fill="none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </div>
+  </div>
+
+  <div class="page-content">
+    <!-- 操作按钮已移至顶部导航栏右侧 -->
 
     <!-- 学习类（展开） -->
     <div class="category-group">

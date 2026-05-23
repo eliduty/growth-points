@@ -109,23 +109,6 @@ export default function ParentSettingsPage() {
 
   return (
     <div className="p-4">
-      {/* 标题 */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-6"
-      >
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-text">设置</h1>
-          {isFetching && (
-            <div className="flex items-center gap-1 text-xs text-text-secondary">
-              <RefreshCw className="w-3 h-3 animate-spin" />
-              <span>刷新中...</span>
-            </div>
-          )}
-        </div>
-      </motion.div>
-
       {/* 成员管理 */}
       <SettingsCard title="成员管理" icon={Users} delay={0.1} className="mb-4">
         <MemberGroup
