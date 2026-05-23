@@ -94,8 +94,9 @@ export default function ParentLoginForm({ onModeChange }: ParentLoginFormProps) 
 
       if (result.code === 0) {
         toast.success("登录成功");
-        // 更新用户状态，确保 layout 能正确识别已登录
         setUser(result.data);
+        // 先刷新服务端组件，确保 Cookie 同步
+        router.refresh();
         router.push("/parent");
       } else {
         toast.error(result.message || "登录失败");
@@ -127,8 +128,9 @@ export default function ParentLoginForm({ onModeChange }: ParentLoginFormProps) 
 
       if (result.code === 0) {
         toast.success("注册成功");
-        // 更新用户状态，确保 layout 能正确识别已登录
         setUser(result.data);
+        // 先刷新服务端组件，确保 Cookie 同步
+        router.refresh();
         router.push("/parent");
       } else {
         toast.error(result.message || "注册失败");

@@ -57,9 +57,9 @@ export default function ChildLoginForm() {
 
       if (result.code === 0) {
         toast.success("登录成功");
-        // 更新用户状态，确保 layout 能正确识别已登录
         setUser(result.data);
-        // 孩子端登录成功后跳转到孩子端主页
+        // 先刷新服务端组件，确保 Cookie 同步
+        router.refresh();
         router.push("/child");
       } else {
         toast.error(result.message || "登录失败");
