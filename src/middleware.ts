@@ -40,6 +40,17 @@ async function verifyJwtToken(token: string): Promise<SessionData | null> {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // 静态文件和 manifest 直接放行
+  if (
+    pathname.startsWith("/_next/") ||
+    pathname === "/favicon.ico" ||
+    pathname === "/manifest.json" ||
+    pathname === "/manifest.webmanifest" ||
+    pathname.match(/\.(png|jpg|jpeg|svg|webp|ico|css|js)$/i)
+  ) {
+    return NextResponse.next();
+  }
+
   // 公开路由直接放行
   if (publicRoutes.some((route) => pathname === route || pathname.startsWith(route + "/"))) {
     return NextResponse.next();

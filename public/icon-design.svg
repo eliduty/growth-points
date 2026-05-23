@@ -1,0 +1,18 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="512" height="512" fill="#5B7FFF"/>
+
+  <!-- 房子主体 -->
+  <path d="M256 120 L120 220 L120 380 L200 380 L200 280 L312 280 L312 380 L392 380 L392 220 L256 120Z" fill="white"/>
+
+  <!-- 门 -->
+  <rect x="220" y="280" width="72" height="100" fill="#5B7FFF"/>
+
+  <!-- 金色星星点缀 -->
+  <polygon points="380,140 385,155 402,155 389,165 394,182 380,172 366,182 371,165 358,155 375,155" fill="#FFD700"/>
+  <polygon points="140,140 143,150 154,150 146,157 149,168 140,161 131,168 134,157 126,150 137,150" fill="#FFD700" transform="scale(0.6) translate(90, 60)"/>
+
+  <!-- 小窗户 -->
+  <rect x="145" y="240" width="40" height="30" fill="#5B7FFF" opacity="0.3"/>
+  <rect x="327" y="240" width="40" height="30" fill="#5B7FFF" opacity="0.3"/>
+</svg>
