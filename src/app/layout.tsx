@@ -7,6 +7,12 @@ import { Toaster } from "@/components/ui/toast";
 export const metadata: Metadata = {
   title: "家庭积分兑换系统",
   description: "通过积分机制激励孩子完成日常任务",
+  manifest: "/manifest.json",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/apple-touch-icon.png",
+  },
+  themeColor: "#5B7FFF",
 };
 
 export default function RootLayout({

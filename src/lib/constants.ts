@@ -49,10 +49,8 @@ export const DAY_OF_WEEK_MAP: Record<number, string> = {
 };
 
 /**
- * Session 配置常量
+ * JWT Session 配置常量
  */
-export const SESSION_CONFIG = {
-  cookieName: "family_points_session",
-  ttl: 7 * 24 * 60 * 60, // 7 天
-  password: process.env.SESSION_PASSWORD || "complex_password_at_least_32_characters_long_for_security",
-} as const;
+export const JWT_SECRET_NAME = "JWT_SECRET";
+export const COOKIE_NAME = "family_points_session";
+export const TOKEN_EXPIRY = 7 * 24 * 60 * 60; // 7 天（秒）

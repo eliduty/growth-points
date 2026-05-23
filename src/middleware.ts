@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getIronSession } from "iron-session";
-import { SessionData } from "@/types";
-import { sessionOptions } from "@/lib/auth/session";
+import { jwtVerify } from "jose";
+import { SessionData, Role } from "@/types";
+import { JWT_SECRET_NAME, COOKIE_NAME } from "@/lib/constants";
 
 // 需要认证的路由
 const protectedRoutes = {
@@ -13,6 +13,30 @@ const protectedRoutes = {
 // 公开路由（无需认证）
 const publicRoutes = ["/", "/login", "/register", "/parent/login", "/child/login"];
 
+/**
+ * 获取 JWT 密钥
+ */
+function getJwtSecret(): Uint8Array {
+  const secret = process.env[JWT_SECRET_NAME];
+  if (!secret) {
+    throw new Error(`JWT secret not configured. Set ${JWT_SECRET_NAME} environment variable.`);
+  }
+  return new TextEncoder().encode(secret);
+}
+
+/**
+ * 验证 JWT token 并提取 payload
+ */
+async function verifyJwtToken(token: string): Promise<SessionData | null> {
+  try {
+    const secret = getJwtSecret();
+    const { payload } = await jwtVerify<SessionData>(token, secret);
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -21,13 +45,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // 获取 Session
-  const response = NextResponse.next();
-  const session = await getIronSession<SessionData>(request, response, sessionOptions);
+  // 从 request.cookies 读取 token
+  const token = request.cookies.get(COOKIE_NAME)?.value;
 
   // 未登录，跳转到对应登录页
-  if (!session.userId) {
-    // 根据访问路径判断跳转到哪个登录页
+  if (!token) {
     if (pathname.startsWith("/child")) {
       const loginUrl = new URL("/child/login", request.url);
       return NextResponse.redirect(loginUrl);
@@ -36,17 +58,35 @@ export async function middleware(request: NextRequest) {
       const loginUrl = new URL("/parent/login", request.url);
       return NextResponse.redirect(loginUrl);
     }
-    // 其他路径跳转到首页入口
     const homeUrl = new URL("/", request.url);
     return NextResponse.redirect(homeUrl);
   }
 
+  // 验证 JWT token
+  const payload = await verifyJwtToken(token);
+
+  // Token 无效或过期
+  if (!payload) {
+    if (pathname.startsWith("/child")) {
+      const loginUrl = new URL("/child/login", request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+    if (pathname.startsWith("/parent")) {
+      const loginUrl = new URL("/parent/login", request.url);
+      return NextResponse.redirect(loginUrl);
+    }
+    const homeUrl = new URL("/", request.url);
+    return NextResponse.redirect(homeUrl);
+  }
+
+  const { role } = payload;
+
   // 孩子端路由检查（排除 /child/login）
   if (protectedRoutes.child.some((route) => pathname.startsWith(route))) {
     if (pathname === "/child/login") {
-      return response; // 登录页已登录用户直接放行
+      return NextResponse.next(); // 登录页已登录用户直接放行
     }
-    if (session.role !== "CHILD") {
+    if (role !== "CHILD") {
       // 家长访问孩子端，跳转到家长端
       const parentUrl = new URL("/parent", request.url);
       return NextResponse.redirect(parentUrl);
@@ -56,16 +96,16 @@ export async function middleware(request: NextRequest) {
   // 家长端路由检查（排除 /parent/login）
   if (protectedRoutes.parent.some((route) => pathname.startsWith(route))) {
     if (pathname === "/parent/login") {
-      return response; // 登录页已登录用户直接放行
+      return NextResponse.next(); // 登录页已登录用户直接放行
     }
-    if (session.role !== "PARENT") {
+    if (role !== "PARENT") {
       // 孩子访问家长端，跳转到孩子端
       const childUrl = new URL("/child", request.url);
       return NextResponse.redirect(childUrl);
     }
   }
 
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {

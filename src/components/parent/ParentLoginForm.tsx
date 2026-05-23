@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { toast } from "sonner";
 import { LogIn, UserPlus } from "lucide-react";
+import { useUser } from "@/hooks/use-user";
 
 // 登录表单验证
 const loginSchema = z.object({
@@ -42,6 +43,7 @@ export default function ParentLoginForm({ onModeChange }: ParentLoginFormProps) 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [currentMode, setCurrentMode] = useState<"login" | "register">("login");
+  const { setUser } = useUser();
 
   // 登录表单
   const loginForm = useForm<LoginFormData>({
@@ -92,6 +94,8 @@ export default function ParentLoginForm({ onModeChange }: ParentLoginFormProps) 
 
       if (result.code === 0) {
         toast.success("登录成功");
+        // 更新用户状态，确保 layout 能正确识别已登录
+        setUser(result.data);
         router.push("/parent");
       } else {
         toast.error(result.message || "登录失败");
@@ -123,6 +127,8 @@ export default function ParentLoginForm({ onModeChange }: ParentLoginFormProps) 
 
       if (result.code === 0) {
         toast.success("注册成功");
+        // 更新用户状态，确保 layout 能正确识别已登录
+        setUser(result.data);
         router.push("/parent");
       } else {
         toast.error(result.message || "注册失败");

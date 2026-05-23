@@ -1,75 +1,116 @@
-import { getIronSession, SessionOptions, IronSession } from "iron-session";
+import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import { SessionData, Role } from "@/types";
-import { SESSION_CONFIG } from "@/lib/constants";
-
-export const sessionOptions: SessionOptions = {
-  cookieName: SESSION_CONFIG.cookieName,
-  password: SESSION_CONFIG.password,
-  cookieOptions: {
-    secure: process.env.NODE_ENV === "production",
-    maxAge: SESSION_CONFIG.ttl,
-    sameSite: "lax",
-    path: "/",
-  },
-};
+import { Role, SessionData } from "@/types";
+import { JWT_SECRET_NAME, COOKIE_NAME, TOKEN_EXPIRY } from "@/lib/constants";
 
 /**
- * 获取 Session
+ * 获取 JWT 密钥
  */
-export async function getSession(): Promise<IronSession<SessionData>> {
-  const cookieStore = await cookies();
-  const session = await getIronSession<SessionData>(cookieStore, sessionOptions);
-  return session;
+function getJwtSecret(): Uint8Array {
+  const secret = process.env[JWT_SECRET_NAME];
+  if (!secret) {
+    throw new Error(`JWT secret not configured. Set ${JWT_SECRET_NAME} environment variable.`);
+  }
+  return new TextEncoder().encode(secret);
+}
+
+/**
+ * 创建 JWT token
+ */
+async function createJwtToken(payload: SessionData): Promise<string> {
+  const secret = getJwtSecret();
+  const token = await new SignJWT(payload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime(`${TOKEN_EXPIRY}s`)
+    .sign(secret);
+  return token;
+}
+
+/**
+ * 验证 JWT token 并提取 payload
+ */
+async function verifyJwtToken(token: string): Promise<SessionData | null> {
+  try {
+    const secret = getJwtSecret();
+    const { payload } = await jwtVerify<SessionData>(token, secret);
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * 获取 cookie 配置
+ */
+function getCookieOptions() {
+  return {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax" as const,
+    maxAge: TOKEN_EXPIRY,
+    path: "/",
+  };
 }
 
 /**
  * 创建 Session（登录成功后）
  */
 export async function createSession(userId: string, role: Role, familyId: string): Promise<void> {
-  const session = await getSession();
-  session.userId = userId;
-  session.role = role;
-  session.familyId = familyId;
-  await session.save();
+  const payload: SessionData = { userId, role, familyId };
+  const token = await createJwtToken(payload);
+  const cookieStore = await cookies();
+  cookieStore.set(COOKIE_NAME, token, getCookieOptions());
 }
 
 /**
  * 清除 Session（登出）
  */
 export async function clearSession(): Promise<void> {
-  const session = await getSession();
-  session.destroy();
+  const cookieStore = await cookies();
+  cookieStore.delete(COOKIE_NAME);
+}
+
+/**
+ * 获取当前 session payload
+ */
+export async function getSessionPayload(): Promise<SessionData | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(COOKIE_NAME)?.value;
+  if (!token) {
+    return null;
+  }
+  return verifyJwtToken(token);
 }
 
 /**
  * 检查是否已登录
  */
 export async function isAuthenticated(): Promise<boolean> {
-  const session = await getSession();
-  return !!session.userId;
+  const payload = await getSessionPayload();
+  return !!payload?.userId;
 }
 
 /**
  * 获取当前用户 ID
  */
 export async function getCurrentUserId(): Promise<string | null> {
-  const session = await getSession();
-  return session.userId || null;
+  const payload = await getSessionPayload();
+  return payload?.userId || null;
 }
 
 /**
  * 获取当前用户角色
  */
 export async function getCurrentRole(): Promise<Role | null> {
-  const session = await getSession();
-  return session.role || null;
+  const payload = await getSessionPayload();
+  return payload?.role || null;
 }
 
 /**
  * 获取当前家庭 ID
  */
 export async function getCurrentFamilyId(): Promise<string | null> {
-  const session = await getSession();
-  return session.familyId || null;
+  const payload = await getSessionPayload();
+  return payload?.familyId || null;
 }

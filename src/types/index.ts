@@ -216,6 +216,7 @@ export interface SessionData {
   userId: string;
   role: Role;
   familyId: string;
+  [key: string]: unknown; // 满足 JWTPayload 接口要求
 }
 
 /**
