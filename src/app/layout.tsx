@@ -1,8 +1,12 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { QueryProvider } from "@/providers/query-provider";
 import { UserProvider } from "@/providers/user-provider";
 import { Toaster } from "@/components/ui/toast";
+
+export const viewport: Viewport = {
+  themeColor: "#5B7FFF",
+};
 
 export const metadata: Metadata = {
   title: "家庭积分兑换系统",
@@ -12,7 +16,6 @@ export const metadata: Metadata = {
     icon: "/favicon.png",
     apple: "/apple-touch-icon.png",
   },
-  themeColor: "#5B7FFF",
 };
 
 export default function RootLayout({
