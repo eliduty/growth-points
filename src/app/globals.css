@@ -149,3 +149,209 @@ body {
 .animate-spin {
   animation: spin 1s linear infinite;
 }
+
+/* =================== 首页专用动画 =================== */
+
+/* 标题入场动画 */
+@keyframes titleEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-title-enter {
+  animation: titleEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 副标题入场动画 */
+@keyframes subtitleEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-subtitle-enter {
+  animation: subtitleEnter 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+  opacity: 0;
+}
+
+/* 卡片入场动画 - 左侧 */
+@keyframes cardEnterLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-60px) translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+}
+
+.animate-card-enter-left {
+  animation: cardEnterLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+  opacity: 0;
+}
+
+/* 卡片入场动画 - 右侧 */
+@keyframes cardEnterRight {
+  0% {
+    opacity: 0;
+    transform: translateX(60px) translateY(40px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) translateY(0);
+  }
+}
+
+.animate-card-enter-right {
+  animation: cardEnterRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.5s forwards;
+  opacity: 0;
+}
+
+/* 底部入场动画 */
+@keyframes footerEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-footer-enter {
+  animation: footerEnter 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards;
+  opacity: 0;
+}
+
+/* 浮动星星动画 */
+@keyframes floatStar {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(10deg);
+  }
+}
+
+.animate-float-star {
+  animation: floatStar 3s ease-in-out infinite;
+}
+
+.animate-float-star-delayed {
+  animation: floatStar 3.5s ease-in-out 0.5s infinite;
+}
+
+.animate-float-star-slow {
+  animation: floatStar 4s ease-in-out 1s infinite;
+}
+
+/* 浮动圆点动画 */
+@keyframes floatDot {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.1);
+  }
+}
+
+.animate-float-dot {
+  animation: floatDot 4s ease-in-out infinite;
+}
+
+.animate-float-dot-delayed {
+  animation: floatDot 4.5s ease-in-out 0.8s infinite;
+}
+
+.animate-float-dot-slow {
+  animation: floatDot 5s ease-in-out 1.5s infinite;
+}
+
+/* 浮动爱心动画 */
+@keyframes floatHeart {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-12px) scale(1.2);
+  }
+}
+
+.animate-float-heart {
+  animation: floatHeart 3s ease-in-out 0.3s infinite;
+}
+
+/* 背景光效浮动 */
+@keyframes bgFloat {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(20px, -30px);
+  }
+}
+
+.animate-bg-float {
+  animation: bgFloat 8s ease-in-out infinite;
+}
+
+.animate-bg-float-delayed {
+  animation: bgFloat 10s ease-in-out 2s infinite;
+}
+
+/* 缓慢脉冲 */
+@keyframes pulseSlow {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(1.05);
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulseSlow 2s ease-in-out infinite;
+}
+
+/* 缓慢弹跳 */
+@keyframes bounceSlow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounceSlow 2.5s ease-in-out infinite;
+}
+
+/* 缓慢旋转 */
+@keyframes rotateSlow {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-rotate-slow {
+  animation: rotateSlow 8s linear infinite;
+}
