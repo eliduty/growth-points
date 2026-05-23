@@ -11,7 +11,6 @@ import { AddMemberDialog } from "@/components/parent/AddMemberDialog";
 import { ExchangeDaysDialog } from "@/components/parent/ExchangeDaysDialog";
 import { SettingsCard } from "@/components/parent/SettingsCard";
 import { DeleteConfirmDialog } from "@/components/parent/DeleteConfirmDialog";
-import { Button } from "@/components/ui/button";
 
 const WEEKDAY_NAMES = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
 
@@ -113,6 +112,7 @@ export default function ParentSettingsPage() {
       <SettingsCard title="成员管理" icon={Users} delay={0.1} className="mb-4">
         <MemberGroup
           title="孩子"
+          role="CHILD"
           members={children}
           onDelete={handleDeleteMember}
           onAdd={() => setAddChildDialogOpen(true)}
@@ -121,6 +121,7 @@ export default function ParentSettingsPage() {
 
         <MemberGroup
           title="家长"
+          role="PARENT"
           members={parents}
           onDelete={handleDeleteMember}
           onAdd={() => setAddParentDialogOpen(true)}
@@ -136,15 +137,13 @@ export default function ParentSettingsPage() {
           </div>
           <span className="text-base font-medium text-text">{exchangeDaysText}</span>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
+        <button
           onClick={() => setExchangeDaysDialogOpen(true)}
           disabled={isUpdating}
-          className="w-full bg-white hover:bg-primary hover:text-white transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-2.5 mt-4 rounded-lg bg-gradient-to-r from-[#5B7FFF] to-[#7B9FFF] text-white font-medium shadow-[0_4px_12px_rgba(91,127,255,0.2)] hover:shadow-[0_6px_16px_rgba(91,127,255,0.25)] hover:-translate-y-[1px] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
         >
           修改设置
-        </Button>
+        </button>
       </SettingsCard>
 
       {/* 个人信息 */}
@@ -161,14 +160,13 @@ export default function ParentSettingsPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.4 }}
       >
-        <Button
-          variant="outline"
+        <button
           onClick={handleLogout}
-          className="w-full bg-white border-border hover:bg-error hover:text-white hover:border-error transition-colors"
+          className="w-full flex items-center justify-center gap-2 py-4 rounded-lg bg-gradient-to-r from-[#5B7FFF] to-[#7B9FFF] text-white font-medium shadow-[0_4px_12px_rgba(91,127,255,0.2)] hover:shadow-[0_6px_16px_rgba(91,127,255,0.25)] hover:-translate-y-[1px] transition-all"
         >
-          <LogOut className="w-4 h-4 mr-2" />
+          <LogOut className="w-5 h-5" />
           退出登录
-        </Button>
+        </button>
       </motion.div>
 
       {/* 添加孩子弹窗 */}

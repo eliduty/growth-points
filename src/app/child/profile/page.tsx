@@ -13,7 +13,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const { user, setUser } = useUser();
   const [activeTab, setActiveTab] = useState<"completions" | "redemptions">("completions");
-  const [expandedWeeks, setExpandedWeeks] = useState<Set<number>>(new Set([0)); // 默认展开本周
+  const [expandedWeeks, setExpandedWeeks] = useState<Set<number>>(new Set([0])); // 默认展开本周
   const { completions, redemptions, isLoading, error } = useChildHistory(4);
 
   const toggleWeek = (index: number) => {
