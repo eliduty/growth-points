@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { verifyPassword } from "@/lib/auth/password";
-import { createSession } from "@/lib/auth/session";
+import { createSession, getCookieOptions } from "@/lib/auth/session";
+import { COOKIE_NAME } from "@/lib/constants";
 import { z } from "zod";
 
 const loginSchema = z.object({
@@ -64,8 +65,8 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    // 创建 Session
-    await createSession(user.id, user.role, user.familyId);
+    // 创建 Session token
+    const token = await createSession(user.id, user.role, user.familyId);
 
     // 返回用户信息（不包含密码）
     const responseData = {
@@ -80,11 +81,13 @@ export async function POST(request: NextRequest) {
       }),
     };
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       code: 0,
       data: responseData,
       message: "登录成功",
     });
+    response.cookies.set(COOKIE_NAME, token, getCookieOptions());
+    return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(

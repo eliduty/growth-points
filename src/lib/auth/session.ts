@@ -41,9 +41,9 @@ async function verifyJwtToken(token: string): Promise<SessionData | null> {
 }
 
 /**
- * 获取 cookie 配置
+ * 获取 cookie 配置（导出供 Route Handlers 直接在 NextResponse 上设置）
  */
-function getCookieOptions() {
+export function getCookieOptions() {
   return {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -54,21 +54,11 @@ function getCookieOptions() {
 }
 
 /**
- * 创建 Session（登录成功后）
+ * 创建 Session token（登录成功后，由 Route Handler 负责将 token 写入响应 cookie）
  */
-export async function createSession(userId: string, role: Role, familyId: string): Promise<void> {
+export async function createSession(userId: string, role: Role, familyId: string): Promise<string> {
   const payload: SessionData = { userId, role, familyId };
-  const token = await createJwtToken(payload);
-  const cookieStore = await cookies();
-  cookieStore.set(COOKIE_NAME, token, getCookieOptions());
-}
-
-/**
- * 清除 Session（登出）
- */
-export async function clearSession(): Promise<void> {
-  const cookieStore = await cookies();
-  cookieStore.delete(COOKIE_NAME);
+  return createJwtToken(payload);
 }
 
 /**
