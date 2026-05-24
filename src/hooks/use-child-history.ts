@@ -22,10 +22,20 @@ export function useChildHistory(weeks: number = 4) {
     queryFn: () => childHistoryApi.redemptions(weeks),
   });
 
+  const {
+    data: rewardsData,
+    isLoading: isLoadingRewards,
+    error: rewardsError,
+  } = useQuery({
+    queryKey: ["child-history-rewards", weeks],
+    queryFn: () => childHistoryApi.rewards(weeks),
+  });
+
   return {
     completions: completionsData?.data ?? [],
     redemptions: redemptionsData?.data ?? [],
-    isLoading: isLoadingCompletions || isLoadingRedemptions,
-    error: completionsError || redemptionsError,
+    rewards: rewardsData?.data ?? [],
+    isLoading: isLoadingCompletions || isLoadingRedemptions || isLoadingRewards,
+    error: completionsError || redemptionsError || rewardsError,
   };
 }

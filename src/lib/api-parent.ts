@@ -5,6 +5,7 @@ import {
   ParentTask,
   ParentRedemption,
   Member,
+  RewardRecord,
 } from "@/types";
 
 const API_BASE = "/api/parent";
@@ -173,6 +174,25 @@ export const exchangeDaysApi = {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ days }),
+    });
+    return res.json();
+  },
+};
+
+/**
+ * 奖励相关 API
+ */
+export const rewardsApi = {
+  list: async (userId?: string): Promise<ApiResponse<RewardRecord[]>> => {
+    const url = userId ? `${API_BASE}/rewards?userId=${userId}` : `${API_BASE}/rewards`;
+    const res = await fetch(url);
+    return res.json();
+  },
+  create: async (data: { userId: string; points: number; reason: string }): Promise<ApiResponse<RewardRecord>> => {
+    const res = await fetch(`${API_BASE}/rewards`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
     });
     return res.json();
   },

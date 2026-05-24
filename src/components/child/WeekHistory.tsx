@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, CheckCircle2, Gift, Clock, Calendar } from "lucide-react";
+import { ChevronDown, CheckCircle2, Gift, Clock, Calendar, Star, Sparkles } from "lucide-react";
 
 interface CompletionItem {
   id: string;
@@ -23,16 +23,39 @@ interface RedemptionItem {
   cancelledAt?: string;
 }
 
+interface RewardItem {
+  id: string;
+  points: number;
+  reason: string;
+  createdAt: string;
+}
+
+// 混合项类型
+interface MixedCompletionItem extends CompletionItem {
+  itemType: "completion";
+  sortTime: number;
+}
+
+interface MixedRewardItem extends RewardItem {
+  itemType: "reward";
+  sortTime: number;
+}
+
+type MixedItem = MixedCompletionItem | MixedRewardItem;
+
 interface WeekData {
   weekRange: { start: string; end: string };
   completions?: CompletionItem[];
   redemptions?: RedemptionItem[];
+  rewards?: RewardItem[];
   summary: {
     completed?: number;
     points?: number;
     confirmed?: number;
     pointsSpent?: number;
     pending?: number;
+    rewards?: number;
+    rewardPoints?: number;
   };
 }
 
@@ -45,7 +68,27 @@ interface WeekHistoryProps {
 
 export default function WeekHistory({ weekData, type, isExpanded, onToggle }: WeekHistoryProps) {
   const { weekRange, summary } = weekData;
-  const items = type === "completions" ? weekData.completions : weekData.redemptions;
+
+  // 对于 completions tab，需要混合展示任务完成和奖励记录
+  const getMixedItems = (): MixedItem[] | null => {
+    if (type !== "completions") return null;
+
+    const completions: MixedCompletionItem[] = (weekData.completions || []).map((c) => ({
+      ...c,
+      itemType: "completion" as const,
+      sortTime: new Date(c.completedAt).getTime(),
+    }));
+
+    const rewards: MixedRewardItem[] = (weekData.rewards || []).map((r) => ({
+      ...r,
+      itemType: "reward" as const,
+      sortTime: new Date(r.createdAt).getTime(),
+    }));
+
+    return [...completions, ...rewards].sort((a, b) => b.sortTime - a.sortTime);
+  };
+
+  const items = type === "completions" ? getMixedItems() : weekData.redemptions;
 
   const formatWeekLabel = () => {
     const start = new Date(weekRange.start);
@@ -90,8 +133,13 @@ export default function WeekHistory({ weekData, type, isExpanded, onToggle }: We
                 <span className="text-gray-600">
                   完成 <span className="font-semibold text-[#4ECDC4]">{summary.completed}</span> 个任务
                 </span>
+                {summary.rewards && summary.rewards > 0 && (
+                  <span className="text-gray-600">
+                    奖励 <span className="font-semibold text-secondary">{summary.rewards}</span> 次
+                  </span>
+                )}
                 <span className="text-gray-600">
-                  获得 <span className="font-semibold text-[#FF6B35]">{summary.points}</span> 积分
+                  获得 <span className="font-semibold text-[#FF6B35]">{(summary.points || 0) + (summary.rewardPoints || 0)}</span> 积分
                 </span>
               </>
             ) : (
@@ -132,41 +180,69 @@ export default function WeekHistory({ weekData, type, isExpanded, onToggle }: We
           >
             <div className="p-4 space-y-3">
               {type === "completions"
-                ? (items as CompletionItem[]).map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between bg-gradient-to-r from-[#E8F8F5] to-[#F0FAF8] rounded-xl p-3"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                            item.revoked ? "bg-gray-200" : "bg-[#4ECDC4]/10"
-                          }`}
-                        >
-                          <CheckCircle2
-                            className={`w-4 h-4 ${item.revoked ? "text-gray-400" : "text-[#4ECDC4]"}`}
-                          />
-                        </div>
-                        <div>
-                          <p
-                            className={`font-medium ${
-                              item.revoked ? "text-gray-400 line-through" : "text-gray-900"
+                ? ((items as MixedItem[]) || []).map((item) => (
+                    item.itemType === "completion" ? (
+                      // 任务完成记录
+                      <div
+                        key={`completion-${item.id}`}
+                        className="flex items-center justify-between bg-gradient-to-r from-[#E8F8F5] to-[#F0FAF8] rounded-xl p-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              item.revoked ? "bg-gray-200" : "bg-[#4ECDC4]/10"
                             }`}
                           >
-                            {item.taskName}
-                          </p>
-                          <p className="text-xs text-gray-500">{item.completedAt}</p>
+                            <CheckCircle2
+                              className={`w-4 h-4 ${item.revoked ? "text-gray-400" : "text-[#4ECDC4]"}`}
+                            />
+                          </div>
+                          <div>
+                            <p
+                              className={`font-medium ${
+                                item.revoked ? "text-gray-400 line-through" : "text-gray-900"
+                              }`}
+                            >
+                              {item.taskName}
+                            </p>
+                            <p className="text-xs text-gray-500">{item.completedAt}</p>
+                          </div>
                         </div>
+                        <span
+                          className={`font-semibold ${
+                            item.revoked ? "text-gray-400" : "text-[#FF6B35]"
+                          }`}
+                        >
+                          {item.revoked ? "" : "+"}
+                          {item.points} 积分
+                        </span>
                       </div>
-                      <span
-                        className={`font-semibold ${
-                          item.revoked ? "text-gray-400" : "text-[#FF6B35]"
-                        }`}
+                    ) : (
+                      // 奖励记录
+                      <div
+                        key={`reward-${item.id}`}
+                        className="flex items-center justify-between bg-gradient-to-r from-secondary/10 to-secondary/5 rounded-xl p-3"
                       >
-                        {item.revoked ? "" : "+"}
-                        {item.points} 积分
-                      </span>
-                    </div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center bg-secondary/20">
+                            <Sparkles className="w-4 h-4 text-secondary" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">{item.reason}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="text-xs text-gray-500">{item.createdAt}</p>
+                              <span className="text-xs text-secondary flex items-center gap-1">
+                                <Gift className="w-3 h-3" />
+                                家长奖励
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <span className="font-semibold text-secondary">
+                          +{item.points} 积分
+                        </span>
+                      </div>
+                    )
                   ))
                 : (items as RedemptionItem[]).map((item) => (
                     <div

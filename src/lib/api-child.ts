@@ -66,4 +66,13 @@ export const childHistoryApi = {
     const res = await fetch(url);
     return res.json();
   },
+  rewards: async (weeks?: number): Promise<ApiResponse<{
+    weekRange: { start: string; end: string };
+    rewards: { id: string; points: number; reason: string; createdAt: string }[];
+    summary: { rewards: number; points: number };
+  }[]>> => {
+    const url = weeks ? `${API_BASE}/history/rewards?weeks=${weeks}` : `${API_BASE}/history/rewards`;
+    const res = await fetch(url);
+    return res.json();
+  },
 };

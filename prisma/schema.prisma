@@ -24,6 +24,7 @@ model User {
   totalPoints     Int              @default(0)
   taskCompletions TaskCompletion[]
   giftRedemptions GiftRedemption[]
+  rewards         Reward[]         // 获得的奖励
 
   @@unique([familyId, username])  // 家庭内用户名唯一
 }
@@ -36,6 +37,7 @@ model Family {
   gifts        Gift[]
   categories   Category[]
   exchangeDays ExchangeDay[]
+  rewards      Reward[]      // 家庭的奖励记录
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
 }
@@ -142,4 +144,21 @@ enum RedemptionStatus {
   PENDING    // 待确认
   CONFIRMED  // 已确认
   CANCELLED  // 已撤销
+}
+
+// 家长奖励记录
+model Reward {
+  id        String   @id @default(cuid())
+  userId    String   // 被奖励的孩子
+  user      User     @relation(fields: [userId], references: [id])
+  familyId  String   // 冗余存储，便于查询
+  family    Family   @relation(fields: [familyId], references: [id])
+  points    Int      // 奖励积分
+  reason    String   // 原因（必填，≤50字符）
+  createdBy String   // 发起奖励的家长 ID
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([familyId, createdAt])
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { LogOut, User } from "lucide-react";
@@ -17,13 +17,69 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+interface WeekDataWithRewards {
+  weekRange: { start: string; end: string };
+  completions?: Array<{
+    id: string;
+    taskName: string;
+    points: number;
+    completedAt: string;
+    revoked: boolean;
+  }>;
+  redemptions?: Array<{
+    id: string;
+    giftName: string;
+    giftColor: string | null;
+    points: number;
+    redeemedAt: string;
+    status: "PENDING" | "CONFIRMED" | "CANCELLED";
+    confirmedAt?: string;
+    cancelledAt?: string;
+  }>;
+  rewards?: Array<{
+    id: string;
+    points: number;
+    reason: string;
+    createdAt: string;
+  }>;
+  summary: {
+    completed?: number;
+    points?: number;
+    confirmed?: number;
+    pointsSpent?: number;
+    pending?: number;
+    rewards?: number;
+    rewardPoints?: number;
+  };
+}
+
 export default function ProfilePage() {
   const router = useRouter();
   const { user, setUser } = useUser();
   const [activeTab, setActiveTab] = useState<"completions" | "redemptions">("completions");
   const [expandedWeeks, setExpandedWeeks] = useState<Set<number>>(new Set([0])); // 默认展开本周
-  const { completions, redemptions, isLoading, error } = useChildHistory(4);
+  const { completions, redemptions, rewards, isLoading, error } = useChildHistory(4);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+
+  // 合并 completions 和 rewards 数据（按周）
+  const mergedWeekData = useMemo(() => {
+    if (!completions || !rewards) return completions;
+
+    return completions.map((completionWeek, index) => {
+      const rewardWeek = rewards[index];
+      const rewardSummary = rewardWeek?.summary || { rewards: 0, points: 0 };
+
+      return {
+        ...completionWeek,
+        rewards: rewardWeek?.rewards || [],
+        summary: {
+          ...completionWeek.summary,
+          rewards: rewardSummary.rewards,
+          rewardPoints: rewardSummary.points,
+        },
+      } as WeekDataWithRewards;
+    });
+  }, [completions, rewards]);
 
   const toggleWeek = (index: number) => {
     setExpandedWeeks((prev) => {
@@ -76,7 +132,7 @@ export default function ProfilePage() {
     );
   }
 
-  const weekData = activeTab === "completions" ? completions : redemptions;
+  const weekData = activeTab === "completions" ? mergedWeekData : redemptions;
 
   return (
     <div className="p-4 pb-20 space-y-4">

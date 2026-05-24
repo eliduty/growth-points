@@ -81,6 +81,15 @@ export const exchangeDaysSchema = z.object({
 });
 
 /**
+ * 创建奖励 Schema
+ */
+export const createRewardSchema = z.object({
+  userId: z.string().min(1, "请选择奖励对象"),
+  points: z.number().int().min(1, "积分至少为1").max(1000, "积分最多1000"),
+  reason: z.string().min(1, "请填写奖励原因").max(50, "原因最多50字符"),
+});
+
+/**
  * 从 Schema 推断类型
  */
 export type RegisterInput = z.infer<typeof registerSchema>;
@@ -89,3 +98,4 @@ export type CreateTaskInput = z.infer<typeof createTaskSchema>;
 export type CreateGiftInput = z.infer<typeof createGiftSchema>;
 export type CreateCategoryInput = z.infer<typeof createCategorySchema>;
 export type ExchangeDaysInput = z.infer<typeof exchangeDaysSchema>;
+export type CreateRewardInput = z.infer<typeof createRewardSchema>;

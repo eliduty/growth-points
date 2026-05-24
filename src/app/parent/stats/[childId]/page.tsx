@@ -1,10 +1,13 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useParentStats } from "@/hooks/use-parent-stats";
+import { useParentRewards } from "@/hooks/use-parent-rewards";
 import { useConfirm } from "@/hooks/use-confirm";
 import { CompletionRecordCard } from "@/components/parent/CompletionRecordCard";
+import { RewardRecordCard } from "@/components/parent/RewardRecordCard";
+import { RewardDialog } from "@/components/parent/RewardDialog";
 import {
   Dialog,
   DialogContent,
@@ -14,9 +17,21 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
-import { ArrowLeft, RefreshCw, AlertCircle, Undo2, Info } from "lucide-react";
+import { ArrowLeft, RefreshCw, AlertCircle, Undo2, Info, Gift, Star } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
+
+type MixedRecord = {
+  id: string;
+  type: "completion" | "reward";
+  points: number;
+  createdAt: string;
+  // 任务完成特有
+  taskName?: string;
+  revokedAt?: string | null;
+  // 奖励特有
+  reason?: string;
+};
 
 export default function ChildStatsDetailPage() {
   const params = useParams();
@@ -25,16 +40,53 @@ export default function ChildStatsDetailPage() {
   const { children, weekRange, isLoading, isError, error, refetch, revokeCompletion, isRevoking } =
     useParentStats();
 
+  const { rewards, isLoading: rewardsLoading, createReward, isCreating } = useParentRewards({ userId: childId });
+
   const { confirmState, showConfirm } = useConfirm();
+
+  // 奖励弹窗状态
+  const [showRewardDialog, setShowRewardDialog] = useState(false);
 
   // 找到当前孩子
   const child = children.find((c) => c.id === childId);
   const completions = child?.completions || [];
 
-  // 按时间倒序排序
-  const sortedCompletions = [...completions].sort(
-    (a, b) => new Date(b.completedAt).getTime() - new Date(a.completedAt).getTime()
-  );
+  // 合并任务完成和奖励记录，按时间排序
+  const mixedRecords = useMemo(() => {
+    const completionRecords: MixedRecord[] = completions.map((c) => ({
+      id: c.id,
+      type: "completion" as const,
+      points: c.points,
+      createdAt: c.completedAt,
+      taskName: c.taskName,
+      revokedAt: c.revokedAt,
+    }));
+
+    const rewardRecords: MixedRecord[] = rewards.map((r) => ({
+      id: r.id,
+      type: "reward" as const,
+      points: r.points,
+      createdAt: r.createdAt,
+      reason: r.reason,
+    }));
+
+    return [...completionRecords, ...rewardRecords].sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+  }, [completions, rewards]);
+
+  // 统计数据
+  const stats = useMemo(() => {
+    const activeCompletions = completions.filter((c) => !c.revokedAt);
+    const weekRewards = rewards; // rewards 已经是该孩子的所有奖励记录
+
+    return {
+      completed: activeCompletions.length,
+      completedPoints: activeCompletions.reduce((sum, c) => sum + c.points, 0),
+      rewards: weekRewards.length,
+      rewardPoints: weekRewards.reduce((sum, r) => sum + r.points, 0),
+    };
+  }, [completions, rewards]);
 
   // 处理撤销
   const handleRevoke = async (completionId: string) => {
@@ -51,8 +103,17 @@ export default function ChildStatsDetailPage() {
     }
   };
 
+  // 处理奖励
+  const handleReward = async (data: { points: number; reason: string }) => {
+    createReward({
+      userId: childId,
+      points: data.points,
+      reason: data.reason,
+    });
+  };
+
   // 加载状态
-  if (isLoading) {
+  if (isLoading || rewardsLoading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
         <div className="text-center">
@@ -142,6 +203,26 @@ export default function ChildStatsDetailPage() {
         )}
       </motion.div>
 
+      {/* 奖励积分按钮 */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="mb-4"
+      >
+        <button
+          onClick={() => setShowRewardDialog(true)}
+          className={cn(
+            "w-full h-12 rounded-button text-base font-semibold transition-all",
+            "flex items-center justify-center gap-2",
+            "bg-secondary text-white shadow-md hover:bg-secondary/80"
+          )}
+        >
+          <Gift className="w-5 h-5" />
+          奖励积分
+        </button>
+      </motion.div>
+
       {/* 撤销提示 */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -156,29 +237,46 @@ export default function ChildStatsDetailPage() {
       </motion.div>
 
       {/* 完成记录列表 */}
-      {sortedCompletions.length === 0 ? (
+      {mixedRecords.length === 0 ? (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="text-center py-8"
         >
-          <p className="text-text-secondary">本周暂无完成记录</p>
+          <p className="text-text-secondary">本周暂无记录</p>
         </motion.div>
       ) : (
         <>
           <div className="space-y-3">
-            {sortedCompletions.map((record, index) => (
+            {mixedRecords.map((record, index) => (
               <motion.div
-                key={record.id}
+                key={`${record.type}-${record.id}`}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
               >
-                <CompletionRecordCard
-                  record={record}
-                  onRevoke={handleRevoke}
-                  disabled={isRevoking}
-                />
+                {record.type === "completion" ? (
+                  <CompletionRecordCard
+                    record={{
+                      id: record.id,
+                      taskName: record.taskName || "",
+                      points: record.points,
+                      completedAt: record.createdAt,
+                      revokedAt: record.revokedAt,
+                    }}
+                    onRevoke={handleRevoke}
+                    disabled={isRevoking}
+                  />
+                ) : (
+                  <RewardRecordCard
+                    record={{
+                      id: record.id,
+                      points: record.points,
+                      reason: record.reason || "",
+                      createdAt: record.createdAt,
+                    }}
+                  />
+                )}
               </motion.div>
             ))}
           </div>
@@ -191,7 +289,11 @@ export default function ChildStatsDetailPage() {
             className="mt-8 pt-4 border-t border-border text-center"
           >
             <p className="text-base text-text-secondary">
-              本周共完成 <span className="font-bold text-primary">{sortedCompletions.length}</span> 个任务
+              本周完成 <span className="font-bold text-primary">{stats.completed}</span> 个任务，
+              奖励 <span className="font-bold text-secondary">{stats.rewards}</span> 次
+            </p>
+            <p className="text-sm text-text-secondary mt-1">
+              共获得 <span className="font-bold text-primary">{stats.completedPoints + stats.rewardPoints}</span> 积分
             </p>
           </motion.div>
         </>
@@ -231,6 +333,14 @@ export default function ChildStatsDetailPage() {
           </DialogContent>
         </Dialog>
       )}
+
+      {/* 奖励弹窗 */}
+      <RewardDialog
+        isOpen={showRewardDialog}
+        onClose={() => setShowRewardDialog(false)}
+        onSubmit={handleReward}
+        childName={child.username}
+      />
     </div>
   );
 }

@@ -210,6 +210,20 @@ export interface Member {
 }
 
 /**
+ * 奖励记录类型
+ */
+export interface RewardRecord {
+  id: string;
+  userId: string;
+  username: string;
+  points: number;
+  reason: string;
+  createdBy: string;
+  creatorName: string;
+  createdAt: string;
+}
+
+/**
  * Session 数据类型
  */
 export interface SessionData {
