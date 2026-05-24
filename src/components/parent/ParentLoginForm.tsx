@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -40,7 +39,6 @@ interface ParentLoginFormProps {
 }
 
 export default function ParentLoginForm({ onModeChange }: ParentLoginFormProps) {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [currentMode, setCurrentMode] = useState<"login" | "register">("login");
   const { setUser } = useUser();
@@ -95,9 +93,7 @@ export default function ParentLoginForm({ onModeChange }: ParentLoginFormProps) 
       if (result.code === 0) {
         toast.success("登录成功");
         setUser(result.data);
-        // 先刷新服务端组件，确保 Cookie 同步
-        router.refresh();
-        router.push("/parent");
+        window.location.href = "/parent";
       } else {
         toast.error(result.message || "登录失败");
       }
@@ -129,9 +125,7 @@ export default function ParentLoginForm({ onModeChange }: ParentLoginFormProps) 
       if (result.code === 0) {
         toast.success("注册成功");
         setUser(result.data);
-        // 先刷新服务端组件，确保 Cookie 同步
-        router.refresh();
-        router.push("/parent");
+        window.location.href = "/parent";
       } else {
         toast.error(result.message || "注册失败");
       }

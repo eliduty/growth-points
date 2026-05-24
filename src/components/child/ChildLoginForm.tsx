@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -19,7 +18,6 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function ChildLoginForm() {
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const { setUser } = useUser();
 
@@ -58,9 +56,7 @@ export default function ChildLoginForm() {
       if (result.code === 0) {
         toast.success("登录成功");
         setUser(result.data);
-        // 先刷新服务端组件，确保 Cookie 同步
-        router.refresh();
-        router.push("/child");
+        window.location.href = "/child";
       } else {
         toast.error(result.message || "登录失败");
       }
