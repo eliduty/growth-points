@@ -51,7 +51,7 @@ export default function ParentLayout({
 
   return (
     <TopNavbarProvider>
-      <div className="min-h-screen pb-nav pt-topnav" style={{ background: "var(--bg-gradient)" }}>
+      <div className={isLoginPage ? "min-h-screen" : "min-h-screen pb-nav pt-topnav"} style={{ background: "var(--bg-gradient)" }}>
         {!isLoginPage && <TopNavbar />}
         {children}
         {!isLoginPage && <BottomNav role="parent" />}
