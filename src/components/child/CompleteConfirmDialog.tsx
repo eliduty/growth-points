@@ -45,7 +45,7 @@ export default function CompleteConfirmDialog({
             exit={{ opacity: 0, scale: 0.8 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-              bg-white rounded-[24px] p-7 w-[90%] max-w-[320px]
+              bg-white rounded-[24px] p-7 w-[90%] max-w-[320px] max-h-[85vh] overflow-y-auto
               shadow-[0_16px_48px_rgba(0,0,0,0.2)] z-[201]"
           >
             {/* 图标 */}
