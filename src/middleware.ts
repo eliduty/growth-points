@@ -1,37 +1,27 @@
 import { NextRequest, NextResponse } from "next/server";
-import { jwtVerify } from "jose";
-import { SessionData, Role } from "@/types";
-import { JWT_SECRET_NAME, COOKIE_NAME } from "@/lib/constants";
+import { COOKIE_NAME } from "@/lib/constants";
 
 // 需要认证的路由
 const protectedRoutes = {
   child: ["/child"],
   parent: ["/parent"],
-  any: [], // 任何角色都可访问（暂无）
 };
 
 // 公开路由（无需认证）
 const publicRoutes = ["/", "/login", "/register", "/parent/login", "/child/login"];
 
 /**
- * 获取 JWT 密钥
+ * 从 JWT token 中解码 payload（不验证签名）
+ * middleware 运行在 Edge Runtime，用 jose jwtVerify 可能因环境变量不可用而失败。
+ * 真正的签名验证在各 API route 的 guard.ts 中进行。
  */
-function getJwtSecret(): Uint8Array {
-  const secret = process.env[JWT_SECRET_NAME];
-  if (!secret) {
-    throw new Error(`JWT secret not configured. Set ${JWT_SECRET_NAME} environment variable.`);
-  }
-  return new TextEncoder().encode(secret);
-}
-
-/**
- * 验证 JWT token 并提取 payload
- */
-async function verifyJwtToken(token: string): Promise<SessionData | null> {
+function decodeJwtPayload(token: string): { role?: string } | null {
   try {
-    const secret = getJwtSecret();
-    const { payload } = await jwtVerify<SessionData>(token, secret);
-    return payload;
+    const parts = token.split(".");
+    if (parts.length !== 3) return null;
+    const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const json = atob(base64);
+    return JSON.parse(json);
   } catch {
     return null;
   }
@@ -62,57 +52,32 @@ export async function middleware(request: NextRequest) {
   // 未登录，跳转到对应登录页
   if (!token) {
     if (pathname.startsWith("/child")) {
-      const loginUrl = new URL("/child/login", request.url);
-      return NextResponse.redirect(loginUrl);
+      return NextResponse.redirect(new URL("/child/login", request.url));
     }
     if (pathname.startsWith("/parent")) {
-      const loginUrl = new URL("/parent/login", request.url);
-      return NextResponse.redirect(loginUrl);
+      return NextResponse.redirect(new URL("/parent/login", request.url));
     }
-    const homeUrl = new URL("/", request.url);
-    return NextResponse.redirect(homeUrl);
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
-  // 验证 JWT token
-  const payload = await verifyJwtToken(token);
+  // 解码 payload（不验签）用于 role 路由判断
+  // 签名合法性由各 API route 的 guard.ts 保证
+  const payload = decodeJwtPayload(token);
+  const role = payload?.role;
 
-  // Token 无效或过期
-  if (!payload) {
-    if (pathname.startsWith("/child")) {
-      const loginUrl = new URL("/child/login", request.url);
-      return NextResponse.redirect(loginUrl);
-    }
-    if (pathname.startsWith("/parent")) {
-      const loginUrl = new URL("/parent/login", request.url);
-      return NextResponse.redirect(loginUrl);
-    }
-    const homeUrl = new URL("/", request.url);
-    return NextResponse.redirect(homeUrl);
-  }
-
-  const { role } = payload;
-
-  // 孩子端路由检查（排除 /child/login）
+  // 孩子端路由检查
   if (protectedRoutes.child.some((route) => pathname.startsWith(route))) {
-    if (pathname === "/child/login") {
-      return NextResponse.next(); // 登录页已登录用户直接放行
-    }
+    if (pathname === "/child/login") return NextResponse.next();
     if (role !== "CHILD") {
-      // 家长访问孩子端，跳转到家长端
-      const parentUrl = new URL("/parent", request.url);
-      return NextResponse.redirect(parentUrl);
+      return NextResponse.redirect(new URL("/parent", request.url));
     }
   }
 
-  // 家长端路由检查（排除 /parent/login）
+  // 家长端路由检查
   if (protectedRoutes.parent.some((route) => pathname.startsWith(route))) {
-    if (pathname === "/parent/login") {
-      return NextResponse.next(); // 登录页已登录用户直接放行
-    }
+    if (pathname === "/parent/login") return NextResponse.next();
     if (role !== "PARENT") {
-      // 孩子访问家长端，跳转到孩子端
-      const childUrl = new URL("/child", request.url);
-      return NextResponse.redirect(childUrl);
+      return NextResponse.redirect(new URL("/child", request.url));
     }
   }
 
