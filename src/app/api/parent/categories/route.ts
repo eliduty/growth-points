@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { requireParent, handleAuthError } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db";
 import { createCategorySchema } from "@/lib/validators";
@@ -6,9 +6,9 @@ import { createCategorySchema } from "@/lib/validators";
 /**
  * GET /api/parent/categories - 获取类别列表
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { familyId } = await requireParent();
+    const { familyId } = await requireParent(request);
 
     // 获取家庭内所有类别
     const categories = await prisma.category.findMany({
@@ -46,9 +46,9 @@ export async function GET() {
 /**
  * POST /api/parent/categories - 创建类别
  */
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { familyId } = await requireParent();
+    const { familyId } = await requireParent(request);
     const body = await request.json();
 
     // 验证输入

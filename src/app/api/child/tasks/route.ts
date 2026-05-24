@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 
 export async function GET(request: NextRequest) {
   try {
-    const { userId, familyId } = await requireChild();
+    const { userId, familyId } = await requireChild(request);
 
     // 获取日期参数（可选）
     const dateParam = request.nextUrl.searchParams.get("date");

@@ -8,7 +8,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId, familyId } = await requireParent();
+    const { userId, familyId } = await requireParent(request);
     const { id } = await params;
 
     // 查询完成记录

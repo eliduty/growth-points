@@ -5,7 +5,7 @@ import { getWeekStart, getWeekEnd, formatBeijingTime } from "@/lib/date";
 
 export async function GET(request: NextRequest) {
   try {
-    const { familyId } = await requireParent();
+    const { familyId } = await requireParent(request);
 
     // 获取可选的 weekStart 参数
     const weekStartParam = request.nextUrl.searchParams.get("weekStart");

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { requireParent, handleAuthError } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db";
 import { RedemptionStatus } from "@/generated/prisma";
@@ -6,9 +6,9 @@ import { RedemptionStatus } from "@/generated/prisma";
 /**
  * GET /api/parent/gifts/redemptions - 获取兑换记录
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { familyId } = await requireParent();
+    const { familyId } = await requireParent(request);
 
     // 获取待确认和已确认的兑换记录
     const redemptions = await prisma.giftRedemption.findMany({

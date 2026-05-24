@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { requireParent, handleAuthError } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db";
 import { createGiftSchema } from "@/lib/validators";
@@ -6,9 +6,9 @@ import { createGiftSchema } from "@/lib/validators";
 /**
  * GET /api/parent/gifts - 获取礼物列表
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { familyId } = await requireParent();
+    const { familyId } = await requireParent(request);
 
     const gifts = await prisma.gift.findMany({
       where: { familyId, deletedAt: null },
@@ -36,9 +36,9 @@ export async function GET() {
 /**
  * POST /api/parent/gifts - 创建礼物
  */
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { familyId } = await requireParent();
+    const { familyId } = await requireParent(request);
     const body = await request.json();
 
     // 验证输入

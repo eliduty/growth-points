@@ -5,7 +5,7 @@ import { getWeekStart, getWeekEnd, getBeijingNow, isExchangeDayNow } from "@/lib
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId, familyId } = await requireChild();
+    const { userId, familyId } = await requireChild(request);
 
     const body = await request.json();
     const { giftId } = body;

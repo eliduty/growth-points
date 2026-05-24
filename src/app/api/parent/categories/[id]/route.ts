@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { requireParent, handleAuthError } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db";
 
@@ -6,11 +6,11 @@ import { prisma } from "@/lib/db";
  * DELETE /api/parent/categories/[id] - 删除类别
  */
 export async function DELETE(
-  _request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { familyId } = await requireParent();
+    const { familyId } = await requireParent(request);
     const { id } = await params;
 
     // 检查类别是否存在且属于当前家庭

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { requireParent, handleAuthError } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db";
 
@@ -9,11 +9,11 @@ import { prisma } from "@/lib/db";
  * 2. 不能删除最后一个家长（保护家庭管理）
  */
 export async function DELETE(
-  _request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId, familyId } = await requireParent();
+    const { userId, familyId } = await requireParent(request);
     const { id } = await params;
 
     // 不能删除自己

@@ -9,7 +9,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId } = await requireChild();
+    const { userId } = await requireChild(request);
     const { id: taskId } = await params;
 
     // 查询任务

@@ -1,11 +1,11 @@
-﻿import { NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireChild, handleAuthError } from "@/lib/auth/guard";
 import { getWeekStart, getWeekEnd, formatBeijingTime, getBeijingNow, isExchangeDayNow, getNextExchangeDayInfo } from "@/lib/date";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { userId, familyId } = await requireChild();
+    const { userId, familyId } = await requireChild(request);
 
     // 计算本周时间范围
     const weekStart = getWeekStart();

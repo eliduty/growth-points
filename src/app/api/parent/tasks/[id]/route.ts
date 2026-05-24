@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { requireParent, handleAuthError } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
@@ -14,11 +14,11 @@ const updateTaskSchema = z.object({
  * PUT /api/parent/tasks/[id] - 更新任务
  */
 export async function PUT(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { familyId } = await requireParent();
+    const { familyId } = await requireParent(request);
     const { id } = await params;
     const body = await request.json();
 
@@ -129,11 +129,11 @@ export async function PUT(
  * DELETE /api/parent/tasks/[id] - 软删除任务
  */
 export async function DELETE(
-  _request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { familyId } = await requireParent();
+    const { familyId } = await requireParent(request);
     const { id } = await params;
 
     // 检查任务是否存在且属于当前家庭

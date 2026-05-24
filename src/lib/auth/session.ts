@@ -1,11 +1,8 @@
 import { SignJWT, jwtVerify } from "jose";
-import { cookies } from "next/headers";
+import { NextRequest } from "next/server";
 import { Role, SessionData } from "@/types";
 import { JWT_SECRET_NAME, COOKIE_NAME, TOKEN_EXPIRY } from "@/lib/constants";
 
-/**
- * 获取 JWT 密钥
- */
 function getJwtSecret(): Uint8Array {
   const secret = process.env[JWT_SECRET_NAME];
   if (!secret) {
@@ -14,9 +11,6 @@ function getJwtSecret(): Uint8Array {
   return new TextEncoder().encode(secret);
 }
 
-/**
- * 创建 JWT token
- */
 async function createJwtToken(payload: SessionData): Promise<string> {
   const secret = getJwtSecret();
   const token = await new SignJWT(payload)
@@ -27,10 +21,7 @@ async function createJwtToken(payload: SessionData): Promise<string> {
   return token;
 }
 
-/**
- * 验证 JWT token 并提取 payload
- */
-async function verifyJwtToken(token: string): Promise<SessionData | null> {
+export async function verifyJwtToken(token: string): Promise<SessionData | null> {
   try {
     const secret = getJwtSecret();
     const { payload } = await jwtVerify<SessionData>(token, secret);
@@ -41,7 +32,16 @@ async function verifyJwtToken(token: string): Promise<SessionData | null> {
 }
 
 /**
- * 获取 cookie 配置（导出供 Route Handlers 直接在 NextResponse 上设置）
+ * 从 NextRequest 读取并验证 session（EdgeOne 兼容，所有 Route Handler 和 Middleware 使用此方式）
+ */
+export async function getSessionFromRequest(request: NextRequest): Promise<SessionData | null> {
+  const token = request.cookies.get(COOKIE_NAME)?.value;
+  if (!token) return null;
+  return verifyJwtToken(token);
+}
+
+/**
+ * 获取 cookie 配置
  */
 export function getCookieOptions() {
   return {
@@ -54,53 +54,9 @@ export function getCookieOptions() {
 }
 
 /**
- * 创建 Session token（登录成功后，由 Route Handler 负责将 token 写入响应 cookie）
+ * 创建 Session token（由 Route Handler 负责将 token 写入 NextResponse cookie）
  */
 export async function createSession(userId: string, role: Role, familyId: string): Promise<string> {
   const payload: SessionData = { userId, role, familyId };
   return createJwtToken(payload);
-}
-
-/**
- * 获取当前 session payload
- */
-export async function getSessionPayload(): Promise<SessionData | null> {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(COOKIE_NAME)?.value;
-  if (!token) {
-    return null;
-  }
-  return verifyJwtToken(token);
-}
-
-/**
- * 检查是否已登录
- */
-export async function isAuthenticated(): Promise<boolean> {
-  const payload = await getSessionPayload();
-  return !!payload?.userId;
-}
-
-/**
- * 获取当前用户 ID
- */
-export async function getCurrentUserId(): Promise<string | null> {
-  const payload = await getSessionPayload();
-  return payload?.userId || null;
-}
-
-/**
- * 获取当前用户角色
- */
-export async function getCurrentRole(): Promise<Role | null> {
-  const payload = await getSessionPayload();
-  return payload?.role || null;
-}
-
-/**
- * 获取当前家庭 ID
- */
-export async function getCurrentFamilyId(): Promise<string | null> {
-  const payload = await getSessionPayload();
-  return payload?.familyId || null;
 }

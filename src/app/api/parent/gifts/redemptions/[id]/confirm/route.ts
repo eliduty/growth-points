@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { requireParent, handleAuthError } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db";
 import { RedemptionStatus } from "@/generated/prisma";
@@ -7,11 +7,11 @@ import { RedemptionStatus } from "@/generated/prisma";
  * PUT /api/parent/gifts/redemptions/[id]/confirm - 确认兑换
  */
 export async function PUT(
-  _request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { userId: parentId, familyId } = await requireParent();
+    const { userId: parentId, familyId } = await requireParent(request);
     const { id } = await params;
 
     // 检查兑换记录是否存在且属于当前家庭

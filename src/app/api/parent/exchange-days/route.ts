@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { requireParent, handleAuthError } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db";
 import { exchangeDaysSchema } from "@/lib/validators";
@@ -6,9 +6,9 @@ import { exchangeDaysSchema } from "@/lib/validators";
 /**
  * GET /api/parent/exchange-days - 获取兑换日设置
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { familyId } = await requireParent();
+    const { familyId } = await requireParent(request);
 
     // 获取兑换日设置
     const exchangeDays = await prisma.exchangeDay.findMany({
@@ -31,9 +31,9 @@ export async function GET() {
 /**
  * PUT /api/parent/exchange-days - 更新兑换日设置
  */
-export async function PUT(request: Request) {
+export async function PUT(request: NextRequest) {
   try {
-    const { familyId } = await requireParent();
+    const { familyId } = await requireParent(request);
     const body = await request.json();
 
     // 验证输入

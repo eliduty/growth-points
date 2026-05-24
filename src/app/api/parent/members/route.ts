@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { requireParent, handleAuthError } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db";
 import { usernameSchema, passwordSchema } from "@/lib/validators";
@@ -7,9 +7,9 @@ import { hash } from "bcryptjs";
 /**
  * GET /api/parent/members - 获取成员列表（children + parents 分组）
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const { userId, familyId } = await requireParent();
+    const { userId, familyId } = await requireParent(request);
 
     // 获取家庭内所有成员
     const members = await prisma.user.findMany({
@@ -58,9 +58,9 @@ export async function GET() {
 /**
  * POST /api/parent/members - 添加成员
  */
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { familyId } = await requireParent();
+    const { familyId } = await requireParent(request);
     const body = await request.json();
 
     // 验证输入

@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getFullUserInfo, handleAuthError } from "@/lib/auth/guard";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const user = await getFullUserInfo();
+    const user = await getFullUserInfo(request);
 
     if (!user) {
       return NextResponse.json(

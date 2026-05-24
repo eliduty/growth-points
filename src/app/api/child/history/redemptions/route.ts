@@ -5,7 +5,7 @@ import { getWeekStart, formatBeijingDate, formatBeijingTime, getBeijingNow } fro
 
 export async function GET(request: NextRequest) {
   try {
-    const { userId } = await requireChild();
+    const { userId } = await requireChild(request);
 
     // 获取周数参数（可选，默认4周）
     const weeksParam = request.nextUrl.searchParams.get("weeks");

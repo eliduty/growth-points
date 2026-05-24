@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { requireParent, handleAuthError } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
@@ -20,11 +20,11 @@ const updateGiftSchema = z.object({
  * PUT /api/parent/gifts/[id] - 更新礼物
  */
 export async function PUT(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { familyId } = await requireParent();
+    const { familyId } = await requireParent(request);
     const { id } = await params;
     const body = await request.json();
 
@@ -96,11 +96,11 @@ export async function PUT(
  * DELETE /api/parent/gifts/[id] - 软删除礼物
  */
 export async function DELETE(
-  _request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { familyId } = await requireParent();
+    const { familyId } = await requireParent(request);
     const { id } = await params;
 
     // 检查礼物是否存在且属于当前家庭

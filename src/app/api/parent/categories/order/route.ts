@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { requireParent, handleAuthError } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
@@ -15,9 +15,9 @@ const updateOrderSchema = z.object({
 /**
  * PUT /api/parent/categories/order - 更新类别顺序
  */
-export async function PUT(request: Request) {
+export async function PUT(request: NextRequest) {
   try {
-    const { familyId } = await requireParent();
+    const { familyId } = await requireParent(request);
     const body = await request.json();
 
     // 验证输入
