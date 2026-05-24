@@ -42,8 +42,8 @@ export default function BottomNav({ role }: BottomNavProps) {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 px-4 py-2 transition-colors",
-                isActive ? "text-primary" : "text-text-muted"
+                "nav-item-active-indicator nav-item-float flex flex-col items-center justify-center gap-1 px-4 py-2 transition-colors",
+                isActive ? "active text-primary" : "text-text-muted"
               )}
             >
               <item.icon className="w-6 h-6" />

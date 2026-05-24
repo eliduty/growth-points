@@ -123,7 +123,7 @@ export default function ChildLoginForm() {
             {...register("username")}
             placeholder="请输入用户名"
             disabled={isLoading}
-            className="h-[50px] rounded-xl border-2 border-border bg-background focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(255,107,53,0.1)]"
+            className="h-[50px] rounded-[14px] border-2 border-border bg-background focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(255,107,53,0.1)]"
           />
           {errors.username && (
             <p className="text-sm text-error">{errors.username.message}</p>
@@ -138,7 +138,7 @@ export default function ChildLoginForm() {
             {...register("password")}
             placeholder="请输入密码"
             disabled={isLoading}
-            className="h-[50px] rounded-xl border-2 border-border bg-background focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(255,107,53,0.1)]"
+            className="h-[50px] rounded-[14px] border-2 border-border bg-background focus:border-primary focus:bg-white focus:shadow-[0_0_0_4px_rgba(255,107,53,0.1)]"
           />
           {errors.password && (
             <p className="text-sm text-error">{errors.password.message}</p>
@@ -147,7 +147,7 @@ export default function ChildLoginForm() {
 
         <Button
           type="submit"
-          className="w-full h-[50px] rounded-xl bg-gradient-to-r from-primary to-primaryLight text-white font-semibold text-lg shadow-[0_4px_16px_rgba(255,107,53,0.25)] hover:shadow-[0_6px_20px_rgba(255,107,53,0.35)] hover:translate-y-[-2px] active:translate-y-0 active:scale-[0.98] active:shadow-[0_2px_8px_rgba(255,107,53,0.2)]"
+          className="w-full h-[50px] rounded-[14px] bg-gradient-to-r from-primary to-primaryLight text-white font-semibold text-lg shadow-[0_4px_16px_rgba(255,107,53,0.25)] hover:shadow-[0_6px_20px_rgba(255,107,53,0.35)] hover:translate-y-[-2px] active:translate-y-0 active:scale-[0.98] active:shadow-[0_2px_8px_rgba(255,107,53,0.2)] shine-effect"
           size="lg"
           disabled={isLoading}
         >

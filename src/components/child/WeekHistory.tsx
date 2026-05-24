@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, CheckCircle2, Gift, Clock } from "lucide-react";
+import { ChevronDown, CheckCircle2, Gift, Clock, Calendar } from "lucide-react";
 
 interface CompletionItem {
   id: string;
@@ -76,6 +76,7 @@ export default function WeekHistory({ weekData, type, isExpanded, onToggle }: We
         className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
       >
         <div className="flex items-center gap-3">
+          <Calendar className="w-4 h-4 text-primary" />
           <span className="font-semibold text-gray-900">{formatWeekLabel()}</span>
           <span className="text-sm text-gray-500">
             {weekRange.start} ~ {weekRange.end}
@@ -112,8 +113,9 @@ export default function WeekHistory({ weekData, type, isExpanded, onToggle }: We
           <motion.div
             animate={{ rotate: isExpanded ? 180 : 0 }}
             transition={{ duration: 0.2 }}
+            className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-100"
           >
-            <ChevronDown className="w-5 h-5 text-gray-400" />
+            <ChevronDown className="w-4 h-4 text-gray-500" />
           </motion.div>
         </div>
       </button>
@@ -133,7 +135,7 @@ export default function WeekHistory({ weekData, type, isExpanded, onToggle }: We
                 ? (items as CompletionItem[]).map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between bg-gray-50 rounded-xl p-3"
+                      className="flex items-center justify-between bg-gradient-to-r from-[#E8F8F5] to-[#F0FAF8] rounded-xl p-3"
                     >
                       <div className="flex items-center gap-3">
                         <div
@@ -169,7 +171,7 @@ export default function WeekHistory({ weekData, type, isExpanded, onToggle }: We
                 : (items as RedemptionItem[]).map((item) => (
                     <div
                       key={item.id}
-                      className="flex items-center justify-between bg-gray-50 rounded-xl p-3"
+                      className="flex items-center justify-between bg-gradient-to-r from-[#FFF8F0] to-[#FFEDD8] rounded-xl p-3"
                     >
                       <div className="flex items-center gap-3">
                         <div

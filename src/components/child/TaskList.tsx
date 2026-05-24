@@ -95,8 +95,14 @@ export default function TaskList({ categories, completedTasks, onComplete }: Tas
       {/* 待完成区域 */}
       {sortedCategories.length > 0 && pendingCount > 0 && (
         <div className="mb-6">
-          <h3 className="text-sm font-medium text-[#6B7280] mb-3">
-            【待完成】（{pendingCount} 个）
+          <h3 className="flex items-center gap-2 mb-3">
+            <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span className="text-sm font-medium text-[#6B7280] bg-[#FFF8F0] px-3 py-1 rounded-full">
+              待完成 · {pendingCount} 个
+            </span>
           </h3>
 
           {sortedCategories.map((category, index) => (
@@ -114,8 +120,13 @@ export default function TaskList({ categories, completedTasks, onComplete }: Tas
       {/* 已完成区域 */}
       {completedTasks.length > 0 && (
         <div className="mb-6">
-          <h3 className="text-sm font-medium text-[#6B7280] mb-3">
-            【已完成】（{completedTasks.length} 个）
+          <h3 className="flex items-center gap-2 mb-3">
+            <svg className="w-4 h-4 text-[#4ECDC4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            <span className="text-sm font-medium text-[#6B7280] bg-[#E8F8F5] px-3 py-1 rounded-full">
+              已完成 · {completedTasks.length} 个
+            </span>
           </h3>
 
           <div className="bg-white rounded-[16px] p-[18px] shadow-[0_4px_12px_rgba(255,107,53,0.15),0_1px_2px_rgba(0,0,0,0.05)] border border-[rgba(255,107,53,0.08)]">
@@ -124,7 +135,7 @@ export default function TaskList({ categories, completedTasks, onComplete }: Tas
                 key={task.id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="bg-[#F9FAFB] rounded-[14px] p-4 mb-3 last:mb-0"
+                className="bg-[#E8F8F5] rounded-[14px] p-4 mb-3 last:mb-0"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
