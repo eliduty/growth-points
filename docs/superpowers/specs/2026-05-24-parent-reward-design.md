@@ -15,9 +15,12 @@ status: draft
 | 项目 | 需求 |
 |------|------|
 | 奖励场景 | 特定场景奖励，需要填写原因 |
-| 积分数值 | 预设档位 + 自定义输入 |
-| 孩子端展示 | 需要看到奖励记录 |
-| 撤销功能 | 家长可撤销奖励，无时间限制 |
+| 积分数值 | 预设档位（5、10、20、30、50）+ 自定义输入 |
+| 孩子端展示 | 整合到「完成」tab，用样式区分 |
+| 撤销功能 | **不允许撤销**（后续规划惩罚功能） |
+| 保存确认 | **需要二次确认弹窗**，避免误操作 |
+| 孩子端奖励人 | 不显示，保持简洁 |
+| 家长端奖励人 | 显示，支持多家长协作 |
 
 ## 数据模型设计
 
@@ -35,8 +38,6 @@ model Reward {
   createdBy   String   // 发起奖励的家长 ID
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  revokedAt   DateTime? // 撤销时间
-  revokedBy   String?  // 撤销操作人 ID
 
   @@index([userId, createdAt])  // 孩子端历史查询
   @@index([familyId, createdAt]) // 家长端统计查询
@@ -61,7 +62,7 @@ model Family {
 - `familyId` 冗余存储，与 `TaskCompletion` 设计一致，简化家长端查询
 - `reason` 字段记录奖励原因，符合用户「特定场景奖励」需求
 - `createdBy` 记录发起奖励的家长 ID，支持多家长场景
-- 撤销字段 `revokedAt`/`revokedBy` 与 `TaskCompletion` 一致
+- **奖励不允许撤销**，设计更简洁，后续用其他机制扣积分
 
 ## API 设计
 
@@ -80,21 +81,7 @@ Response: { rewardId: string, points: number, currentPoints: number }
 - `points`: 必填，正整数，建议范围 1-1000
 - `reason`: 必填，长度限制 50 字符
 
-**2. 撤销奖励**
-
-```
-DELETE /api/parent/rewards/:id
-Response: { pointsRevoked: number, redemptionsCancelled: number }
-```
-
-撤销逻辑：
-- 验证奖励属于本家庭
-- 检查是否已撤销
-- **无时间限制**（与任务完成不同）
-- 扣减孩子积分，如积分不足则撤销待确认兑换记录
-- 记录 `revokedAt` 和 `revokedBy`
-
-**3. 查询奖励记录**
+**2. 查询奖励记录**
 
 ```
 GET /api/parent/rewards
@@ -113,8 +100,6 @@ interface ParentRewardRecord {
   createdBy: string;
   createdByName: string;   // 发起奖励的家长名
   createdAt: string;
-  revokedAt?: string | null;
-  revokedByName?: string;  // 撤销人名（如有）
 }
 ```
 
@@ -141,7 +126,6 @@ interface ChildRewardRecord {
   points: number;
   reason: string;
   createdAt: string;
-  revokedAt?: string | null;
 }
 ```
 
@@ -159,10 +143,15 @@ interface ChildRewardRecord {
 **奖励表单**：
 
 弹窗表单包含：
-1. **预设档位选择**：4 个按钮（10、20、50、100 积分），点击后填入对应数值
+1. **预设档位选择**：5 个按钮（5、10、20、30、50 积分），点击后填入对应数值
 2. **自定义输入框**：数字输入框，可手动修改积分值
 3. **原因输入框**：文本输入框，必填，限制 50 字符
-4. **确认按钮**：点击后发起奖励请求
+4. **确认按钮**：点击后弹出二次确认弹窗
+
+**二次确认弹窗**：
+- 显示奖励详情（积分值、原因）
+- 用户点击「确认奖励」后才真正提交
+- 避免误操作
 
 **奖励记录展示**：
 
@@ -186,34 +175,15 @@ interface ChildRewardRecord {
 - 任务完成：显示任务名、积分，用「任务」图标
 - 奖励：显示原因、积分，用「礼物/星星」图标，标注「家长奖励」
 
-## 撤销逻辑设计
-
-与任务完成撤销类似，但有以下差异：
-
-| 项目 | 任务完成撤销 | 奖励撤销 |
-|------|-------------|----------|
-| 时间限制 | 只能撤销本周 | 无限制 |
-| 积分处理 | 扣减积分，撤销兑换记录 | 同上 |
-
-撤销流程：
-1. 验证奖励属于本家庭
-2. 检查是否已撤销
-3. 计算撤销后积分：`currentPoints - rewardPoints`
-4. 如积分不足（结果 < 0），按时间倒序撤销待确认兑换记录
-5. 执行事务：
-   - 更新 Reward 记录（设置 revokedAt, revokedBy）
-   - 更新 User 积分（扣减）
-   - 更新兑换记录状态（如有）
-
 ## 前端改动清单
 
 ### 家长端
 
 1. **API 层** (`src/lib/api-parent.ts`)：
-   - 新增 `rewardsApi` 对象：create, revoke, list
+   - 新增 `rewardsApi` 对象：create, list
 
 2. **组件层**：
-   - 新增 `RewardDialog.tsx`：奖励表单弹窗
+   - 新增 `RewardDialog.tsx`：奖励表单弹窗（含二次确认）
    - 新增 `RewardRecordCard.tsx`：奖励记录卡片
    - 修改 `CompletionRecordCard.tsx`：或统一为积分记录卡片
 

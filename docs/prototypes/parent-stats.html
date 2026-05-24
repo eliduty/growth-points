@@ -717,6 +717,396 @@
     .overlay.show {
       display: block;
     }
+
+    /* 奖励积分按钮 */
+    .reward-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 14px;
+      font-size: 14px;
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(34, 211, 153, 0.25);
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .reward-btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .reward-btn:hover {
+      box-shadow: 0 4px 12px rgba(34, 211, 153, 0.35);
+      transform: translateY(-1px);
+    }
+
+    /* 奖励表单弹窗 */
+    .reward-dialog {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 20px;
+      padding: 24px;
+      width: 90%;
+      max-width: 360px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+      z-index: 201;
+      display: none;
+    }
+
+    .reward-dialog.show {
+      display: block;
+      animation: popIn 0.2s ease-out;
+    }
+
+    .dialog-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .dialog-title {
+      font-size: 18px;
+      color: var(--text-primary);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dialog-title svg {
+      width: 20px;
+      height: 20px;
+      stroke: #34D399;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .dialog-close {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .dialog-close:hover {
+      background: #F3F4F6;
+    }
+
+    .dialog-close svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--text-muted);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    /* 预设档位 */
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .preset-btn {
+      background: #F3F4F6;
+      border: 2px solid #E5E7EB;
+      border-radius: 12px;
+      padding: 14px 8px;
+      font-size: 14px;
+      color: var(--text-primary);
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      transition: all 0.15s;
+      text-align: center;
+    }
+
+    .preset-btn:hover {
+      border-color: #34D399;
+      background: #ECFDF5;
+    }
+
+    .preset-btn.selected {
+      border-color: #34D399;
+      background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+      color: #059669;
+    }
+
+    .preset-value {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .preset-value svg {
+      width: 12px;
+      height: 12px;
+      stroke: currentColor;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    /* 自定义输入 */
+    .custom-input-group {
+      margin-bottom: 16px;
+    }
+
+    .input-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .input-label svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--text-secondary);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .custom-input {
+      width: 100%;
+      border: 2px solid #E5E7EB;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 16px;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-weight: 600;
+      transition: all 0.15s;
+      outline: none;
+    }
+
+    .custom-input:focus {
+      border-color: #34D399;
+      background: #ECFDF5;
+    }
+
+    .custom-input::placeholder {
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* 原因输入 */
+    .reason-input {
+      width: 100%;
+      border: 2px solid #E5E7EB;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: var(--text-primary);
+      font-family: inherit;
+      transition: all 0.15s;
+      outline: none;
+      resize: none;
+      min-height: 60px;
+    }
+
+    .reason-input:focus {
+      border-color: #34D399;
+      background: #ECFDF5;
+    }
+
+    .reason-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .char-count {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    /* 提交按钮 */
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(34, 211, 153, 0.25);
+      transition: all 0.15s;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .submit-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .submit-btn:hover {
+      box-shadow: 0 4px 12px rgba(34, 211, 153, 0.35);
+    }
+
+    .submit-btn:disabled {
+      background: #E5E7EB;
+      color: var(--text-muted);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* 二次确认弹窗 */
+    .confirm-popup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 16px;
+      padding: 28px;
+      width: 90%;
+      max-width: 320px;
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.2);
+      z-index: 202;
+      display: none;
+    }
+
+    .confirm-popup.show {
+      display: block;
+      animation: popIn 0.2s ease-out;
+    }
+
+    .confirm-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .confirm-icon svg {
+      width: 24px;
+      height: 24px;
+      stroke: #34D399;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .confirm-title {
+      font-size: 16px;
+      color: var(--text-primary);
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+
+    .confirm-content {
+      text-align: center;
+      margin-bottom: 24px;
+      background: #F9FAFB;
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    .confirm-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      font-size: 14px;
+    }
+
+    .confirm-label {
+      color: var(--text-secondary);
+    }
+
+    .confirm-value {
+      color: var(--text-primary);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .confirm-value svg {
+      width: 14px;
+      height: 14px;
+      stroke: #34D399;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .confirm-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .confirm-btn-cancel {
+      flex: 1;
+      background: white;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 15px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.15s;
+    }
+
+    .confirm-btn-cancel:hover {
+      border-color: var(--text-muted);
+    }
+
+    .confirm-btn-ok {
+      flex: 1;
+      background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
+      border: none;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 15px;
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(34, 211, 153, 0.2);
+      transition: all 0.15s;
+    }
+
+    .confirm-btn-ok:hover {
+      box-shadow: 0 4px 12px rgba(34, 211, 153, 0.3);
+    }
   </style>
 </head>
 <body>
@@ -766,6 +1156,12 @@
               </div>
             </div>
           </div>
+          <!-- 奖励积分按钮 -->
+          <button class="reward-btn" onclick="showRewardDialog()">
+            <!-- Gift icon -->
+            <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>
+            奖励积分
+          </button>
         </div>
 
         <div class="child-card">
@@ -953,6 +1349,102 @@
   <!-- 遮罩层 -->
   <div class="overlay" id="overlay"></div>
 
+  <!-- 奖励表单弹窗 -->
+  <div class="reward-dialog" id="rewardDialog">
+    <div class="dialog-header">
+      <div class="dialog-title">
+        <!-- Gift icon -->
+        <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>
+        奖励积分
+      </div>
+      <div class="dialog-close" onclick="hideRewardDialog()">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </div>
+    </div>
+
+    <!-- 预设档位 -->
+    <div class="preset-grid">
+      <button class="preset-btn" onclick="selectPreset(10)">
+        <div class="preset-value">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          10
+        </div>
+      </button>
+      <button class="preset-btn" onclick="selectPreset(20)">
+        <div class="preset-value">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          20
+        </div>
+      </button>
+      <button class="preset-btn" onclick="selectPreset(50)">
+        <div class="preset-value">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          50
+        </div>
+      </button>
+      <button class="preset-btn" onclick="selectPreset(100)">
+        <div class="preset-value">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          100
+        </div>
+      </button>
+    </div>
+
+    <!-- 自定义输入 -->
+    <div class="custom-input-group">
+      <div class="input-label">
+        <!-- Edit3 icon -->
+        <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        自定义积分
+      </div>
+      <input type="number" class="custom-input" id="customPoints" placeholder="输入积分数量" oninput="updatePresetSelection()">
+    </div>
+
+    <!-- 原因输入 -->
+    <div class="custom-input-group">
+      <div class="input-label">
+        <!-- MessageSquare icon -->
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        奖励原因（必填）
+      </div>
+      <textarea class="reason-input" id="rewardReason" placeholder="如：考试取得好成绩" maxlength="50" oninput="updateCharCount()"></textarea>
+      <div class="char-count"><span id="charCount">0</span>/50</div>
+    </div>
+
+    <!-- 提交按钮 -->
+    <button class="submit-btn" id="submitBtn" disabled onclick="showConfirmPopup()">
+      <!-- Check icon -->
+      <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      确认
+    </button>
+  </div>
+
+  <!-- 二次确认弹窗 -->
+  <div class="confirm-popup" id="confirmPopup">
+    <div class="confirm-icon">
+      <!-- Gift icon -->
+      <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>
+    </div>
+    <div class="confirm-title">确认奖励积分？</div>
+    <div class="confirm-content">
+      <div class="confirm-item">
+        <div class="confirm-label">奖励积分</div>
+        <div class="confirm-value" id="confirmPoints">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span>50</span>
+        </div>
+      </div>
+      <div class="confirm-item">
+        <div class="confirm-label">奖励原因</div>
+        <div class="confirm-value" id="confirmReason">考试取得好成绩</div>
+      </div>
+    </div>
+    <div class="confirm-buttons">
+      <button class="confirm-btn-cancel" onclick="hideConfirmPopup()">取消</button>
+      <button class="confirm-btn-ok" onclick="confirmReward()">确认奖励</button>
+    </div>
+  </div>
+
   <!-- 认撤销弹窗 -->
   <div class="undo-popup" id="undoPopup">
     <div class="popup-icon">
@@ -1030,6 +1522,7 @@
   </div>
 
   <script>
+    // 原有撤销弹窗逻辑
     function showUndoPopup() {
       document.getElementById('overlay').classList.add('show');
       document.getElementById('undoPopup').classList.add('show');
@@ -1043,6 +1536,83 @@
     function confirmUndo() {
       hideUndoPopup();
       alert('已撤销');
+    }
+
+    // 奖励表单逻辑
+    let selectedPreset = null;
+
+    function showRewardDialog() {
+      document.getElementById('overlay').classList.add('show');
+      document.getElementById('rewardDialog').classList.add('show');
+    }
+
+    function hideRewardDialog() {
+      document.getElementById('overlay').classList.remove('show');
+      document.getElementById('rewardDialog').classList.remove('show');
+      // 重置表单
+      selectedPreset = null;
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('selected'));
+      document.getElementById('customPoints').value = '';
+      document.getElementById('rewardReason').value = '';
+      document.getElementById('charCount').textContent = '0';
+      document.getElementById('submitBtn').disabled = true;
+    }
+
+    function selectPreset(value) {
+      selectedPreset = value;
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('selected'));
+      event.target.closest('.preset-btn').classList.add('selected');
+      document.getElementById('customPoints').value = value;
+      checkFormValidity();
+    }
+
+    function updatePresetSelection() {
+      const value = parseInt(document.getElementById('customPoints').value);
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('selected'));
+      if ([10, 20, 50, 100].includes(value)) {
+        document.querySelectorAll('.preset-btn')[[10, 20, 50, 100].indexOf(value)].classList.add('selected');
+        selectedPreset = value;
+      } else {
+        selectedPreset = null;
+      }
+      checkFormValidity();
+    }
+
+    function updateCharCount() {
+      const reason = document.getElementById('rewardReason').value;
+      document.getElementById('charCount').textContent = reason.length;
+      checkFormValidity();
+    }
+
+    function checkFormValidity() {
+      const points = parseInt(document.getElementById('customPoints').value);
+      const reason = document.getElementById('rewardReason').value.trim();
+      const isValid = points > 0 && reason.length > 0;
+      document.getElementById('submitBtn').disabled = !isValid;
+    }
+
+    // 二次确认弹窗逻辑
+    function showConfirmPopup() {
+      const points = document.getElementById('customPoints').value;
+      const reason = document.getElementById('rewardReason').value;
+
+      document.getElementById('confirmPoints').querySelector('span').textContent = points;
+      document.getElementById('confirmReason').textContent = reason;
+
+      document.getElementById('rewardDialog').classList.remove('show');
+      document.getElementById('confirmPopup').classList.add('show');
+    }
+
+    function hideConfirmPopup() {
+      document.getElementById('confirmPopup').classList.remove('show');
+      document.getElementById('rewardDialog').classList.add('show');
+    }
+
+    function confirmReward() {
+      const points = document.getElementById('confirmPoints').querySelector('span').textContent;
+      hideConfirmPopup();
+      hideRewardDialog();
+      alert(`已奖励 ${points} 积分`);
     }
   </script>
 </body>
