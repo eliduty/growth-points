@@ -24,8 +24,18 @@ export async function GET(request: NextRequest) {
       select: {
         currentPoints: true,
         totalPoints: true,
+        taskCompletions: {
+          where: {
+            completedAt: { gte: weekStart, lte: weekEnd },
+            revokedAt: null,
+          },
+          select: { points: true },
+        },
       },
     });
+
+    // 本周获得积分
+    const weeklyPoints = user?.taskCompletions.reduce((sum, c) => sum + c.points, 0) || 0;
 
     if (!user) {
       return NextResponse.json(
@@ -118,9 +128,9 @@ export async function GET(request: NextRequest) {
       code: 0,
       data: {
         pointsOverview: {
-          current: user.currentPoints || 0,
-          total: user.totalPoints || 0,
-          weekly: 0,
+          current: user?.currentPoints || 0,
+          total: user?.totalPoints || 0,
+          weekly: weeklyPoints,
         },
         exchangeDaysInfo: {
           days: exchangeDays,
