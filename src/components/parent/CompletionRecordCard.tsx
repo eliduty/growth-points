@@ -3,13 +3,12 @@
 import { motion } from "framer-motion";
 import { cn } from "@/lib/cn";
 import { Clock, Star, Undo2 } from "lucide-react";
-import { useLongPress } from "@/hooks/use-long-press";
 import type { CompletionRecord } from "@/types";
 import { formatBeijingTime } from "@/lib/date";
 
 interface CompletionRecordCardProps {
   record: CompletionRecord;
-  onRevoke?: (id: string) => void;
+  onRevoke?: (record: CompletionRecord) => void;
   disabled?: boolean;
 }
 
@@ -20,14 +19,11 @@ export function CompletionRecordCard({
 }: CompletionRecordCardProps) {
   const isRevoked = record.revokedAt !== null;
 
-  const { isPressed, handlers } = useLongPress({
-    onLongPress: () => {
-      if (!isRevoked && onRevoke && !disabled) {
-        onRevoke(record.id);
-      }
-    },
-    delay: 800,
-  });
+  const handleUndoClick = () => {
+    if (!isRevoked && onRevoke && !disabled) {
+      onRevoke(record);
+    }
+  };
 
   return (
     <motion.div
@@ -38,26 +34,9 @@ export function CompletionRecordCard({
         "relative rounded-xl p-4 border transition-all",
         isRevoked
           ? "bg-gray-50 border-gray-200 opacity-60"
-          : isPressed
-            ? "bg-red-50 border-red-300 scale-[0.98]"
-            : "bg-card border-border hover:shadow-sm"
+          : "bg-card border-border hover:shadow-sm"
       )}
-      {...handlers}
     >
-      {/* 长按提示 */}
-      {!isRevoked && !disabled && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isPressed ? 1 : 0 }}
-          className="absolute inset-0 flex items-center justify-center bg-red-100/80 rounded-xl"
-        >
-          <div className="flex items-center gap-2 text-red-600">
-            <Undo2 className="w-5 h-5" />
-            <span className="text-sm font-medium">松开撤销</span>
-          </div>
-        </motion.div>
-      )}
-
       {/* 已撤销标记 */}
       {isRevoked && (
         <div className="absolute top-2 right-2 flex items-center gap-1 text-gray-500">
@@ -84,15 +63,35 @@ export function CompletionRecordCard({
           <span>{formatBeijingTime(record.completedAt)}</span>
         </div>
 
-        {/* 积分 */}
-        <div
-          className={cn(
-            "flex items-center gap-1 text-sm font-semibold",
-            isRevoked ? "text-gray-500" : "text-primary"
+        {/* 积分和撤销按钮 */}
+        <div className="flex items-center gap-3">
+          {/* 积分 */}
+          <div
+            className={cn(
+              "flex items-center gap-1 text-sm font-semibold",
+              isRevoked ? "text-gray-500" : "text-primary"
+            )}
+          >
+            <Star className="w-3.5 h-3.5 fill-current" />
+            <span>+{record.points}</span>
+          </div>
+
+          {/* 撤销按钮 */}
+          {!isRevoked && onRevoke && (
+            <button
+              onClick={handleUndoClick}
+              disabled={disabled}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-all",
+                "bg-white border border-gray-200 text-text-secondary",
+                "hover:border-red-400 hover:text-red-500",
+                disabled && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              <Undo2 className="w-3.5 h-3.5" />
+              <span>撤销</span>
+            </button>
           )}
-        >
-          <Star className="w-3.5 h-3.5 fill-current" />
-          <span>+{record.points}</span>
         </div>
       </div>
     </motion.div>

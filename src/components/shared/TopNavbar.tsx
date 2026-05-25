@@ -14,13 +14,22 @@ const TITLE_MAP: Record<string, string> = {
   "/child/profile": "个人中心",
 };
 
+// 动态路由标题匹配
+function getTitleFromPathname(pathname: string): string | undefined {
+  // /parent/stats/[childId] 详情页
+  if (pathname.match(/^\/parent\/stats\/[^/]+$/)) {
+    return "完成记录";
+  }
+  return TITLE_MAP[pathname];
+}
+
 export default function TopNavbar() {
   const router = useRouter();
   const pathname = usePathname();
   const { config } = useTopNavbar();
 
   // 获取标题：优先使用页面设置的，否则使用路由映射
-  const title = config.title ?? TITLE_MAP[pathname] ?? "";
+  const title = config.title ?? getTitleFromPathname(pathname) ?? "";
 
   const handleBack = () => {
     router.back();

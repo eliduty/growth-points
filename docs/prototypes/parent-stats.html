@@ -37,6 +37,24 @@
       position: relative;
     }
 
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%235B7FFF' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-content {
+      padding: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
     /* 顶部导航栏 */
     .top-nav {
       height: 56px;
@@ -92,82 +110,55 @@
       opacity: 0;
     }
 
-    body::before {
-      content: '';
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%235B7FFF' fill-opacity='0.03'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .page-content {
-      padding: 16px;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* 页面标题 */
-    .page-header {
-      margin-bottom: 20px;
+    /* 页面切换按钮 */
+    .page-switch {
       display: flex;
-      align-items: center;
       gap: 12px;
-    }
-
-    .page-header-icon {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, #5B7FFF 0%, #7B9FFF 100%);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(91, 127, 255, 0.2);
-    }
-
-    .page-header-icon svg {
-      width: 20px;
-      height: 20px;
-      stroke: white;
-      stroke-width: 2;
-      fill: none;
-    }
-
-    .page-title {
-      font-size: 18px;
-      color: var(--text-primary);
-      font-weight: 600;
-    }
-
-    .page-subtitle {
-      font-size: 13px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-
-    /* 孩子概览卡片横向滑动 */
-    .children-overview {
       margin-bottom: 20px;
+      padding: 12px 16px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow-card);
+      border: 1px solid #E5E7EB;
     }
 
-    .children-scroll {
-      display: flex;
-      gap: 14px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      scrollbar-width: none;
+    .page-switch-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: 2px solid #E5E7EB;
+      background: #F3F4F6;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
     }
 
-    .children-scroll::-webkit-scrollbar {
+    .page-switch-btn.active {
+      border-color: var(--color-primary);
+      background: linear-gradient(135deg, #F0F4FF 0%, #E8F0FE 100%);
+      color: var(--color-primary);
+    }
+
+    /* 概览页样式 */
+    .overview-page {
+      display: block;
+    }
+
+    .detail-page {
       display: none;
     }
 
+    /* 孩子概览卡片垂直列表 */
+    .children-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
     .child-card {
-      min-width: 150px;
       background: white;
       border-radius: 16px;
       padding: 18px;
@@ -181,28 +172,29 @@
 
     .child-card:hover {
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      border-color: var(--color-primary);
     }
 
-    .child-card.selected {
-      border-color: var(--color-primary);
-      background: linear-gradient(135deg, #F0F4FF 0%, #E8F0FE 100%);
-      box-shadow: 0 4px 16px rgba(91, 127, 255, 0.15);
+    .child-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
     }
 
     .child-avatar {
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       background: linear-gradient(135deg, #F0F4FF 0%, #E8F0FE 100%);
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 12px;
     }
 
     .child-avatar svg {
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       stroke: var(--color-primary);
       stroke-width: 2;
       fill: none;
@@ -212,55 +204,142 @@
       font-size: 16px;
       color: var(--text-primary);
       font-weight: 600;
-      text-align: center;
-      margin-bottom: 14px;
     }
 
     .child-stats {
       display: flex;
-      flex-direction: column;
-      gap: 10px;
+      justify-content: space-around;
+      gap: 12px;
     }
 
     .stat-item {
+      flex: 1;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 13px;
-    }
-
-    .stat-label {
-      color: var(--text-secondary);
-      display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 6px;
+      padding: 12px;
+      background: #F9FAFB;
+      border-radius: 10px;
     }
 
-    .stat-label svg {
-      width: 14px;
-      height: 14px;
-      stroke: var(--text-secondary);
-      stroke-width: 2;
-      fill: none;
-    }
-
-    .stat-value {
-      color: var(--color-primary);
-      font-weight: 600;
+    .stat-icon {
+      width: 28px;
+      height: 28px;
       display: flex;
       align-items: center;
-      gap: 4px;
+      justify-content: center;
     }
 
-    .stat-value svg {
-      width: 12px;
-      height: 12px;
+    .stat-icon svg {
+      width: 18px;
+      height: 18px;
       stroke: var(--color-primary);
       stroke-width: 2;
       fill: none;
     }
 
-    /* 记录详情区域 */
+    .stat-value {
+      font-size: 20px;
+      color: var(--color-primary);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .stat-value svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--color-primary);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* 详情页样式 */
+    .detail-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .detail-avatar {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #F0F4FF 0%, #E8F0FE 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .detail-avatar svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--color-primary);
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .detail-info {
+      flex: 1;
+    }
+
+    .detail-name {
+      font-size: 18px;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .detail-week {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* 奖励积分按钮 */
+    .reward-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
+      border: none;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 16px;
+      font-size: 15px;
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      box-shadow: 0 2px 8px rgba(34, 211, 153, 0.25);
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .reward-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: white;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    .reward-btn:hover {
+      box-shadow: 0 4px 12px rgba(34, 211, 153, 0.35);
+      transform: translateY(-1px);
+    }
+
+    /* 记录列表 */
     .records-section {
       background: white;
       border-radius: var(--radius-card);
@@ -270,75 +349,11 @@
       border: 1px solid #E5E7EB;
     }
 
-    .record-group {
-      border-bottom: 1px solid #E5E7EB;
-    }
-
-    .record-group:last-child {
-      border-bottom: none;
-    }
-
-    .record-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 18px;
-      cursor: pointer;
-      background: #F9FAFB;
-      transition: all 0.15s;
-    }
-
-    .record-header.expanded {
-      background: linear-gradient(135deg, #F0F4FF 0%, #E8F0FE 100%);
-    }
-
-    .record-header-title {
-      font-size: 15px;
-      color: var(--text-primary);
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .record-header-title svg {
-      width: 16px;
-      height: 16px;
-      stroke: var(--color-primary);
-      stroke-width: 2;
-      fill: none;
-    }
-
-    .record-header-icon {
-      width: 20px;
-      height: 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.15s ease-out;
-    }
-
-    .record-header-icon svg {
-      width: 14px;
-      height: 14px;
-      stroke: var(--text-muted);
-      stroke-width: 2;
-      fill: none;
-    }
-
-    .record-header.expanded .record-header-icon {
-      transform: rotate(180deg);
-    }
-
-    .record-list {
-      padding: 0 18px;
-    }
-
     .record-item {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 0;
+      padding: 16px 18px;
       border-bottom: 1px solid #E5E7EB;
     }
 
@@ -351,9 +366,9 @@
     }
 
     .record-name {
-      font-size: 14px;
+      font-size: 15px;
       color: var(--text-primary);
-      margin-bottom: 4px;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -368,7 +383,7 @@
     }
 
     .record-time {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--text-muted);
       display: flex;
       align-items: center;
@@ -390,7 +405,7 @@
     }
 
     .record-points {
-      font-size: 14px;
+      font-size: 15px;
       color: var(--color-primary);
       font-weight: 600;
       display: flex;
@@ -439,37 +454,53 @@
       stroke: var(--color-error);
     }
 
-    /* 周统计 */
-    .week-summary {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 14px 18px;
+    /* 已撤销状态 */
+    .record-item.revoked {
       background: #F9FAFB;
+      opacity: 0.7;
     }
 
-    .summary-text {
-      font-size: 13px;
-      color: var(--text-secondary);
+    .revoked-tag {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--text-muted);
+      background: #F3F4F6;
+      padding: 4px 8px;
+      border-radius: 6px;
     }
 
-    .summary-text svg {
-      width: 14px;
-      height: 14px;
-      stroke: var(--text-secondary);
+    .revoked-tag svg {
+      width: 12px;
+      height: 12px;
+      stroke: var(--text-muted);
       stroke-width: 2;
       fill: none;
     }
 
-    .summary-value {
-      font-size: 14px;
-      color: var(--color-primary);
-      font-weight: 600;
+    /* 底部统计 */
+    .week-summary {
       display: flex;
       align-items: center;
+      justify-content: space-around;
+      padding: 14px 18px;
+      background: #F9FAFB;
+      border-radius: 10px;
+      margin-top: 16px;
+    }
+
+    .summary-item {
+      text-align: center;
+    }
+
+    .summary-value {
+      font-size: 18px;
+      color: var(--color-primary);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       gap: 4px;
     }
 
@@ -479,6 +510,12 @@
       stroke: var(--color-primary);
       stroke-width: 2;
       fill: none;
+    }
+
+    .summary-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
     }
 
     /* 底部导航 */
@@ -565,7 +602,23 @@
       font-weight: 600;
     }
 
-    /* 确认撤销弹窗 */
+    /* 弹窗样式 */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 200;
+      display: none;
+      backdrop-filter: blur(2px);
+    }
+
+    .overlay.show {
+      display: block;
+    }
+
     .undo-popup {
       position: fixed;
       top: 50%;
@@ -702,56 +755,6 @@
       box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
     }
 
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.3);
-      z-index: 200;
-      display: none;
-      backdrop-filter: blur(2px);
-    }
-
-    .overlay.show {
-      display: block;
-    }
-
-    /* 奖励积分按钮 */
-    .reward-btn {
-      width: 100%;
-      background: linear-gradient(135deg, #34D399 0%, #10B981 100%);
-      border: none;
-      border-radius: 10px;
-      padding: 12px;
-      margin-top: 14px;
-      font-size: 14px;
-      color: white;
-      cursor: pointer;
-      font-family: inherit;
-      font-weight: 600;
-      box-shadow: 0 2px 8px rgba(34, 211, 153, 0.25);
-      transition: all 0.15s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .reward-btn svg {
-      width: 16px;
-      height: 16px;
-      stroke: white;
-      stroke-width: 2;
-      fill: none;
-    }
-
-    .reward-btn:hover {
-      box-shadow: 0 4px 12px rgba(34, 211, 153, 0.35);
-      transform: translateY(-1px);
-    }
-
     /* 奖励表单弹窗 */
     .reward-dialog {
       position: fixed;
@@ -820,20 +823,20 @@
       fill: none;
     }
 
-    /* 预设档位 */
+    /* 预设档位 - 五档 */
     .preset-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
       margin-bottom: 16px;
     }
 
     .preset-btn {
       background: #F3F4F6;
       border: 2px solid #E5E7EB;
-      border-radius: 12px;
-      padding: 14px 8px;
-      font-size: 14px;
+      border-radius: 10px;
+      padding: 12px 6px;
+      font-size: 13px;
       color: var(--text-primary);
       cursor: pointer;
       font-family: inherit;
@@ -857,7 +860,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 2px;
     }
 
     .preset-value svg {
@@ -1112,235 +1115,240 @@
 <body>
   <!-- 顶部导航栏 -->
   <div class="top-nav">
-    <div class="nav-back">
-      <!-- ChevronLeft icon -->
+    <div class="nav-back" onclick="goBack()">
       <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
     </div>
-    <div class="nav-title">本周统计</div>
-    <div class="nav-action">
-      <!-- 预留位置 -->
-    </div>
+    <div class="nav-title" id="navTitle">统计</div>
+    <div class="nav-action"></div>
   </div>
 
   <div class="page-content">
-    <!-- 顶部导航栏已添加，移除旧的页面标题 -->
+    <!-- 页面切换按钮 -->
+    <div class="page-switch">
+      <button class="page-switch-btn active" onclick="showOverviewPage()">概览页</button>
+      <button class="page-switch-btn" onclick="showDetailPage()">详情页</button>
+    </div>
 
-    <!-- 孩子概览卡片 -->
-    <div class="children-overview">
-      <div class="children-scroll">
-        <div class="child-card selected">
-          <div class="child-avatar">
-            <!-- Smile icon -->
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+    <!-- 概览页 -->
+    <div class="overview-page" id="overviewPage">
+      <!-- 孩子卡片垂直列表 -->
+      <div class="children-list">
+        <!-- 小明卡片 -->
+        <div class="child-card" onclick="showDetailPage()">
+          <div class="child-header">
+            <div class="child-avatar">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            </div>
+            <div class="child-name">小明</div>
           </div>
-          <div class="child-name">小明</div>
           <div class="child-stats">
             <div class="stat-item">
-              <div class="stat-label">
-                <!-- CheckCircle icon -->
+              <div class="stat-icon">
                 <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
-                完成
               </div>
-              <div class="stat-value">5 个</div>
+              <div class="stat-value">5</div>
+              <div class="stat-label">完成任务</div>
             </div>
             <div class="stat-item">
-              <div class="stat-label">
-                <!-- TrendingUp icon -->
-                <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                获得
-              </div>
-              <div class="stat-value">
-                <!-- Star icon -->
+              <div class="stat-icon">
                 <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                +45 积分
-              </div>
-            </div>
-          </div>
-          <!-- 奖励积分按钮 -->
-          <button class="reward-btn" onclick="showRewardDialog()">
-            <!-- Gift icon -->
-            <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>
-            奖励积分
-          </button>
-        </div>
-
-        <div class="child-card">
-          <div class="child-avatar">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
-          </div>
-          <div class="child-name">小红</div>
-          <div class="child-stats">
-            <div class="stat-item">
-              <div class="stat-label">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
-                完成
-              </div>
-              <div class="stat-value">3 个</div>
-            </div>
-            <div class="stat-item">
-              <div class="stat-label">
-                <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                获得
               </div>
               <div class="stat-value">
                 <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                +25 积分
+                +45
               </div>
+              <div class="stat-label">获得积分</div>
             </div>
           </div>
         </div>
 
-        <div class="child-card">
-          <div class="child-avatar">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        <!-- 小红卡片 -->
+        <div class="child-card" onclick="showDetailPage()">
+          <div class="child-header">
+            <div class="child-avatar">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            </div>
+            <div class="child-name">小红</div>
           </div>
-          <div class="child-name">小刚</div>
           <div class="child-stats">
             <div class="stat-item">
-              <div class="stat-label">
+              <div class="stat-icon">
                 <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
-                完成
               </div>
-              <div class="stat-value">2 个</div>
+              <div class="stat-value">3</div>
+              <div class="stat-label">完成任务</div>
             </div>
             <div class="stat-item">
-              <div class="stat-label">
-                <svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
-                获得
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               </div>
               <div class="stat-value">
                 <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                +15 积分
+                +25
               </div>
+              <div class="stat-label">获得积分</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 小刚卡片 -->
+        <div class="child-card" onclick="showDetailPage()">
+          <div class="child-header">
+            <div class="child-avatar">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            </div>
+            <div class="child-name">小刚</div>
+          </div>
+          <div class="child-stats">
+            <div class="stat-item">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+              </div>
+              <div class="stat-value">2</div>
+              <div class="stat-label">完成任务</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon">
+                <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              </div>
+              <div class="stat-value">
+                <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                +15
+              </div>
+              <div class="stat-label">获得积分</div>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 记录详情区域 -->
-    <div class="records-section">
-      <!-- 小明本周记录（展开） -->
-      <div class="record-group">
-        <div class="record-header expanded">
-          <div class="record-header-title">
-            <!-- User icon -->
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
-            小明本周记录
+    <!-- 详情页 -->
+    <div class="detail-page" id="detailPage">
+      <!-- 详情页头部信息 -->
+      <div class="detail-header">
+        <div class="detail-avatar">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        </div>
+        <div class="detail-info">
+          <div class="detail-name">小明</div>
+          <div class="detail-week">5月19日 ~ 5月25日</div>
+        </div>
+      </div>
+
+      <!-- 奖励积分按钮 -->
+      <button class="reward-btn" onclick="showRewardDialog()">
+        <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>
+        奖励积分
+      </button>
+
+      <!-- 记录列表 -->
+      <div class="records-section">
+        <div class="record-item">
+          <div class="record-info">
+            <div class="record-name">
+              <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3 3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3 3h7z"/></svg>
+              阅读书籍
+            </div>
+            <div class="record-time">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              5月21日 09:30
+            </div>
           </div>
-          <div class="record-header-icon">
-            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          <div class="record-meta">
+            <div class="record-points">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              +10
+            </div>
+            <button class="undo-btn" onclick="showUndoPopup('阅读书籍', 10)">
+              <svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+              撤销
+            </button>
           </div>
         </div>
-        <div class="record-list">
-          <div class="record-item">
-            <div class="record-info">
-              <div class="record-name">
-                <!-- BookOpen icon -->
-                <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3 3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3 3h7z"/></svg>
-                阅读书籍
-              </div>
-              <div class="record-time">
-                <!-- Clock icon -->
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                5月21日 09:30
-              </div>
+
+        <div class="record-item">
+          <div class="record-info">
+            <div class="record-name">
+              <svg viewBox="0 0 24 24"><path d="M12 3l1.912 5.813 6.088-1.913-3.5 3.5 3.5 3.5-6.088-1.913L12 21l-1.912-5.813L4 17l3.5-3.5L4 10l6.088 1.913L12 3z"/></svg>
+              整理房间
             </div>
-            <div class="record-meta">
-              <div class="record-points">
-                <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                +10
-              </div>
-              <button class="undo-btn" onclick="showUndoPopup()">
-                <!-- Undo2 icon -->
-                <svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
-                撤销
-              </button>
+            <div class="record-time">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              5月20日 15:20
             </div>
           </div>
-          <div class="record-item">
-            <div class="record-info">
-              <div class="record-name">
-                <!-- Sparkles icon -->
-                <svg viewBox="0 0 24 24"><path d="M12 3l1.912 5.813 6.088-1.913-3.5 3.5 3.5 3.5-6.088-1.913L12 21l-1.912-5.813L4 17l3.5-3.5L4 10l6.088 1.913L12 3z"/></svg>
-                整理房间
-              </div>
-              <div class="record-time">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                5月20日 15:20
-              </div>
+          <div class="record-meta">
+            <div class="record-points">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              +5
             </div>
-            <div class="record-meta">
-              <div class="record-points">
-                <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                +5
-              </div>
-              <button class="undo-btn">
-                <svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
-                撤销
-              </button>
+            <button class="undo-btn" onclick="showUndoPopup('整理房间', 5)">
+              <svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+              撤销
+            </button>
+          </div>
+        </div>
+
+        <div class="record-item">
+          <div class="record-info">
+            <div class="record-name">
+              <svg viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L11 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
+              做作业
+            </div>
+            <div class="record-time">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              5月19日 18:45
             </div>
           </div>
-          <div class="record-item">
-            <div class="record-info">
-              <div class="record-name">
-                <!-- PenTool icon -->
-                <svg viewBox="0 0 24 24"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L11 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>
-                做作业
-              </div>
-              <div class="record-time">
-                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                5月19日 18:45
-              </div>
+          <div class="record-meta">
+            <div class="record-points">
+              <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              +15
             </div>
-            <div class="record-meta">
-              <div class="record-points">
-                <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                +15
-              </div>
-              <button class="undo-btn">
-                <svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
-                撤销
-              </button>
+            <button class="undo-btn" onclick="showUndoPopup('做作业', 15)">
+              <svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+              撤销
+            </button>
+          </div>
+        </div>
+
+        <!-- 已撤销记录 -->
+        <div class="record-item revoked">
+          <div class="record-info">
+            <div class="record-name">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+              洗碗
+            </div>
+            <div class="record-time">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              5月18日 20:00
+            </div>
+          </div>
+          <div class="record-meta">
+            <div class="record-points" style="color: var(--text-muted);">
+              <svg viewBox="0 0 24 24" style="stroke: var(--text-muted);"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              +5
+            </div>
+            <div class="revoked-tag">
+              <svg viewBox="0 0 24 24"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+              已撤销
             </div>
           </div>
         </div>
-        <div class="week-summary">
-          <div class="summary-text">
-            <!-- CheckCircle icon -->
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
-            本周共完成 5 个任务
-          </div>
+      </div>
+
+      <!-- 底部统计 -->
+      <div class="week-summary">
+        <div class="summary-item">
+          <div class="summary-value">5</div>
+          <div class="summary-label">完成任务</div>
+        </div>
+        <div class="summary-item">
           <div class="summary-value">
             <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            获 45 积分
+            +45
           </div>
-        </div>
-      </div>
-
-      <!-- 小红本周记录（折叠） -->
-      <div class="record-group">
-        <div class="record-header">
-          <div class="record-header-title">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
-            小红本周记录
-          </div>
-          <div class="record-header-icon">
-            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
-        </div>
-      </div>
-
-      <!-- 小刚本周记录（折叠） -->
-      <div class="record-group">
-        <div class="record-header">
-          <div class="record-header-title">
-            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 1 0-16 0"/></svg>
-            小刚本周记录
-          </div>
-          <div class="record-header-icon">
-            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-          </div>
+          <div class="summary-label">获得积分</div>
         </div>
       </div>
     </div>
@@ -1349,11 +1357,38 @@
   <!-- 遮罩层 -->
   <div class="overlay" id="overlay"></div>
 
+  <!-- 撤销确认弹窗 -->
+  <div class="undo-popup" id="undoPopup">
+    <div class="popup-icon">
+      <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <div class="popup-title">确认撤销这条完成记录？</div>
+    <div class="popup-content">
+      <div class="popup-item">
+        <div class="popup-label">任务</div>
+        <div class="popup-value" id="undoTaskName">
+          <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3 3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3 3h7z"/></svg>
+          阅读书籍
+        </div>
+      </div>
+      <div class="popup-item">
+        <div class="popup-label">将扣回</div>
+        <div class="popup-value deduct" id="undoPoints">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          10 积分
+        </div>
+      </div>
+    </div>
+    <div class="popup-buttons">
+      <button class="popup-btn-cancel" onclick="hideUndoPopup()">取消</button>
+      <button class="popup-btn-confirm" onclick="confirmUndo()">确认撤销</button>
+    </div>
+  </div>
+
   <!-- 奖励表单弹窗 -->
   <div class="reward-dialog" id="rewardDialog">
     <div class="dialog-header">
       <div class="dialog-title">
-        <!-- Gift icon -->
         <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>
         奖励积分
       </div>
@@ -1362,8 +1397,14 @@
       </div>
     </div>
 
-    <!-- 预设档位 -->
+    <!-- 预设档位 - 五档 5/10/20/30/50 -->
     <div class="preset-grid">
+      <button class="preset-btn" onclick="selectPreset(5)">
+        <div class="preset-value">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          5
+        </div>
+      </button>
       <button class="preset-btn" onclick="selectPreset(10)">
         <div class="preset-value">
           <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
@@ -1376,16 +1417,16 @@
           20
         </div>
       </button>
+      <button class="preset-btn" onclick="selectPreset(30)">
+        <div class="preset-value">
+          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          30
+        </div>
+      </button>
       <button class="preset-btn" onclick="selectPreset(50)">
         <div class="preset-value">
           <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
           50
-        </div>
-      </button>
-      <button class="preset-btn" onclick="selectPreset(100)">
-        <div class="preset-value">
-          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          100
         </div>
       </button>
     </div>
@@ -1393,7 +1434,6 @@
     <!-- 自定义输入 -->
     <div class="custom-input-group">
       <div class="input-label">
-        <!-- Edit3 icon -->
         <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
         自定义积分
       </div>
@@ -1403,7 +1443,6 @@
     <!-- 原因输入 -->
     <div class="custom-input-group">
       <div class="input-label">
-        <!-- MessageSquare icon -->
         <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         奖励原因（必填）
       </div>
@@ -1413,7 +1452,6 @@
 
     <!-- 提交按钮 -->
     <button class="submit-btn" id="submitBtn" disabled onclick="showConfirmPopup()">
-      <!-- Check icon -->
       <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
       确认
     </button>
@@ -1422,7 +1460,6 @@
   <!-- 二次确认弹窗 -->
   <div class="confirm-popup" id="confirmPopup">
     <div class="confirm-icon">
-      <!-- Gift icon -->
       <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>
     </div>
     <div class="confirm-title">确认奖励积分？</div>
@@ -1445,48 +1482,16 @@
     </div>
   </div>
 
-  <!-- 认撤销弹窗 -->
-  <div class="undo-popup" id="undoPopup">
-    <div class="popup-icon">
-      <!-- AlertTriangle icon -->
-      <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    </div>
-    <div class="popup-title">确认撤销这条完成记录？</div>
-    <div class="popup-content">
-      <div class="popup-item">
-        <div class="popup-label">任务</div>
-        <div class="popup-value">
-          <!-- BookOpen icon -->
-          <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3 3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3 3h7z"/></svg>
-          阅读书籍
-        </div>
-      </div>
-      <div class="popup-item">
-        <div class="popup-label">将扣回</div>
-        <div class="popup-value deduct">
-          <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          10 积分
-        </div>
-      </div>
-    </div>
-    <div class="popup-buttons">
-      <button class="popup-btn-cancel" onclick="hideUndoPopup()">取消</button>
-      <button class="popup-btn-confirm" onclick="confirmUndo()">确认撤销</button>
-    </div>
-  </div>
-
   <!-- 底部导航 -->
   <div class="bottom-nav">
     <div class="nav-item active">
       <div class="nav-icon">
-        <!-- BarChart3 icon -->
         <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
       </div>
       <div class="nav-label">统计</div>
     </div>
     <div class="nav-item">
       <div class="nav-icon">
-        <!-- ListTodo icon -->
         <svg viewBox="0 0 24 24">
           <rect x="3" y="5" width="6" height="6" rx="1"/>
           <path d="M11 4h10"/>
@@ -1499,7 +1504,6 @@
     </div>
     <div class="nav-item">
       <div class="nav-icon">
-        <!-- Gift icon -->
         <svg viewBox="0 0 24 24">
           <rect x="3" y="8" width="18" height="4" rx="1"/>
           <path d="M12 8v13"/>
@@ -1511,7 +1515,6 @@
     </div>
     <div class="nav-item">
       <div class="nav-icon">
-        <!-- Settings icon -->
         <svg viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="3"/>
           <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -1522,8 +1525,41 @@
   </div>
 
   <script>
-    // 原有撤销弹窗逻辑
-    function showUndoPopup() {
+    // 页面切换逻辑
+    function showOverviewPage() {
+      document.getElementById('overviewPage').style.display = 'block';
+      document.getElementById('detailPage').style.display = 'none';
+      document.getElementById('navTitle').textContent = '统计';
+      document.querySelectorAll('.page-switch-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.page-switch-btn')[0].classList.add('active');
+    }
+
+    function showDetailPage() {
+      document.getElementById('overviewPage').style.display = 'none';
+      document.getElementById('detailPage').style.display = 'block';
+      document.getElementById('navTitle').textContent = '完成记录';
+      document.querySelectorAll('.page-switch-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.page-switch-btn')[1].classList.add('active');
+    }
+
+    function goBack() {
+      if (document.getElementById('detailPage').style.display === 'block') {
+        showOverviewPage();
+      } else {
+        alert('返回上一页');
+      }
+    }
+
+    // 撤销弹窗逻辑
+    function showUndoPopup(taskName, points) {
+      document.getElementById('undoTaskName').innerHTML = `
+        <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3 3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3 3h7z"/></svg>
+        ${taskName}
+      `;
+      document.getElementById('undoPoints').innerHTML = `
+        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        ${points} 积分
+      `;
       document.getElementById('overlay').classList.add('show');
       document.getElementById('undoPopup').classList.add('show');
     }
@@ -1569,8 +1605,9 @@
     function updatePresetSelection() {
       const value = parseInt(document.getElementById('customPoints').value);
       document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('selected'));
-      if ([10, 20, 50, 100].includes(value)) {
-        document.querySelectorAll('.preset-btn')[[10, 20, 50, 100].indexOf(value)].classList.add('selected');
+      const presets = [5, 10, 20, 30, 50];
+      if (presets.includes(value)) {
+        document.querySelectorAll('.preset-btn')[presets.indexOf(value)].classList.add('selected');
         selectedPreset = value;
       } else {
         selectedPreset = null;

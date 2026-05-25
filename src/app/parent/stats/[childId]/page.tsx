@@ -17,9 +17,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
-import { ArrowLeft, RefreshCw, AlertCircle, Undo2, Info, Gift, Star } from "lucide-react";
-import Link from "next/link";
 import { cn } from "@/lib/cn";
+import { RefreshCw, AlertCircle, Gift } from "lucide-react";
 
 type MixedRecord = {
   id: string;
@@ -89,17 +88,17 @@ export default function ChildStatsDetailPage() {
   }, [completions, rewards]);
 
   // 处理撤销
-  const handleRevoke = async (completionId: string) => {
+  const handleRevoke = async (record: { id: string; taskName: string; points: number }) => {
     const confirmed = await showConfirm({
       title: "撤销完成记录",
-      content: "撤销后，该任务积分将被扣除。确定要撤销吗？",
+      content: `任务「${record.taskName}」将扣回 ${record.points} 积分，确定要撤销吗？`,
       confirmText: "确认撤销",
       cancelText: "取消",
       destructive: true,
     });
 
     if (confirmed) {
-      revokeCompletion(completionId);
+      revokeCompletion(record.id);
     }
   };
 
@@ -128,13 +127,6 @@ export default function ChildStatsDetailPage() {
   if (isError) {
     return (
       <div className="p-4">
-        <Link
-          href="/parent"
-          className="flex items-center gap-2 text-text-secondary mb-6"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span>返回</span>
-        </Link>
         <div className="flex items-center justify-center min-h-[40vh]">
           <div className="text-center">
             <AlertCircle className="w-8 h-8 text-red-500 mx-auto mb-3" />
@@ -156,13 +148,6 @@ export default function ChildStatsDetailPage() {
   if (!child) {
     return (
       <div className="p-4">
-        <Link
-          href="/parent"
-          className="flex items-center gap-2 text-text-secondary mb-6"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span>返回</span>
-        </Link>
         <div className="flex items-center justify-center min-h-[40vh]">
           <div className="text-center">
             <p className="text-text-secondary">孩子不存在或已被删除</p>
@@ -174,28 +159,13 @@ export default function ChildStatsDetailPage() {
 
   return (
     <div className="p-4">
-      {/* 返回按钮 */}
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        className="mb-6"
-      >
-        <Link
-          href="/parent"
-          className="flex items-center gap-2 text-text-secondary hover:text-text transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span>返回</span>
-        </Link>
-      </motion.div>
-
       {/* 孩子信息 */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         className="mb-6"
       >
-        <h1 className="text-xl font-bold text-text mb-2">{child.username} 的完成记录</h1>
+        <h1 className="text-xl font-bold text-text mb-2">{child.username}</h1>
         {weekRange && (
           <p className="text-sm text-text-secondary">
             {weekRange.start} ~ {weekRange.end}
@@ -221,19 +191,6 @@ export default function ChildStatsDetailPage() {
           <Gift className="w-5 h-5" />
           奖励积分
         </button>
-      </motion.div>
-
-      {/* 撤销提示 */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="mb-4 p-3 bg-blue-50 rounded-xl border border-blue-100"
-      >
-        <div className="flex items-center gap-2 text-blue-600">
-          <Info className="w-4 h-4" />
-          <span className="text-sm">长按记录可撤销完成</span>
-        </div>
       </motion.div>
 
       {/* 完成记录列表 */}
