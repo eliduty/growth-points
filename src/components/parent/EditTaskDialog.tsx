@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -69,12 +69,12 @@ export function EditTaskDialog({
         },
   });
 
-  // 同步 availableDays 状态
-  useState(() => {
-    if (task) {
+  // 当 task 变化时同步 availableDays 状态
+  useEffect(() => {
+    if (task && isOpen) {
       setAvailableDays(task.availableDays);
     }
-  });
+  }, [task, isOpen]);
 
   // 当 task 变化时更新 availableDays
   const handleDaysChange = (value: string | null) => {
@@ -105,11 +105,7 @@ export function EditTaskDialog({
     onClose();
   };
 
-  // 当 task 变化时更新状态
-  if (task && availableDays !== task.availableDays && isOpen) {
-    setAvailableDays(task.availableDays);
-  }
-
+  
   if (!task) return null;
 
   return (

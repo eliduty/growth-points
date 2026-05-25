@@ -53,7 +53,7 @@ export function useTasks() {
 
   // 更新任务
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: Partial<{ name: string; points: number; categoryId: string; description: string }> }) => {
+    mutationFn: async ({ id, data }: { id: string; data: Partial<{ name: string; points: number; categoryId: string; description: string; availableDays: string | null }> }) => {
       const response = await tasksApi.update(id, data);
       if (response.code !== 0) {
         throw new Error(response.message);
@@ -161,7 +161,7 @@ export function useTasks() {
     // 任务操作
     createTask: createMutation.mutate,
     isCreatingTask: createMutation.isPending,
-    updateTask: (id: string, data: Partial<{ name: string; points: number; categoryId: string; description: string }>) => updateMutation.mutate({ id, data }),
+    updateTask: (id: string, data: Partial<{ name: string; points: number; categoryId: string; description: string; availableDays: string | null }>) => updateMutation.mutate({ id, data }),
     isUpdatingTask: updateMutation.isPending,
     deleteTask: deleteMutation.mutate,
     isDeletingTask: deleteMutation.isPending,

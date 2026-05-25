@@ -47,7 +47,7 @@ export const tasksApi = {
     });
     return res.json();
   },
-  update: async (id: string, data: Partial<{ name: string; points: number; categoryId: string; description: string }>): Promise<ApiResponse<ParentTask>> => {
+  update: async (id: string, data: Partial<{ name: string; points: number; categoryId: string; description: string; availableDays: string | null }>): Promise<ApiResponse<ParentTask>> => {
     const res = await fetch(`${API_BASE}/tasks/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
