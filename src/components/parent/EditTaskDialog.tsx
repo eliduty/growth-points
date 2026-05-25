@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { DaySelector } from "./DaySelector";
 import type { ParentTask, CategoryWithTasks } from "@/types";
 
 const editTaskSchema = z.object({
@@ -21,6 +22,7 @@ const editTaskSchema = z.object({
   points: z.number().int().min(1, "积分至少为1").max(100, "积分最多100"),
   description: z.string().max(200, "描述最多200字符").optional(),
   categoryId: z.string().min(1, "请选择类别"),
+  availableDays: z.string().nullable().optional(),
 });
 
 type EditTaskFormData = z.infer<typeof editTaskSchema>;
@@ -41,6 +43,7 @@ export function EditTaskDialog({
   onUpdate,
 }: EditTaskDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [availableDays, setAvailableDays] = useState<string | null>(null);
 
   const {
     register,
@@ -55,21 +58,38 @@ export function EditTaskDialog({
           points: task.points,
           description: task.description || "",
           categoryId: task.categoryId,
+          availableDays: task.availableDays,
         }
       : {
           name: "",
           points: 1,
           description: "",
           categoryId: categories[0]?.id || "",
+          availableDays: null,
         },
   });
+
+  // 同步 availableDays 状态
+  useState(() => {
+    if (task) {
+      setAvailableDays(task.availableDays);
+    }
+  });
+
+  // 当 task 变化时更新 availableDays
+  const handleDaysChange = (value: string | null) => {
+    setAvailableDays(value);
+  };
 
   const onSubmit = async (data: EditTaskFormData) => {
     if (!task) return;
 
     setIsLoading(true);
     try {
-      await onUpdate(task.id, data);
+      await onUpdate(task.id, {
+        ...data,
+        availableDays,
+      });
       toast.success("任务更新成功");
       onClose();
     } catch (error) {
@@ -81,8 +101,14 @@ export function EditTaskDialog({
 
   const handleClose = () => {
     reset();
+    setAvailableDays(null);
     onClose();
   };
+
+  // 当 task 变化时更新状态
+  if (task && availableDays !== task.availableDays && isOpen) {
+    setAvailableDays(task.availableDays);
+  }
 
   if (!task) return null;
 
@@ -157,6 +183,16 @@ export function EditTaskDialog({
             {errors.description && (
               <p className="text-sm text-error">{errors.description.message}</p>
             )}
+          </div>
+
+          {/* 可用日期 */}
+          <div className="space-y-2">
+            <Label>可用日期</Label>
+            <DaySelector
+              value={availableDays}
+              onChange={handleDaysChange}
+              disabled={isLoading}
+            />
           </div>
 
           {/* 提交按钮 */}

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { requireChild } from "@/lib/auth/guard";
 import { handleAuthError } from "@/lib/auth/guard";
-import { getWeekStart, getWeekEnd, formatBeijingTime, getBeijingNow } from "@/lib/date";
+import { getWeekStart, getWeekEnd, formatBeijingTime, getBeijingNow, isAvailableToday, formatAvailableDaysDisplay } from "@/lib/date";
 import dayjs from "dayjs";
 
 export async function GET(request: NextRequest) {
@@ -52,12 +52,13 @@ export async function GET(request: NextRequest) {
         name: true,
         order: true,
         tasks: {
-          where: { deletedAt: null },
+          where: { deletedAt: null, availableDays: { not: null } },
           select: {
             id: true,
             name: true,
             points: true,
             description: true,
+            availableDays: true,
           },
         },
       },
@@ -98,6 +99,9 @@ export async function GET(request: NextRequest) {
         completedAt: completedTaskIds.has(task.id)
           ? formatBeijingTime(todayCompletions.find((c) => c.taskId === task.id)!.completedAt)
           : null,
+        availableDays: task.availableDays,
+        isAvailableToday: isAvailableToday(task.availableDays),
+        availableDaysDisplay: formatAvailableDaysDisplay(task.availableDays),
       })),
     }));
 

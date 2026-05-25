@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireParent, handleAuthError } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db";
-import { createTaskSchema } from "@/lib/validators";
+import { createTaskSchema, availableDaysSchema } from "@/lib/validators";
+import { formatTaskStatus, formatAvailableDaysDisplay } from "@/lib/date";
+import { z } from "zod";
+
+const createTaskWithDaysSchema = createTaskSchema.extend({
+  availableDays: availableDaysSchema,
+});
 
 /**
  * GET /api/parent/tasks - 获取任务列表（按类别分组）
@@ -26,6 +32,7 @@ export async function GET(request: NextRequest) {
             points: true,
             description: true,
             categoryId: true,
+            availableDays: true,
           },
           orderBy: { createdAt: "asc" },
         },
@@ -44,6 +51,9 @@ export async function GET(request: NextRequest) {
         description: task.description,
         categoryId: task.categoryId,
         categoryName: cat.name,
+        availableDays: task.availableDays,
+        status: formatTaskStatus(task.availableDays),
+        availableDaysDisplay: formatAvailableDaysDisplay(task.availableDays),
       })),
     }));
 
@@ -66,7 +76,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // 验证输入
-    const validated = createTaskSchema.parse(body);
+    const validated = createTaskWithDaysSchema.parse(body);
 
     // 检查类别是否属于当前家庭
     const category = await prisma.category.findFirst({
@@ -104,6 +114,7 @@ export async function POST(request: NextRequest) {
         description: validated.description,
         categoryId: validated.categoryId,
         familyId,
+        availableDays: validated.availableDays,
       },
       select: {
         id: true,
@@ -111,6 +122,7 @@ export async function POST(request: NextRequest) {
         points: true,
         description: true,
         categoryId: true,
+        availableDays: true,
       },
     });
 
@@ -119,6 +131,8 @@ export async function POST(request: NextRequest) {
       data: {
         ...task,
         categoryName: category.name,
+        status: formatTaskStatus(task.availableDays),
+        availableDaysDisplay: formatAvailableDaysDisplay(task.availableDays),
       },
       message: "创建成功",
     });

@@ -132,3 +132,56 @@ export function formatRelativeTime(date: Date | string): string {
     return target.format("YYYY-MM-DD HH:mm");
   }
 }
+
+/**
+ * 星期名称映射
+ */
+const DAY_NAMES = ["周日", "周一", "周二", "周三", "周四", "周五", "周六"];
+
+/**
+ * 解析可用日期字符串为数组
+ * @param availableDays 逗号分隔的数字字符串，如 "1,3,5"
+ */
+export function parseAvailableDays(availableDays: string | null): number[] {
+  if (!availableDays) return [];
+  return availableDays
+    .split(",")
+    .map((p) => parseInt(p.trim(), 10))
+    .filter((n) => !isNaN(n) && n >= 0 && n <= 6);
+}
+
+/**
+ * 判断任务今天是否可用
+ * @param availableDays 逗号分隔的数字字符串，如 "1,3,5"
+ */
+export function isAvailableToday(availableDays: string | null): boolean {
+  if (!availableDays) return false;
+  const days = parseAvailableDays(availableDays);
+  const today = getBeijingDayOfWeek();
+  return days.includes(today);
+}
+
+/**
+ * 格式化可用日期为显示文本
+ * @param availableDays 逗号分隔的数字字符串，如 "1,3,5"
+ * @returns "每天"、"仅周二"、"周二、周四"、"周三、周五、周日" 等
+ */
+export function formatAvailableDaysDisplay(availableDays: string | null): string {
+  if (!availableDays) return "";
+  const days = parseAvailableDays(availableDays);
+  if (days.length === 0) return "";
+  if (days.length === 7) return "每天";
+  const dayNames = days.map((d) => DAY_NAMES[d]);
+  if (days.length === 1) return `仅${dayNames[0]}`;
+  return dayNames.join("、");
+}
+
+/**
+ * 格式化任务状态显示
+ * @param availableDays 逗号分隔的数字字符串
+ * @returns "待安排" 或可用日期摘要
+ */
+export function formatTaskStatus(availableDays: string | null): string {
+  if (!availableDays) return "待安排";
+  return formatAvailableDaysDisplay(availableDays);
+}

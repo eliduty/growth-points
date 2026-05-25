@@ -2,12 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireParent, handleAuthError } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
+import { availableDaysSchema } from "@/lib/validators";
+import { formatTaskStatus, formatAvailableDaysDisplay } from "@/lib/date";
 
 const updateTaskSchema = z.object({
   name: z.string().min(1, "请输入任务名称").max(50, "任务名称最多50字符").optional(),
   points: z.number().int().min(1, "积分至少为1").max(100, "积分最多100").optional(),
   description: z.string().max(200, "描述最多200字符").optional(),
   categoryId: z.string().min(1, "请选择类别").optional(),
+  availableDays: availableDaysSchema.optional(),
 });
 
 /**
@@ -93,16 +96,25 @@ export async function PUT(
       }
     }
 
+    // 构建更新数据
+    const updateData: Record<string, unknown> = {};
+    if (validated.name !== undefined) updateData.name = validated.name;
+    if (validated.points !== undefined) updateData.points = validated.points;
+    if (validated.description !== undefined) updateData.description = validated.description;
+    if (validated.categoryId !== undefined) updateData.categoryId = validated.categoryId;
+    if (validated.availableDays !== undefined) updateData.availableDays = validated.availableDays;
+
     // 更新任务
     const task = await prisma.task.update({
       where: { id },
-      data: validated,
+      data: updateData,
       select: {
         id: true,
         name: true,
         points: true,
         description: true,
         categoryId: true,
+        availableDays: true,
       },
     });
 
@@ -111,6 +123,8 @@ export async function PUT(
       data: {
         ...task,
         categoryName: newCategory.name,
+        status: formatTaskStatus(task.availableDays),
+        availableDaysDisplay: formatAvailableDaysDisplay(task.availableDays),
       },
       message: "更新成功",
     });

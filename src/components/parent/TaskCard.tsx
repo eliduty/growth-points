@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Edit2, Trash2 } from "lucide-react";
+import { Edit2, Trash2, Clock } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type { ParentTask } from "@/types";
 
@@ -12,6 +11,8 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
+  const isPending = !task.availableDays;
+
   return (
     <div
       className={cn(
@@ -20,9 +21,22 @@ export function TaskCard({ task, onEdit, onDelete }: TaskCardProps) {
       )}
     >
       <div className="flex-1 min-w-0">
-        <h3 className="text-base font-medium text-text truncate">
-          {task.name}
-        </h3>
+        <div className="flex items-center gap-2">
+          <h3 className="text-base font-medium text-text truncate">
+            {task.name}
+          </h3>
+          {/* 待安排/已安排状态 */}
+          {isPending ? (
+            <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full shrink-0">
+              待安排
+            </span>
+          ) : (
+            <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full shrink-0 flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              {task.availableDaysDisplay || task.status}
+            </span>
+          )}
+        </div>
         {task.description && (
           <p className="text-sm text-text-muted truncate mt-1">
             {task.description}

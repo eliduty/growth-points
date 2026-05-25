@@ -14,12 +14,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { DaySelector } from "./DaySelector";
 
 const addTaskSchema = z.object({
   name: z.string().min(1, "请输入任务名称").max(50, "任务名称最多50字符"),
   points: z.number().int().min(1, "积分至少为1").max(100, "积分最多100"),
   description: z.string().max(200, "描述最多200字符").optional(),
   categoryId: z.string().min(1, "请选择类别"),
+  availableDays: z.string().nullable().optional(),
 });
 
 type AddTaskFormData = z.infer<typeof addTaskSchema>;
@@ -44,6 +46,7 @@ export function AddTaskDialog({
   onAdd,
 }: AddTaskDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [availableDays, setAvailableDays] = useState<string | null>(null);
 
   const {
     register,
@@ -57,6 +60,7 @@ export function AddTaskDialog({
       points: 1,
       description: "",
       categoryId: categories[0]?.id || "",
+      availableDays: null,
     },
   });
 
@@ -70,12 +74,20 @@ export function AddTaskDialog({
     }
   });
 
+  const handleDaysChange = (value: string | null) => {
+    setAvailableDays(value);
+  };
+
   const onSubmit = async (data: AddTaskFormData) => {
     setIsLoading(true);
     try {
-      await onAdd(data);
+      await onAdd({
+        ...data,
+        availableDays,
+      });
       toast.success("任务创建成功");
       reset();
+      setAvailableDays(null);
       onClose();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "创建失败");
@@ -86,6 +98,7 @@ export function AddTaskDialog({
 
   const handleClose = () => {
     reset();
+    setAvailableDays(null);
     onClose();
   };
 
@@ -164,6 +177,16 @@ export function AddTaskDialog({
             {errors.description && (
               <p className="text-sm text-error">{errors.description.message}</p>
             )}
+          </div>
+
+          {/* 可用日期 */}
+          <div className="space-y-2">
+            <Label>可用日期</Label>
+            <DaySelector
+              value={availableDays}
+              onChange={handleDaysChange}
+              disabled={isLoading}
+            />
           </div>
 
           {/* 提交按钮 */}

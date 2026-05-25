@@ -88,6 +88,9 @@ export interface ChildTask {
   categoryOrder: number;
   completed: boolean;
   completedAt: string | null;
+  availableDays: string | null;
+  isAvailableToday: boolean;
+  availableDaysDisplay: string;
 }
 
 /**
@@ -170,6 +173,9 @@ export interface ParentTask {
   description: string | null;
   categoryId: string;
   categoryName: string;
+  availableDays: string | null;
+  status: string;
+  availableDaysDisplay: string;
 }
 
 /**

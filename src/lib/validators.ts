@@ -81,6 +81,36 @@ export const exchangeDaysSchema = z.object({
 });
 
 /**
+ * 可用日期 Schema（逗号分隔的数字字符串）
+ * 格式: "0,1,3,5" 表示周日、周一、周三、周五
+ */
+export const availableDaysSchema = z
+  .string()
+  .optional()
+  .nullable()
+  .refine(
+    (val) => {
+      if (!val) return true; // null 或空字符串允许
+      const parts = val.split(",");
+      return parts.every((p) => {
+        const num = parseInt(p.trim(), 10);
+        return !isNaN(num) && num >= 0 && num <= 6;
+      });
+    },
+    { message: "可用日期格式无效，应为逗号分隔的数字（0-6）" }
+  )
+  .transform((val) => {
+    if (!val) return null;
+    // 去重、排序
+    const nums = val
+      .split(",")
+      .map((p) => parseInt(p.trim(), 10))
+      .filter((n) => !isNaN(n) && n >= 0 && n <= 6);
+    const unique = Array.from(new Set(nums)).sort((a, b) => a - b);
+    return unique.length > 0 ? unique.join(",") : null;
+  });
+
+/**
  * 创建奖励 Schema
  */
 export const createRewardSchema = z.object({
