@@ -50,7 +50,7 @@ export function CategorySection({
 
       {/* 任务列表（仅展开时显示） */}
       {isExpanded && (
-        <div className="px-4 pb-2">
+        <div className="px-4 py-2">
           {category.tasks.length === 0 ? (
             <div className="py-4 text-center text-sm text-text-muted">
               暂无任务

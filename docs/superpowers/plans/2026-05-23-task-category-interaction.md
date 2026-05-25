@@ -4,7 +4,7 @@
 
 **Goal:** 按照高保真原型重构任务页，将类别管理交互从隐蔽的长按改为显式的按钮操作。
 
-**Architecture:** 
+**Architecture:**
 - 顶部操作栏：左右并列的「管理类别」和「添加任务」按钮
 - 类别分组：白色卡片容器，可点击折叠/展开
 - 任务卡片：直接显示编辑/删除按钮
@@ -161,7 +161,7 @@ export function CategorySection({
 
       {/* 任务列表（仅展开时显示） */}
       {isExpanded && (
-        <div className="px-4 pb-2">
+        <div className="px-4 py-2">
           {category.tasks.length === 0 ? (
             <div className="py-4 text-center text-sm text-text-muted">
               暂无任务
