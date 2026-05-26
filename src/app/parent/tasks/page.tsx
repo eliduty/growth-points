@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Plus, Settings, RefreshCw, AlertCircle } from "lucide-react";
+import { Plus, RefreshCw, AlertCircle, Settings } from "lucide-react";
 import { useTasks } from "@/hooks/use-tasks";
 import { useTopNavbar } from "@/providers/topnavbar-provider";
 import { CategorySection } from "@/components/parent/CategorySection";
@@ -28,6 +28,7 @@ export default function ParentTasksPage() {
     deleteTask,
     createCategory,
     deleteCategory,
+    updateCategory,
     updateCategoryOrder,
   } = useTasks();
 
@@ -49,9 +50,17 @@ export default function ParentTasksPage() {
         <div className="flex items-center gap-1">
           {isFetching && <RefreshCw className="w-3 h-3 animate-spin text-text-muted" />}
           <button
+            onClick={() => setCategoryManageDialogOpen(true)}
+            className="flex items-center justify-center"
+            title="管理分类"
+          >
+            <Settings className="w-5 h-5 stroke-text-secondary stroke-width-2" />
+          </button>
+          <button
             onClick={() => setAddTaskDialogOpen(true)}
             disabled={categories.length === 0 || isCreatingTask}
             className="flex items-center justify-center"
+            title="添加任务"
           >
             <Plus className="w-5 h-5 stroke-primary stroke-width-2" />
           </button>
@@ -136,6 +145,7 @@ export default function ParentTasksPage() {
               category={category}
               onEditTask={handleEditTask}
               onDeleteTask={handleDeleteTask}
+              onManageCategory={() => setCategoryManageDialogOpen(true)}
             />
           </motion.div>
         ))
@@ -175,6 +185,9 @@ export default function ParentTasksPage() {
         }}
         onDeleteCategory={async (id) => {
           await deleteCategory(id);
+        }}
+        onUpdateCategory={async (id, name) => {
+          await updateCategory(id, name);
         }}
         onUpdateOrder={async (orders) => {
           await updateCategoryOrder(orders);

@@ -77,6 +77,14 @@ export const categoriesApi = {
     });
     return res.json();
   },
+  update: async (id: string, name: string): Promise<ApiResponse<{ id: string; name: string; order: number }>> => {
+    const res = await fetch(`${API_BASE}/categories/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name }),
+    });
+    return res.json();
+  },
   delete: async (id: string): Promise<ApiResponse<null>> => {
     const res = await fetch(`${API_BASE}/categories/${id}`, { method: "DELETE" });
     return res.json();

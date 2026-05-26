@@ -127,6 +127,25 @@ export function useTasks() {
     },
   });
 
+  // 更新类别名称
+  const updateCategoryMutation = useMutation({
+    mutationFn: async ({ id, name }: { id: string; name: string }) => {
+      const response = await categoriesApi.update(id, name);
+      if (response.code !== 0) {
+        throw new Error(response.message);
+      }
+      return response.data as { id: string; name: string; order: number };
+    },
+    onSuccess: () => {
+      toast.success("类别名称已更新");
+      queryClient.invalidateQueries({ queryKey: ["parent-tasks"] });
+      queryClient.invalidateQueries({ queryKey: ["parent-categories"] });
+    },
+    onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "更新失败");
+    },
+  });
+
   // 更新类别顺序
   const updateCategoryOrderMutation = useMutation({
     mutationFn: async (orders: { id: string; order: number }[]) => {
@@ -171,6 +190,8 @@ export function useTasks() {
     isCreatingCategory: createCategoryMutation.isPending,
     deleteCategory: deleteCategoryMutation.mutate,
     isDeletingCategory: deleteCategoryMutation.isPending,
+    updateCategory: (id: string, name: string) => updateCategoryMutation.mutate({ id, name }),
+    isUpdatingCategory: updateCategoryMutation.isPending,
     updateCategoryOrder: updateCategoryOrderMutation.mutate,
     isUpdatingCategoryOrder: updateCategoryOrderMutation.isPending,
   };
