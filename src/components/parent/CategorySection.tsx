@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, Settings } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { TaskCard } from "./TaskCard";
 import { cn } from "@/lib/cn";
 import type { CategoryWithTasks, ParentTask } from "@/types";
@@ -10,7 +10,6 @@ interface CategorySectionProps {
   category: CategoryWithTasks;
   onEditTask: (task: ParentTask) => void;
   onDeleteTask: (task: ParentTask) => void;
-  onManageCategory?: () => void;
   defaultExpanded?: boolean;
 }
 
@@ -18,7 +17,6 @@ export function CategorySection({
   category,
   onEditTask,
   onDeleteTask,
-  onManageCategory,
   defaultExpanded = true,
 }: CategorySectionProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
@@ -41,18 +39,6 @@ export function CategorySection({
           <span className="text-xs text-text-muted">
             {category.tasks.length} 个任务
           </span>
-          {onManageCategory && (
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                onManageCategory();
-              }}
-              className="flex items-center justify-center p-1 rounded hover:bg-blue-200/50 transition-colors"
-              title="管理此分类"
-            >
-              <Settings className="w-3.5 h-3.5 stroke-text-muted" />
-            </button>
-          )}
           <ChevronDown
             className={cn(
               "w-4 h-4 text-text-muted transition-transform duration-150",

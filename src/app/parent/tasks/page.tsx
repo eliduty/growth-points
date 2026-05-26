@@ -145,7 +145,6 @@ export default function ParentTasksPage() {
               category={category}
               onEditTask={handleEditTask}
               onDeleteTask={handleDeleteTask}
-              onManageCategory={() => setCategoryManageDialogOpen(true)}
             />
           </motion.div>
         ))
