@@ -1,6 +1,7 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode, ReactElement } from "react";
+import { createContext, useContext, useState, ReactNode, ReactElement, useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 interface TopNavbarConfig {
   title?: string;
@@ -16,6 +17,12 @@ const TopNavbarContext = createContext<TopNavbarContextType | undefined>(undefin
 
 export function TopNavbarProvider({ children }: { children: ReactNode }) {
   const [config, setConfig] = useState<TopNavbarConfig>({});
+  const pathname = usePathname();
+
+  // 当 pathname 变化时，自动清空 config（让页面重新设置）
+  useEffect(() => {
+    setConfig({});
+  }, [pathname]);
 
   return (
     <TopNavbarContext.Provider value={{ config, setConfig }}>
