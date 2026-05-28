@@ -34,12 +34,13 @@ export async function GET(request: NextRequest) {
               gte: weekStart,
               lte: weekEnd,
             },
-            revokedAt: null, // 未撤销的记录
+            // 查询所有记录（包含已撤销）
           },
           select: {
             id: true,
             points: true,
             completedAt: true,
+            revokedAt: true,
             task: {
               select: {
                 id: true,
@@ -54,10 +55,11 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // 计算统计数据
+    // 计算统计数据（只统计未撤销的记录）
     const stats = children.map((child) => {
-      const weeklyCompleted = child.taskCompletions.length;
-      const weeklyPoints = child.taskCompletions.reduce(
+      const activeCompletions = child.taskCompletions.filter((c) => !c.revokedAt);
+      const weeklyCompleted = activeCompletions.length;
+      const weeklyPoints = activeCompletions.reduce(
         (sum, c) => sum + c.points,
         0
       );
@@ -75,6 +77,7 @@ export async function GET(request: NextRequest) {
           taskName: c.task.name,
           points: c.points,
           completedAt: formatBeijingTime(c.completedAt),
+          revokedAt: c.revokedAt ? formatBeijingTime(c.revokedAt) : null,
         })),
       };
     });
