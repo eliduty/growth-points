@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Plus, Settings, Trash2, Gift, Clock, CheckCircle, Star, User, RefreshCw, AlertCircle } from "lucide-react";
 import { useGifts } from "@/hooks/use-gifts";
 import { useTopNavbar } from "@/providers/topnavbar-provider";
@@ -284,88 +285,68 @@ export default function ParentGiftsPage() {
       />
 
       {/* 确认兑换弹窗 */}
-      <AnimatePresence>
-        {confirmRedemptionDialogOpen && selectedRedemption && (
-          <>
-            {/* 遮罩 */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-[rgba(0,0,0,0.3)] backdrop-blur-[2px] z-[200]"
-              onClick={() => setConfirmRedemptionDialogOpen(false)}
-            />
+      <Dialog open={confirmRedemptionDialogOpen} onOpenChange={setConfirmRedemptionDialogOpen}>
+        <DialogContent className="sm:max-w-[340px] max-h-[85vh] overflow-y-auto">
+          <div className="text-center">
+            {/* 图标 */}
+            <div className="w-12 h-12 mx-auto mb-4 bg-[linear-gradient(135deg,#D1FAE5_0%,#A7F3D0_100%)] rounded-full flex items-center justify-center">
+              <CheckCircle className="w-6 h-6 stroke-[var(--color-success)]" />
+            </div>
 
-            {/* 弹窗 */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.2 }}
-              className="fixed top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] bg-white rounded-[16px] w-[90%] max-w-[340px] shadow-[0_16px_48px_rgba(0,0,0,0.2)] z-[201]"
-            >
-              <div className="p-7 text-center">
-                {/* 图标 */}
-                <div className="w-12 h-12 mx-auto mb-4 bg-[linear-gradient(135deg,#D1FAE5_0%,#A7F3D0_100%)] rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 stroke-[var(--color-success)]" />
-                </div>
+            {/* 标题 */}
+            <div className="text-base text-[var(--text-primary)] font-semibold mb-5">
+              确认兑换这个礼物？
+            </div>
 
-                {/* 标题 */}
-                <div className="text-base text-[var(--text-primary)] font-semibold mb-5">
-                  确认兑换这个礼物？
-                </div>
-
-                {/* 详情 */}
-                <div className="space-y-[10px] text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-[var(--text-secondary)]">孩子</span>
-                    <span className="text-[var(--text-primary)] font-medium flex items-center gap-1">
-                      <User className="w-3.5 h-3.5" />
-                      {selectedRedemption.username}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-[var(--text-secondary)]">礼物</span>
-                    <span className="text-[var(--text-primary)] font-medium flex items-center gap-1">
-                      <Gift className="w-3.5 h-3.5" />
-                      {selectedRedemption.giftName}
-                    </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-[var(--text-secondary)]">积分</span>
-                    <span className="text-[var(--text-primary)] font-medium flex items-center gap-1">
-                      <Star className="w-3.5 h-3.5" />
-                      {selectedRedemption.points}
-                    </span>
-                  </div>
-                </div>
-
-                {/* 提示 */}
-                <div className="text-sm text-[var(--color-warning)] mt-2 mb-6">
-                  确认后不可撤销
-                </div>
-
-                {/* 按钮 */}
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setConfirmRedemptionDialogOpen(false)}
-                    className="flex-1 bg-white border border-[#E5E7EB] rounded-[8px] py-3 text-sm text-[var(--text-secondary)] cursor-pointer"
-                  >
-                    取消
-                  </button>
-                  <button
-                    onClick={handleConfirmRedemptionAction}
-                    disabled={isConfirmingRedemption}
-                    className="flex-1 bg-[var(--color-success)] border-none rounded-[8px] py-3 text-sm text-white cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isConfirmingRedemption ? "确认中..." : "确认兑换"}
-                  </button>
-                </div>
+            {/* 详情 */}
+            <div className="space-y-[10px] text-sm">
+              <div className="flex justify-between">
+                <span className="text-[var(--text-secondary)]">孩子</span>
+                <span className="text-[var(--text-primary)] font-medium flex items-center gap-1">
+                  <User className="w-3.5 h-3.5" />
+                  {selectedRedemption?.username}
+                </span>
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+              <div className="flex justify-between">
+                <span className="text-[var(--text-secondary)]">礼物</span>
+                <span className="text-[var(--text-primary)] font-medium flex items-center gap-1">
+                  <Gift className="w-3.5 h-3.5" />
+                  {selectedRedemption?.giftName}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-[var(--text-secondary)]">积分</span>
+                <span className="text-[var(--text-primary)] font-medium flex items-center gap-1">
+                  <Star className="w-3.5 h-3.5" />
+                  {selectedRedemption?.points}
+                </span>
+              </div>
+            </div>
+
+            {/* 提示 */}
+            <div className="text-sm text-[var(--color-warning)] mt-2 mb-6">
+              确认后不可撤销
+            </div>
+
+            {/* 按钮 */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmRedemptionDialogOpen(false)}
+                className="flex-1 bg-white border border-[#E5E7EB] rounded-[8px] py-3 text-sm text-[var(--text-secondary)] cursor-pointer"
+              >
+                取消
+              </button>
+              <button
+                onClick={handleConfirmRedemptionAction}
+                disabled={isConfirmingRedemption}
+                className="flex-1 bg-[var(--color-success)] border-none rounded-[8px] py-3 text-sm text-white cursor-pointer font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isConfirmingRedemption ? "确认中..." : "确认兑换"}
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
