@@ -55,14 +55,35 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    // 查询家庭内本周所有奖励记录
+    const weeklyRewards = await prisma.reward.findMany({
+      where: {
+        familyId,
+        createdAt: { gte: weekStart, lte: weekEnd },
+      },
+      select: {
+        userId: true,
+        points: true,
+      },
+    });
+
+    // 按孩子 ID 分组奖励积分
+    const rewardPointsByChild = new Map<string, number>();
+    for (const reward of weeklyRewards) {
+      const current = rewardPointsByChild.get(reward.userId) || 0;
+      rewardPointsByChild.set(reward.userId, current + reward.points);
+    }
+
     // 计算统计数据（只统计未撤销的记录）
     const stats = children.map((child) => {
       const activeCompletions = child.taskCompletions.filter((c) => !c.revokedAt);
       const weeklyCompleted = activeCompletions.length;
-      const weeklyPoints = activeCompletions.reduce(
+      const taskPoints = activeCompletions.reduce(
         (sum, c) => sum + c.points,
         0
       );
+      const rewardPoints = rewardPointsByChild.get(child.id) || 0;
+      const weeklyPoints = taskPoints + rewardPoints;
 
       return {
         id: child.id,

@@ -34,8 +34,18 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // 本周获得积分
-    const weeklyPoints = user?.taskCompletions.reduce((sum, c) => sum + c.points, 0) || 0;
+    // 查询本周奖励积分
+    const weeklyRewards = await prisma.reward.findMany({
+      where: {
+        userId,
+        createdAt: { gte: weekStart, lte: weekEnd },
+      },
+      select: { points: true },
+    });
+    const weeklyRewardPoints = weeklyRewards.reduce((sum, r) => sum + r.points, 0);
+
+    // 本周获得积分（任务 + 奖励）
+    const weeklyPoints = (user?.taskCompletions.reduce((sum, c) => sum + c.points, 0) || 0) + weeklyRewardPoints;
 
     if (!user) {
       return NextResponse.json(
