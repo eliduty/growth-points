@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { edgeFetch } from "@/lib/edge-fetch";
 
 const registerSchema = z
   .object({
@@ -53,7 +52,7 @@ export default function RegisterForm({ onSuccess }: RegisterFormProps) {
     setIsLoading(true);
 
     try {
-      const response = await edgeFetch("/api/auth/register", {
+      const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

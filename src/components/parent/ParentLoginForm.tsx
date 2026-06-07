@@ -7,7 +7,6 @@ import { z } from "zod";
 import { toast } from "sonner";
 import { LogIn, UserPlus } from "lucide-react";
 import { useUser } from "@/hooks/use-user";
-import { edgeFetch } from "@/lib/edge-fetch";
 
 // 登录表单验证
 const loginSchema = z.object({
@@ -78,7 +77,7 @@ export default function ParentLoginForm({ onModeChange }: ParentLoginFormProps) 
     try {
       const timezoneOffset = -new Date().getTimezoneOffset() / 60;
 
-      const response = await edgeFetch("/api/auth/login", {
+      const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +109,7 @@ export default function ParentLoginForm({ onModeChange }: ParentLoginFormProps) 
     setIsLoading(true);
 
     try {
-      const response = await edgeFetch("/api/auth/register", {
+      const response = await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

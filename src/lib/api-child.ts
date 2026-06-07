@@ -1,5 +1,4 @@
 import { ApiResponse } from "@/types";
-import { edgeFetch } from "@/lib/edge-fetch";
 
 const API_BASE = "/api/child";
 
@@ -13,11 +12,11 @@ export const childTasksApi = {
     completedTasks: { id: string; taskName: string; points: number; completedAt: string }[];
   }>> => {
     const url = date ? `${API_BASE}/tasks?date=${date}` : `${API_BASE}/tasks`;
-    const res = await edgeFetch(url);
+    const res = await fetch(url);
     return res.json();
   },
   complete: async (taskId: string): Promise<ApiResponse<{ pointsEarned: number; currentPoints: number }>> => {
-    const res = await edgeFetch(`${API_BASE}/tasks/${taskId}/complete`, { method: "POST" });
+    const res = await fetch(`${API_BASE}/tasks/${taskId}/complete`, { method: "POST" });
     return res.json();
   },
 };
@@ -27,7 +26,7 @@ export const childTasksApi = {
  */
 export const childGiftsApi = {
   list: async (): Promise<ApiResponse<import("@/types").ChildGiftsResponse>> => {
-    const res = await edgeFetch(`${API_BASE}/gifts`);
+    const res = await fetch(`${API_BASE}/gifts`);
     return res.json();
   },
   redeem: async (giftId: string): Promise<ApiResponse<{
@@ -36,7 +35,7 @@ export const childGiftsApi = {
     currentPoints: number;
     status: "PENDING";
   }>> => {
-    const res = await edgeFetch(`${API_BASE}/gifts/redeem`, {
+    const res = await fetch(`${API_BASE}/gifts/redeem`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ giftId }),
@@ -55,7 +54,7 @@ export const childHistoryApi = {
     summary: { completed: number; points: number };
   }[]>> => {
     const url = weeks ? `${API_BASE}/history/completions?weeks=${weeks}` : `${API_BASE}/history/completions`;
-    const res = await edgeFetch(url);
+    const res = await fetch(url);
     return res.json();
   },
   redemptions: async (weeks?: number): Promise<ApiResponse<{
@@ -64,7 +63,7 @@ export const childHistoryApi = {
     summary: { confirmed: number; pointsSpent: number; pending: number };
   }[]>> => {
     const url = weeks ? `${API_BASE}/history/redemptions?weeks=${weeks}` : `${API_BASE}/history/redemptions`;
-    const res = await edgeFetch(url);
+    const res = await fetch(url);
     return res.json();
   },
   rewards: async (weeks?: number): Promise<ApiResponse<{
@@ -73,7 +72,7 @@ export const childHistoryApi = {
     summary: { rewards: number; points: number };
   }[]>> => {
     const url = weeks ? `${API_BASE}/history/rewards?weeks=${weeks}` : `${API_BASE}/history/rewards`;
-    const res = await edgeFetch(url);
+    const res = await fetch(url);
     return res.json();
   },
 };
