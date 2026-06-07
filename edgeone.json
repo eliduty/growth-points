@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm run build",
+  "buildCommand": "pnpm build",
   "outputDirectory": ".next",
   "nodeVersion": "20.18.0"
 }
