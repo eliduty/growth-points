@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { edgeFetch } from "@/lib/edge-fetch";
 import { LogOut, User } from "lucide-react";
 import { useChildHistory } from "@/hooks/use-child-history";
 import { useUser } from "@/hooks/use-user";
@@ -99,7 +100,7 @@ export default function ProfilePage() {
 
   const confirmLogout = async () => {
     setShowLogoutDialog(false);
-    await fetch("/api/logout", { method: "POST" });
+    await edgeFetch("/api/logout", { method: "POST" });
     setUser(null);
     router.push("/child/login");
   };

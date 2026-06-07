@@ -7,6 +7,7 @@ import {
   Member,
   RewardRecord,
 } from "@/types";
+import { edgeFetch } from "@/lib/edge-fetch";
 
 const API_BASE = "/api/parent";
 
@@ -16,7 +17,7 @@ const API_BASE = "/api/parent";
 export const statsApi = {
   getWeekly: async (weekStart?: string): Promise<ApiResponse<WeeklyStats>> => {
     const url = weekStart ? `${API_BASE}/stats?weekStart=${weekStart}` : `${API_BASE}/stats`;
-    const res = await fetch(url);
+    const res = await edgeFetch(url);
     return res.json();
   },
 };
@@ -26,7 +27,7 @@ export const statsApi = {
  */
 export const completionsApi = {
   revoke: async (id: string): Promise<ApiResponse<{ pointsRevoked: number; redemptionsCancelled: number }>> => {
-    const res = await fetch(`${API_BASE}/completions/${id}`, { method: "DELETE" });
+    const res = await edgeFetch(`${API_BASE}/completions/${id}`, { method: "DELETE" });
     return res.json();
   },
 };
@@ -36,11 +37,11 @@ export const completionsApi = {
  */
 export const tasksApi = {
   list: async (): Promise<ApiResponse<{ categories: CategoryWithTasks[] }>> => {
-    const res = await fetch(`${API_BASE}/tasks`);
+    const res = await edgeFetch(`${API_BASE}/tasks`);
     return res.json();
   },
   create: async (data: { name: string; points: number; categoryId: string; description?: string }): Promise<ApiResponse<ParentTask>> => {
-    const res = await fetch(`${API_BASE}/tasks`, {
+    const res = await edgeFetch(`${API_BASE}/tasks`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -48,7 +49,7 @@ export const tasksApi = {
     return res.json();
   },
   update: async (id: string, data: Partial<{ name: string; points: number; categoryId: string; description: string; availableDays: string | null }>): Promise<ApiResponse<ParentTask>> => {
-    const res = await fetch(`${API_BASE}/tasks/${id}`, {
+    const res = await edgeFetch(`${API_BASE}/tasks/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -56,7 +57,7 @@ export const tasksApi = {
     return res.json();
   },
   delete: async (id: string): Promise<ApiResponse<null>> => {
-    const res = await fetch(`${API_BASE}/tasks/${id}`, { method: "DELETE" });
+    const res = await edgeFetch(`${API_BASE}/tasks/${id}`, { method: "DELETE" });
     return res.json();
   },
 };
@@ -66,11 +67,11 @@ export const tasksApi = {
  */
 export const categoriesApi = {
   list: async (): Promise<ApiResponse<{ id: string; name: string; order: number; taskCount: number }[]>> => {
-    const res = await fetch(`${API_BASE}/categories`);
+    const res = await edgeFetch(`${API_BASE}/categories`);
     return res.json();
   },
   create: async (name: string): Promise<ApiResponse<{ id: string; name: string; order: number }>> => {
-    const res = await fetch(`${API_BASE}/categories`, {
+    const res = await edgeFetch(`${API_BASE}/categories`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name }),
@@ -78,7 +79,7 @@ export const categoriesApi = {
     return res.json();
   },
   update: async (id: string, name: string): Promise<ApiResponse<{ id: string; name: string; order: number }>> => {
-    const res = await fetch(`${API_BASE}/categories/${id}`, {
+    const res = await edgeFetch(`${API_BASE}/categories/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name }),
@@ -86,11 +87,11 @@ export const categoriesApi = {
     return res.json();
   },
   delete: async (id: string): Promise<ApiResponse<null>> => {
-    const res = await fetch(`${API_BASE}/categories/${id}`, { method: "DELETE" });
+    const res = await edgeFetch(`${API_BASE}/categories/${id}`, { method: "DELETE" });
     return res.json();
   },
   updateOrder: async (orders: { id: string; order: number }[]): Promise<ApiResponse<null>> => {
-    const res = await fetch(`${API_BASE}/categories/order`, {
+    const res = await edgeFetch(`${API_BASE}/categories/order`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ orders }),
@@ -104,11 +105,11 @@ export const categoriesApi = {
  */
 export const giftsApi = {
   list: async (): Promise<ApiResponse<{ id: string; name: string; points: number; description: string | null; color: string | null; weeklyLimit: number | null }[]>> => {
-    const res = await fetch(`${API_BASE}/gifts`);
+    const res = await edgeFetch(`${API_BASE}/gifts`);
     return res.json();
   },
   create: async (data: { name: string; points: number; description?: string; weeklyLimit?: number | null }): Promise<ApiResponse<{ id: string; name: string; points: number; description: string | null; color: string; weeklyLimit: number | null }>> => {
-    const res = await fetch(`${API_BASE}/gifts`, {
+    const res = await edgeFetch(`${API_BASE}/gifts`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -116,7 +117,7 @@ export const giftsApi = {
     return res.json();
   },
   update: async (id: string, data: Partial<{ name: string; points: number; description: string; weeklyLimit: number | null }>): Promise<ApiResponse<{ id: string; name: string; points: number; description: string | null; color: string | null; weeklyLimit: number | null }>> => {
-    const res = await fetch(`${API_BASE}/gifts/${id}`, {
+    const res = await edgeFetch(`${API_BASE}/gifts/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -124,7 +125,7 @@ export const giftsApi = {
     return res.json();
   },
   delete: async (id: string): Promise<ApiResponse<null>> => {
-    const res = await fetch(`${API_BASE}/gifts/${id}`, { method: "DELETE" });
+    const res = await edgeFetch(`${API_BASE}/gifts/${id}`, { method: "DELETE" });
     return res.json();
   },
 };
@@ -134,15 +135,15 @@ export const giftsApi = {
  */
 export const redemptionsApi = {
   list: async (): Promise<ApiResponse<{ pending: ParentRedemption[]; confirmed: ParentRedemption[] }>> => {
-    const res = await fetch(`${API_BASE}/gifts/redemptions`);
+    const res = await edgeFetch(`${API_BASE}/gifts/redemptions`);
     return res.json();
   },
   confirm: async (id: string): Promise<ApiResponse<null>> => {
-    const res = await fetch(`${API_BASE}/gifts/redemptions/${id}/confirm`, { method: "PUT" });
+    const res = await edgeFetch(`${API_BASE}/gifts/redemptions/${id}/confirm`, { method: "PUT" });
     return res.json();
   },
   cancel: async (id: string): Promise<ApiResponse<{ giftName: string; username: string; pointsReturned: number }>> => {
-    const res = await fetch(`${API_BASE}/gifts/redemptions/${id}/cancel`, { method: "PUT" });
+    const res = await edgeFetch(`${API_BASE}/gifts/redemptions/${id}/cancel`, { method: "PUT" });
     return res.json();
   },
 };
@@ -152,11 +153,11 @@ export const redemptionsApi = {
  */
 export const membersApi = {
   list: async (): Promise<ApiResponse<{ children: Member[]; parents: Member[] }>> => {
-    const res = await fetch(`${API_BASE}/members`);
+    const res = await edgeFetch(`${API_BASE}/members`);
     return res.json();
   },
   add: async (data: { username: string; password: string; role: "PARENT" | "CHILD" }): Promise<ApiResponse<{ id: string; username: string; role: string; familyId: string }>> => {
-    const res = await fetch(`${API_BASE}/members`, {
+    const res = await edgeFetch(`${API_BASE}/members`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
@@ -164,7 +165,7 @@ export const membersApi = {
     return res.json();
   },
   delete: async (id: string): Promise<ApiResponse<null>> => {
-    const res = await fetch(`${API_BASE}/members/${id}`, { method: "DELETE" });
+    const res = await edgeFetch(`${API_BASE}/members/${id}`, { method: "DELETE" });
     return res.json();
   },
 };
@@ -174,11 +175,11 @@ export const membersApi = {
  */
 export const exchangeDaysApi = {
   get: async (): Promise<ApiResponse<number[]>> => {
-    const res = await fetch(`${API_BASE}/exchange-days`);
+    const res = await edgeFetch(`${API_BASE}/exchange-days`);
     return res.json();
   },
   update: async (days: number[]): Promise<ApiResponse<number[]>> => {
-    const res = await fetch(`${API_BASE}/exchange-days`, {
+    const res = await edgeFetch(`${API_BASE}/exchange-days`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ days }),
@@ -193,11 +194,11 @@ export const exchangeDaysApi = {
 export const rewardsApi = {
   list: async (userId?: string): Promise<ApiResponse<RewardRecord[]>> => {
     const url = userId ? `${API_BASE}/rewards?userId=${userId}` : `${API_BASE}/rewards`;
-    const res = await fetch(url);
+    const res = await edgeFetch(url);
     return res.json();
   },
   create: async (data: { userId: string; points: number; reason: string }): Promise<ApiResponse<RewardRecord>> => {
-    const res = await fetch(`${API_BASE}/rewards`, {
+    const res = await edgeFetch(`${API_BASE}/rewards`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { UserInfo } from "@/types";
+import { edgeFetch } from "@/lib/edge-fetch";
 
 interface UserContextType {
   user: UserInfo | null;
@@ -32,7 +33,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   const fetchCurrentUser = async () => {
     try {
-      const res = await fetch("/api/auth/me");
+      const res = await edgeFetch("/api/auth/me");
       if (res.ok) {
         const data = await res.json();
         setUser(data.data);

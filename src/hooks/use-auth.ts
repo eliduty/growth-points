@@ -5,6 +5,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useUser } from "@/hooks/use-user";
 import { Role } from "@/generated/prisma";
+import { edgeFetch } from "@/lib/edge-fetch";
 
 interface LoginInput {
   username: string;
@@ -34,7 +35,7 @@ export function useAuth() {
     try {
       const timezoneOffset = -new Date().getTimezoneOffset() / 60;
 
-      const response = await fetch("/api/auth/login", {
+      const response = await edgeFetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,7 +79,7 @@ export function useAuth() {
     setIsRegistering(true);
 
     try {
-      const response = await fetch("/api/auth/register", {
+      const response = await edgeFetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -113,7 +114,7 @@ export function useAuth() {
    */
   const logout = async () => {
     try {
-      const response = await fetch("/api/auth/logout", {
+      const response = await edgeFetch("/api/auth/logout", {
         method: "POST",
       });
 

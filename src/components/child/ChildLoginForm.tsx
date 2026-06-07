@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useUser } from "@/hooks/use-user";
+import { edgeFetch } from "@/lib/edge-fetch";
 
 const loginSchema = z.object({
   username: z.string().min(1, "请输入用户名"),
@@ -40,7 +41,7 @@ export default function ChildLoginForm() {
       // 获取当前时区偏移量
       const timezoneOffset = -new Date().getTimezoneOffset() / 60;
 
-      const response = await fetch("/api/auth/login", {
+      const response = await edgeFetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
