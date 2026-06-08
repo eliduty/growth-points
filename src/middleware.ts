@@ -30,6 +30,14 @@ function decodeJwtPayload(token: string): { role?: string } | null {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // 处理 API 路径的尾部斜杠（EdgeOne CDN 可能自动添加）
+  // 使用 rewrite 而不是 redirect，避免 Set-Cookie 头在 307 响应中被忽略
+  if (pathname.startsWith("/api/") && pathname.endsWith("/") && pathname !== "/api/") {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.slice(0, -1);
+    return NextResponse.rewrite(url);
+  }
+
   // 静态文件和 manifest 直接放行
   if (
     pathname.startsWith("/_next/") ||
@@ -87,13 +95,13 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * 匹配所有路径，除了：
-     * - api (API 路由)
+     * 匹配所有路径，包括 API 路由（用于处理尾部斜杠）
+     * 除了：
      * - _next/static (静态文件)
      * - _next/image (图片优化)
      * - favicon.ico (浏览器图标)
      * - public folder
      */
-    "/((?!api|_next/static|_next/image|favicon.ico|public/).*)",
+    "/((?!_next/static|_next/image|favicon.ico|public/).*)",
   ],
 };
