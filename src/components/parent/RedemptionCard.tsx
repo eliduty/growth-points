@@ -3,7 +3,7 @@
 import { Clock, CheckCircle, Gift, User, Star } from "lucide-react";
 import { cn } from "@/lib/cn";
 import { formatRelativeTime } from "@/lib/date";
-import { RedemptionStatus } from "@/generated/prisma";
+import { RedemptionStatus } from "@prisma/client";
 
 interface Redemption {
   id: string;

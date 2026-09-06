@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useUser } from "@/hooks/use-user";
-import { Role } from "@/generated/prisma";
+import { Role } from "@prisma/client";
 
 interface LoginInput {
   username: string;

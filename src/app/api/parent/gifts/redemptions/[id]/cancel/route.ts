@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireParent, handleAuthError } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db";
-import { RedemptionStatus } from "@/generated/prisma";
+import { RedemptionStatus } from "@prisma/client";
 
 /**
  * PUT /api/parent/gifts/redemptions/[id]/cancel - 撤销兑换（仅 PENDING 状态）

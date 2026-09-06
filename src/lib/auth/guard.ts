@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionFromRequest } from "./session";
 import { prisma } from "@/lib/db";
-import { Role } from "@/generated/prisma";
+import { Role } from "@prisma/client";
 
 export async function requireAuth(request: NextRequest): Promise<{ userId: string; role: Role; familyId: string }> {
   const payload = await getSessionFromRequest(request);

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Role } from "@/generated/prisma";
+import { Role } from "@prisma/client";
 
 const loginSchema = z.object({
   username: z.string().min(1, "请输入用户名"),

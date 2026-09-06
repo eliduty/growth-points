@@ -5,8 +5,8 @@ node_modules
 .env*.local
 .worktrees
 worktrees
-# Prisma generated client
-src/generated/prisma
+# OpenNext Cloudflare 构建产物
+.open-next
 
 # Local database files (any location)
 dev.db

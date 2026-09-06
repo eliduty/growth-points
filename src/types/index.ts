@@ -1,4 +1,4 @@
-import { Role, RedemptionStatus } from "@/generated/prisma";
+import { Role, RedemptionStatus } from "@prisma/client";
 export { Role, RedemptionStatus };
 
 /**
