@@ -38,6 +38,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.rewrite(url);
   }
 
+  // 所有 /api/ 路径跳过前端路由认证检查
+  // API 路由自行通过 guard.ts 处理认证，返回 JSON 错误而非 307 重定向
+  if (pathname.startsWith("/api/")) {
+    return NextResponse.next();
+  }
+
   // 静态文件和 manifest 直接放行
   if (
     pathname.startsWith("/_next/") ||
