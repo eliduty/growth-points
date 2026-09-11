@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/cn";
+import { getWeekStart, formatBeijingDate } from "@/lib/date";
 import { RefreshCw, AlertCircle, Gift } from "lucide-react";
 
 type MixedRecord = {
@@ -39,8 +40,6 @@ export default function ChildStatsDetailPage() {
   const { children, weekRange, isLoading, isError, error, refetch, revokeCompletion, isRevoking } =
     useParentStats();
 
-  const { rewards, isLoading: rewardsLoading, createReward, isCreating } = useParentRewards({ userId: childId });
-
   const { confirmState, showConfirm } = useConfirm();
 
   // 奖励弹窗状态
@@ -49,6 +48,14 @@ export default function ChildStatsDetailPage() {
   // 找到当前孩子
   const child = children.find((c) => c.id === childId);
   const completions = child?.completions || [];
+
+  // 当前周 weekStart（与 API 相同的归一化函数，保证周口径一致）
+  const weekStart = useMemo(() => formatBeijingDate(getWeekStart()), []);
+
+  const { rewards, isLoading: rewardsLoading, createReward, isCreating } = useParentRewards({
+    userId: childId,
+    weekStart,
+  });
 
   // 合并任务完成和奖励记录，按时间排序
   const mixedRecords = useMemo(() => {
@@ -74,18 +81,10 @@ export default function ChildStatsDetailPage() {
     );
   }, [completions, rewards]);
 
-  // 统计数据
-  const stats = useMemo(() => {
-    const activeCompletions = completions.filter((c) => !c.revokedAt);
-    const weekRewards = rewards; // rewards 已经是该孩子的所有奖励记录
-
-    return {
-      completed: activeCompletions.length,
-      completedPoints: activeCompletions.reduce((sum, c) => sum + c.points, 0),
-      rewards: weekRewards.length,
-      rewardPoints: weekRewards.reduce((sum, r) => sum + r.points, 0),
-    };
-  }, [completions, rewards]);
+  // 统计数据：直接采用 /api/parent/stats 的本周口径（与首页一致，单一事实来源）
+  const weeklyCompleted = child?.weeklyCompleted ?? 0;
+  const weeklyRewardsCount = child?.weeklyRewards ?? 0;
+  const weeklyPoints = child?.weeklyPoints ?? 0;
 
   // 处理撤销
   const handleRevoke = async (record: { id: string; taskName: string; points: number }) => {
@@ -246,11 +245,11 @@ export default function ChildStatsDetailPage() {
             className="mt-8 pt-4 border-t border-border text-center"
           >
             <p className="text-base text-text-secondary">
-              本周完成 <span className="font-bold text-primary">{stats.completed}</span> 个任务，
-              奖励 <span className="font-bold text-secondary">{stats.rewards}</span> 次
+              本周完成 <span className="font-bold text-primary">{weeklyCompleted}</span> 个任务，
+              奖励 <span className="font-bold text-secondary">{weeklyRewardsCount}</span> 次
             </p>
             <p className="text-sm text-text-secondary mt-1">
-              共获得 <span className="font-bold text-primary">{stats.completedPoints + stats.rewardPoints}</span> 积分
+              共获得 <span className="font-bold text-primary">{weeklyPoints}</span> 积分
             </p>
           </motion.div>
         </>

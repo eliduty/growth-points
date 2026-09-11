@@ -67,11 +67,16 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // 按孩子 ID 分组奖励积分
+    // 按孩子 ID 分组奖励积分与次数
     const rewardPointsByChild = new Map<string, number>();
+    const rewardCountByChild = new Map<string, number>();
     for (const reward of weeklyRewards) {
       const current = rewardPointsByChild.get(reward.userId) || 0;
       rewardPointsByChild.set(reward.userId, current + reward.points);
+      rewardCountByChild.set(
+        reward.userId,
+        (rewardCountByChild.get(reward.userId) || 0) + 1
+      );
     }
 
     // 计算统计数据（只统计未撤销的记录）
@@ -83,6 +88,7 @@ export async function GET(request: NextRequest) {
         0
       );
       const rewardPoints = rewardPointsByChild.get(child.id) || 0;
+      const rewardCount = rewardCountByChild.get(child.id) || 0;
       const weeklyPoints = taskPoints + rewardPoints;
 
       return {
@@ -92,6 +98,8 @@ export async function GET(request: NextRequest) {
         totalPoints: child.totalPoints,
         weeklyCompleted,
         weeklyPoints,
+        weeklyRewards: rewardCount,
+        weeklyRewardPoints: rewardPoints,
         completions: child.taskCompletions.map((c) => ({
           id: c.id,
           taskId: c.task.id,

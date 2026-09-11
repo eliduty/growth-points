@@ -191,8 +191,15 @@ export const exchangeDaysApi = {
  * 奖励相关 API
  */
 export const rewardsApi = {
-  list: async (userId?: string): Promise<ApiResponse<RewardRecord[]>> => {
-    const url = userId ? `${API_BASE}/rewards?userId=${userId}` : `${API_BASE}/rewards`;
+  list: async (
+    userId?: string,
+    weekStart?: string
+  ): Promise<ApiResponse<RewardRecord[]>> => {
+    const params = new URLSearchParams();
+    if (userId) params.set("userId", userId);
+    if (weekStart) params.set("weekStart", weekStart);
+    const query = params.toString();
+    const url = query ? `${API_BASE}/rewards?${query}` : `${API_BASE}/rewards`;
     const res = await fetch(url);
     return res.json();
   },

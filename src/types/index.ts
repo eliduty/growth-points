@@ -149,6 +149,8 @@ export interface ChildStats {
   totalPoints: number;
   weeklyCompleted: number;
   weeklyPoints: number;
+  weeklyRewards: number;
+  weeklyRewardPoints: number;
   completions: CompletionRecord[];
 }
 

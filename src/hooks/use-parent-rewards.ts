@@ -7,6 +7,7 @@ import type { RewardRecord } from "@/types";
 
 interface UseParentRewardsOptions {
   userId?: string;
+  weekStart?: string;
 }
 
 export function useParentRewards(options?: UseParentRewardsOptions) {
@@ -14,9 +15,9 @@ export function useParentRewards(options?: UseParentRewardsOptions) {
 
   // 获取奖励记录列表
   const query = useQuery({
-    queryKey: ["parent-rewards", options?.userId],
+    queryKey: ["parent-rewards", options?.userId, options?.weekStart],
     queryFn: async () => {
-      const response = await rewardsApi.list(options?.userId);
+      const response = await rewardsApi.list(options?.userId, options?.weekStart);
       if (response.code !== 0) {
         throw new Error(response.message);
       }

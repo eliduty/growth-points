@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireParent, handleAuthError } from "@/lib/auth/guard";
 import { prisma } from "@/lib/db";
 import { createRewardSchema } from "@/lib/validators";
-import { formatBeijingTime } from "@/lib/date";
+import { formatBeijingTime, getWeekStart, getWeekEnd } from "@/lib/date";
 
 /**
  * GET /api/parent/rewards - 获取奖励记录列表
@@ -14,11 +14,25 @@ export async function GET(request: NextRequest) {
     // 获取可选的 userId 参数（查询特定孩子的奖励）
     const userIdParam = request.nextUrl.searchParams.get("userId");
 
+    // 获取可选的 weekStart 参数（按周过滤，与 /api/parent/stats 同模式归一化）
+    const weekStartParam = request.nextUrl.searchParams.get("weekStart");
+    const weekStartDate = weekStartParam
+      ? new Date(weekStartParam)
+      : undefined;
+
     // 查询奖励记录
     const rewards = await prisma.reward.findMany({
       where: {
         familyId,
         ...(userIdParam ? { userId: userIdParam } : {}),
+        ...(weekStartDate
+          ? {
+              createdAt: {
+                gte: getWeekStart(weekStartDate),
+                lte: getWeekEnd(weekStartDate),
+              },
+            }
+          : {}),
       },
       select: {
         id: true,
