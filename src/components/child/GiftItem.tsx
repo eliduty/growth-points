@@ -47,10 +47,10 @@ export default function GiftItem({ gift, onRedeem, isRedeeming }: GiftItemProps)
 
   const getButtonState = () => {
     if (gift.limitStatus === "exhausted") {
-      return { disabled: true, text: "已兑完", className: "bg-white/30 text-white/60" };
+      return { disabled: true, text: "已兑完", className: "bg-gray-100 text-gray-400 border border-gray-200" };
     }
     if (!gift.canRedeem) {
-      return { disabled: true, text: "积分不足", className: "bg-white/30 text-white/60" };
+      return { disabled: true, text: "积分不足", className: "bg-gray-100 text-gray-400 border border-gray-200" };
     }
     return { disabled: false, text: "兑换", className: "bg-white text-primary font-bold hover:bg-white/90" };
   };
