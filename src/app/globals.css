@@ -342,53 +342,6 @@ body {
   animation: bounceSlow 2.5s ease-in-out infinite;
 }
 
-/* Toast 通知样式 */
-[data-sonner-toast] {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: var(--font-size-sm);
-  color: var(--text-primary);
-}
-
-/* Toast 图标颜色 */
-[data-sonner-toast][data-type="success"] [data-icon] {
-  color: var(--color-success);
-}
-
-[data-sonner-toast][data-type="error"] [data-icon] {
-  color: var(--color-error);
-}
-
-[data-sonner-toast][data-type="warning"] [data-icon] {
-  color: var(--color-warning);
-}
-
-[data-sonner-toast][data-type="info"] [data-icon] {
-  color: var(--color-info);
-}
-
-/* Toast 背景 + 左侧色条 */
-[data-sonner-toast][data-type="success"] {
-  background: linear-gradient(90deg, var(--color-success) 0px, var(--color-success) 4px, rgba(78, 205, 196, 0.1) 4px) !important;
-  border: none !important;
-}
-
-[data-sonner-toast][data-type="error"] {
-  background: linear-gradient(90deg, var(--color-error) 0px, var(--color-error) 4px, rgba(255, 107, 107, 0.1) 4px) !important;
-  border: none !important;
-}
-
-[data-sonner-toast][data-type="warning"] {
-  background: linear-gradient(90deg, var(--color-warning) 0px, var(--color-warning) 4px, rgba(255, 217, 61, 0.1) 4px) !important;
-  border: none !important;
-}
-
-[data-sonner-toast][data-type="info"] {
-  background: linear-gradient(90deg, var(--color-info) 0px, var(--color-info) 4px, rgba(96, 165, 250, 0.1) 4px) !important;
-  border: none !important;
-}
-
 /* 缓慢旋转 */
 @keyframes rotateSlow {
   0% {
