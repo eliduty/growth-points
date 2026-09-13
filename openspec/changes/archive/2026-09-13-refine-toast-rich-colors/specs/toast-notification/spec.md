@@ -1,3 +1,5 @@
+## MODIFIED Requirements
+
 ### Requirement: Toast 支持四种状态类型
 
 Toast 通知组件 SHALL 支持四种状态类型：`success`、`error`、`warning`、`info`，每种类型采用 sonner `richColors` 内置着色，具有可辨识的视觉差异。
